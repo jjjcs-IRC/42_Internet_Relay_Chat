@@ -1,5 +1,5 @@
 SRCS := $(wildcard *.cpp)
-NAME := ft_server
+NAME := ircserv
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98
 CXX = c++
 
