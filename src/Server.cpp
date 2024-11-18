@@ -176,7 +176,6 @@ void Server::handleNewConnection(void)
     registerClientSocket(clientSock);
 
 	// 클라이언트 객체 생성
-	// 클라이언트 객체를 생성하는 매니저 클래스의 함수 필요
 	client_manager.add_client(clientSock);
 	std::cout << "new client obj is created" << std::endl;
 }
@@ -196,11 +195,11 @@ void Server::handleClientData(int clientSock, struct kevent& event)
         return;
     }
 
+	// std::cout << "read_buf : " << read_buf << std::endl;
+	printAsciiValues(read_buf);
 	//PASS, NICK, USER
-	// std::cout << read_buf << std::endl;
-	parse_cmd(clientSock);
-
-
+	t_params t_params = setParams(clientSock);
+	printParams(t_params);
 
     write(clientSock, write_buf, strLen);
 }
@@ -255,42 +254,34 @@ void Server::cleanup(void)
     }
 }
 
-
-
-//////////////////////////////////////////////// server_cmd
-std::vector<std::string>	Server::parse_cmd(int fd)
+t_params Server::setParams(int &fd)
 {
-	std::vector<std::string>	params;
+	t_params result;
 
-	params = split(read_buf, ' ');
-	// std::cout << params.size() << std::endl;
-	params[0].erase(std::remove(params[0].begin(), params[0].end(), '\n'), params[0].end()); // 클라에서 입력된 패스워드에 개행 제거 
-	if (params[0] == "PASS" && params.size() == 2)
+	result.client_fd = fd;
+	result.tokens = parse.makeTokens(read_buf);
+	result.cmd_type = parse.identifyCommand(result.tokens);
+	result.password = parse.extractPassword(result.tokens);
+	return (result);
+}
+
+// 임시 함수
+
+void Server::printParams(t_params t_params)
+{
+	std::cout << "client fd : " << t_params.client_fd << std::endl;
+	std::cout << "command type : " << t_params.cmd_type << std::endl;
+	std::cout << "password : " << t_params.password << std::endl;
+	std::cout << "tokens : ";
+	for (unsigned long i = 0; i < t_params.tokens.size(); i++)
 	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		if (this->password == params[1])
-		{
-			client_manager.pass_client(fd);
-			std::cout << "pass password" << std::endl;
-		}
+		std::cout << t_params.tokens[i] << " | ";
 	}
-	else if (params[0] == "NICK" && params.size() == 2)
-	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		client_manager.set_nick_client(fd, params[1]);
-		std::cout << "set nickname" << std::endl;
-	}
-	else if (params[0] == "USER" && params.size() == 2)
-	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		client_manager.set_real_client(fd, params[1]);
-		std::cout << "set realname" << std::endl;
-	}
-	if (params[0] == "NICK" && params.size() == 1)
-	{
-		std::cout << "print NICK" << std::endl;
-		memset(write_buf, 0, BUF_SIZE);
-		send(fd, client_manager.print_client(fd).c_str(), client_manager.print_client(fd).length(), 0);
-	}
-	return (params);
+	std::cout << "\n\n";
+}
+
+void Server::printAsciiValues(const std::string& str) {
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+        std::cout << *it << " -> " << static_cast<int>(*it) << std::endl;
+    }
 }

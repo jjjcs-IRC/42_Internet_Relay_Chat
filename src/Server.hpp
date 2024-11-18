@@ -17,8 +17,27 @@
 #include <string>
 #include <sstream>
 
+#include "Parse.hpp"
+
+// 임시 함수 헤더
+
+
 const int BUF_SIZE = 1024; // 전역변수가 됬나?
 const int MAX_EVENTS = 30;
+
+enum Commands {
+	PASS,
+	NICK,
+	USER
+};
+
+typedef struct s_params 
+{
+	int	client_fd;
+	int	cmd_type;
+	std::string password;
+	std::vector<std::string> tokens;
+} t_params;
 
 class Server {
 	private :
@@ -42,6 +61,9 @@ class Server {
     /* 서버 상태 관련 변수 */
     	bool m_running;             /* 서버 실행 상태 플래그 */
     	static Server* m_instance;  /* 시그널 핸들러에서 사용할 인스턴스 포인터 */
+
+	/* 파싱 객체 생성 */
+		Parse parse;
 
 	public :
 		Server(int port, std::string password);
@@ -67,18 +89,11 @@ class Server {
 		void cleanup(void);
 
 		//server측 command
-		public :
-		std::vector<std::string> parse_cmd(int fd);
-		std::vector<std::string> split(const std::string& str, char delimiter) {
-    		std::vector<std::string> tokens;
-    		std::stringstream ss(str);
-    		std::string token;
+		t_params setParams(int &fd);
 
-    		while (std::getline(ss, token, delimiter)) {
-    		    tokens.push_back(token);
-    		}
-    		return tokens;
-		}
+		//임시 함수
+		void printParams(t_params t_params);
+		void printAsciiValues(const std::string& str);
 };
 
 #endif
