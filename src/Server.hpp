@@ -55,7 +55,8 @@ class Server {
     
     /* 데이터 송수신 관련 변수 */
     	char read_buf[BUF_SIZE];    /* 메시지 버퍼 */
-		char write_buf[BUF_SIZE];
+		std::string tem_string;
+		// char write_buf[BUF_SIZE];
     	std::vector<int> m_clientSocks; /* 연결된 클라이언트 소켓 목록 */
     
     /* 서버 상태 관련 변수 */
@@ -87,9 +88,10 @@ class Server {
 		void handleClientData(int clientSock, struct kevent& event);
 		void disconnectClient(int clientSock);
 		void cleanup(void);
+		std::string receiveMessage(int clientSock);
 
 		//server측 command
-		t_params setParams(int &fd);
+		t_params setParams(int &fd, std::string &string);
 
 		//임시 함수
 		void printParams(t_params t_params);

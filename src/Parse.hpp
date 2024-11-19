@@ -18,8 +18,8 @@ class Parse {
 		Parse(void);
 		~Parse(void);
 
-		std::vector<std::string> makeTokens(char *read_buf);
-		std::vector<std::string> parseByBNF(char *read_buf);
+		std::vector<std::string> makeTokens(std::string &read_buf);
+		std::vector<std::string> parseByBNF(std::string &read_buf);
 		std::vector<std::string> parseCommandDetails(std::vector<std::string> &tokens);
 		std::string extractPassword(std::vector<std::string> &tokens);
 		std::vector<std::string> parsePASS(std::vector<std::string> &tokens);

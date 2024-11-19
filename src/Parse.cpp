@@ -3,7 +3,7 @@
 Parse::Parse(void) {};
 Parse::~Parse(void) {};
 
-std::vector<std::string> Parse::makeTokens(char *read_buf)
+std::vector<std::string> Parse::makeTokens(std::string &read_buf)
 {
 	std::vector<std::string> raw_tokens;
 
@@ -14,7 +14,7 @@ std::vector<std::string> Parse::makeTokens(char *read_buf)
 	return (parseCommandDetails(raw_tokens));
 }
 
-std::vector<std::string> Parse::parseByBNF(char *read_buf)
+std::vector<std::string> Parse::parseByBNF(std::string &read_buf)
 {
 	std::vector<std::string> params;
 	int end_index;
