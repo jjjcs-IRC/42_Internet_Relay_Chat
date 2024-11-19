@@ -160,6 +160,16 @@ Client* ClientManager::find_client_byNick(std::string nickname)
 
 //
 
+bool check_pass_client(int fd) const
+{
+    Client *tmp_client;
+
+    tmp_client = find_client(fd);
+    return tmp_client.check_pass_client();
+}
+
+//
+
 std::string get_readBuf(int fd)
 {
     Client *tmp_client;

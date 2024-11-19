@@ -7,6 +7,7 @@
 class Client{
 protected:
 	int client_fd;
+	std::string userName;
 	std::string nickName;
 	std::string realName;
 	std::vector<std::string> channels;
@@ -22,6 +23,7 @@ public:
 	virtual ~Client();
 	//
 	int get_clientFd() const;
+	std::string get_userName() const;
 	std::string get_nickName() const;
 	std::string get_realName() const;
 	std::vector<std::string> get_channels() const;
@@ -30,6 +32,7 @@ public:
 	std::string get_writeBuf() const;
 	//
 	void set_clientFd(int fd);
+	void set_userName(std::string username);
 	void set_nickName(std::string nickname);
 	void set_realName(std::string realname);
 	bool set_channels(std::string channel);

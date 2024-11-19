@@ -1,16 +1,16 @@
 #include <Client.hpp>
 
-Client::Client() : client_fd(-1), nickName(NULL), realName(NULL), passed(false)
+Client::Client() : client_fd(-1), userName(NULL), nickName(NULL), realName(NULL), passed(false)
 {
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd) : client_fd(fd), nickName(NULL), realName(NULL), passed(false)
+Client::Client(int fd) : client_fd(fd), userName(NULL), nickName(NULL), realName(NULL), passed(false)
 {
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd, std::string nickname, std::string realname, bool passed) : client_fd(fd), nickName(nickname), realName(realname), passed(passed)
+Client::Client(int fd, std::string username, std::string nickname, std::string realname, bool passed) : client_fd(fd), userName(username) nickName(nickname), realName(realname), passed(passed)
 {
 	//std::cout << "Create Client!!!" << std::endl;
 }
@@ -18,6 +18,7 @@ Client::Client(int fd, std::string nickname, std::string realname, bool passed) 
 Client::Client(const Client &obj)
 {
 	this->client_fd = obj.client_fd;
+	this->userName = obj.get_userName();
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
 	// this->channels = obj.get_channels();
@@ -29,6 +30,7 @@ Client::Client(const Client &obj)
 Client& Client::operator=(const Client &obj)
 {
 	this->client_fd = obj.get_clientFd();
+	this->userName = obj.get_userName();
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
 	// this->channels = obj.get_channels();
@@ -48,6 +50,11 @@ Client::~Client()
 int Client::get_clientFd() const
 {
 	return (this->client_fd);
+}
+
+std::string Client::get_userName() const
+{
+	return (this->userName);
 }
 
 std::string Client::get_nickName() const
@@ -85,6 +92,11 @@ std::string Client::get_writeBuf() const
 void Client::set_clientFd(int fd)
 {
 	this->client_fd = fd;
+}
+
+void Client::set_userName(std::string username)
+{
+	this->userName = username;
 }
 
 void Client::set_nickName(std::string nickname)
@@ -127,6 +139,8 @@ void Client::set_writeBuf(std::string buf)
 bool Client::check_pass_client() const
 {
 	if (this->client_fd < 0)
+		return (false);
+	if (this->userName.empty())
 		return (false);
 	if (this->nickName.empty())
 		return (false);
