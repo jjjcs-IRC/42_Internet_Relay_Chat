@@ -69,5 +69,9 @@ void Channel::addParticipant(Client* participant) {
     this->participants.push_back(participant);
 }
 
-// TODO: 채널 내 사용자 수 확인
+// 채널 내 사용자 수 확인
+size_t Channel::getParticipantCount() const {
+    return participants.size();
+}
+
 // TODO: invite 모드이면 invite가 허용된 client만 채널에 입장할 수 있도록 하기

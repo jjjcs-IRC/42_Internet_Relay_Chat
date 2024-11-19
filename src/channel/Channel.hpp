@@ -36,6 +36,8 @@ public:
     void setMode(const std::string& mode);
 
     const std::vector<Client*>& getParticipants() const;
-     void addParticipant(Client* participant);
+    void addParticipant(Client* participant);
+
+    size_t getParticipantCount() const;
 };
 #endif
