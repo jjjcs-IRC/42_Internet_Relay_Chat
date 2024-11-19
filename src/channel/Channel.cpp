@@ -105,3 +105,27 @@ bool Channel::isUnderCapacity() const {
 void Channel::setMaxParticipants(size_t max) {
     maxParticipants = max;
 }
+
+std::vector<Client*>::iterator Channel::findClient(const std::string& name) {
+    return std::find_if(participants.begin(), participants.end(),
+        [&name](Client* client) {
+            return client->getName() == name;
+        });
+}
+
+
+// 채널의 참여자 삭제
+bool Channel::removeParticipantByName(const std::string& name) {
+     std::vector<Client*>::iterator it = findClient(name);
+    if (it != participants.end()) {
+        delete *it; // 메모리 해제
+        participants.erase(it); // 벡터에서 제거
+        std::cout << name << " 채널에서 삭제" << std::endl;
+        return true;
+    }
+
+    std::cout << name << " 채널에 존재하지 않는 클라이언트" << std::endl;
+    return false;
+}
+
+//TODO: 채널의 방장 추가, 제거, 상속

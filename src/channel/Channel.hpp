@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector> 
 #include "Client.hpp" 
+#include <algorithm>
 
 class Channel
 {
@@ -19,6 +20,7 @@ private:
 
     bool isInvited(Client* client) const; // 초대 여부 확인
     size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
+    std::vector<Client*>::iterator findClient(const std::string& name); // 해당 이름의 클라이언트 찾기
 
 public:
     Channel(const std::string& name, const std::string& password = "");
@@ -48,5 +50,8 @@ public:
 
     bool isUnderCapacity() const; // 현재 참여 가능 여부 확인 (최대 인원을 넘지 않았는지)
     void setMaxParticipants(size_t max); // L 모드 최대 참여자 설정
+
+    bool removeParticipantByName(const std::string& name); // 클라이언트 채널에서 삭제
 };
+
 #endif
