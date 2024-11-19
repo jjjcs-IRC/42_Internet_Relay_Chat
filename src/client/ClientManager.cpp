@@ -64,6 +64,14 @@ void ClientManager::pass_client(int fd)
     tmp_client->set_passed();
 }
 
+void ClientManager::set_user_client(int fd, std::string username)
+{
+    Client *tmp_client;
+
+    tmp_client = find_client(fd);
+    tmp_client.set_userName(username);
+}
+
 bool ClientManager::set_nick_client(int fd, std::string nickname)
 {
     Client *tmp_client;

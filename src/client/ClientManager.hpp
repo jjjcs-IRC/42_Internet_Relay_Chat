@@ -21,6 +21,7 @@ public:
 	//
 	void add_client(int fd);
     void pass_client(int fd);
+	void set_user_client(int fd, std::string username);
     bool set_nick_client(int fd, std::string nickname);
     void set_real_client(int fd, std::string realname);
 	void set_readBuf(int fd, std::string buf);
