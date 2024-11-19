@@ -82,6 +82,16 @@ bool Client::get_passed() const
     return (this->passed);
 }
 
+std::string Client::get_readBuf() const
+{
+	return (this->read_buf);
+}
+
+std::string Client::get_writeBuf() const
+{
+	return (this->write_buf);
+}
+
 //
 
 void Client::set_clientFd(int fd)
@@ -99,9 +109,12 @@ void Client::set_realName(std::string realname)
 	this->realName = realname;
 }
 
-void Client::set_channels(std::string channel)
+bool Client::set_channels(std::string channel)
 {
+	if (this->channels.size() >= 10)
+		return false;
 	this->channels.push_back(channel);
+	return true;
 }
 
 void Client::set_passed()
@@ -109,7 +122,21 @@ void Client::set_passed()
     this->passed = true;
 }
 
-bool Client::check_pass_client(int fd) const
+void Client::set_readBuf(std::string buf)
+{
+	this->read_buf.clear();
+	this->read_buf = buf.substr();
+}
+
+void Client::set_writeBuf(std::string buf)
+{
+	this->write_buf.clear();
+	this->read_buf = buf.substr();
+}
+
+//
+
+bool Client::check_pass_client() const
 {
 	if (this->client_fd < 0)
 		return (false);
@@ -120,4 +147,22 @@ bool Client::check_pass_client(int fd) const
 	if (!this->passed)
 		return (false);
 	return (true);
+}
+
+bool Client::check_join_channel() const
+{
+	if (this->channels.size() >= 10)
+		return false;
+	return true;
+}
+
+bool Client::kick_client_from_channel(std::string channel)
+{
+	std::vector<std::string>::iterator it;
+
+	if = find(this->channels.begin(), this->channels.end(), channel);
+	if (it == this->channels.end())
+		return false;
+	else
+		this->channels.erase(it);
 }

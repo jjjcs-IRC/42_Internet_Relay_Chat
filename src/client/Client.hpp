@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jeakim <jeakim@student.42seoul.kr>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 19:52:27 by jimchoi           #+#    #+#             */
-/*   Updated: 2024/11/15 19:09:46 by jeakim           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
@@ -23,6 +11,8 @@ protected:
 	std::string realName;
 	std::vector<std::string> channels;
     bool  passed;
+	std::string read_buf;
+	std::string write_buf;
 public:
 	Client();
 	Client(int fd);
@@ -36,14 +26,20 @@ public:
 	std::string get_realName() const;
 	std::vector<std::string> get_channels() const;
     bool get_passed() const;
+	std::string get_readBuf() const;
+	std::string get_writeBuf() const;
 	//
 	void set_clientFd(int fd);
 	void set_nickName(std::string nickname);
 	void set_realName(std::string realname);
-	void set_channels(std::string channel);
+	bool set_channels(std::string channel);
     void set_passed();
+	void set_readBuf(std::string buf);
+	void set_writeBuf(std::string buf);
 	//
-	bool check_pass_client(int fd) const;
+	bool check_pass_client() const;
+	bool check_join_channel() const;
+	void kick_client_from_channel(std::string channel);
 	//
 	bool operator==(const Client& obj) const
 	{
