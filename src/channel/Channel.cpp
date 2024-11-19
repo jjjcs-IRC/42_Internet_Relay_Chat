@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, const std::string& password)
-    : channelName(name), password(password), leader(nullptr) {}
+    : channelName(name), password(password), leader(NULL) {}
 
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
@@ -68,3 +68,6 @@ const std::vector<User*>& Channel::getParticipants() const {
 void Channel::addParticipant(Client* participant) {
     this->participants.push_back(participant);
 }
+
+// TODO: 채널 내 사용자 수 확인
+// TODO: invite 모드이면 invite가 허용된 client만 채널에 입장할 수 있도록 하기
