@@ -2,6 +2,7 @@
 #define CHANNEL_HPP
 
 #include <iostream>
+#include <vector> 
 #include "Client.hpp" 
 
 class Channel
@@ -14,7 +15,7 @@ private:
     std::string mode;
     std::vector<Client*> participants;
 public:
-    Channel(std::string const &channelName);
+    Channel(const std::string& name, const std::string& password = "");
 	Channel(Channel const &other);
 	Channel &operator=(Channel const &other);
 	~Channel();
@@ -35,5 +36,6 @@ public:
     void setMode(const std::string& mode);
 
     const std::vector<Client*>& getParticipants() const;
-}
+     void addParticipant(Client* participant);
+};
 #endif
