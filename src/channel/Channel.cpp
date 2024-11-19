@@ -65,13 +65,34 @@ const std::vector<User*>& Channel::getParticipants() const {
     return participants;
 }
 
-void Channel::addParticipant(Client* participant) {
-    this->participants.push_back(participant);
+// invite 모드이면 invite가 허용된 client만 채널에 입장 가능
+bool Channel::addParticipant(Client* participant) {
+    if (mode == "invite") {
+        if (!isInvited(participant)) {
+            std::cout << participant->getName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
+            return false;
+        }
+    }
+    participants.push_back(participant);
+    std::cout << participant->getName() << " 입장 완료" << std::endl;
+    return true
 }
 
-// 채널 내 사용자 수 확인
 size_t Channel::getParticipantCount() const {
     return participants.size();
 }
 
-// TODO: invite 모드이면 invite가 허용된 client만 채널에 입장할 수 있도록 하기
+bool Channel::inviteClient(Client* client) {
+    if (std::find(invitedClients.begin(), invitedClients.end(), client) != invitedClients.end()) {
+        std::cout << client->getName() << " 채널에 이미 초대된 사용자" << std::endl;
+        return false; // 이미 초대된 경우
+    }
+    invitedClients.push_back(client);
+    std::cout << client->getName() << " 채널 초대 성공" << std::endl;
+    return true; // 초대 성공
+}
+
+// 초대 여부 확인
+bool Channel::isInvited(Client* client) const {
+    return std::find(invitedClients.begin(), invitedClients.end(), client) != invitedClients.end();
+}

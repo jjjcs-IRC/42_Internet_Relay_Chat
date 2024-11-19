@@ -14,6 +14,8 @@ private:
     Client* leader;
     std::string mode;
     std::vector<Client*> participants;
+    std::vector<Client*> invitedClients; 
+
 public:
     Channel(const std::string& name, const std::string& password = "");
 	Channel(Channel const &other);
@@ -36,8 +38,11 @@ public:
     void setMode(const std::string& mode);
 
     const std::vector<Client*>& getParticipants() const;
-    void addParticipant(Client* participant);
+    bool addParticipant(Client* participant);
+   
+    size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
 
-    size_t getParticipantCount() const;
+    bool inviteClient(Client* client); // 클라이언트 초대
+    bool isInvited(Client* client) const; // 초대 여부 확인
 };
 #endif
