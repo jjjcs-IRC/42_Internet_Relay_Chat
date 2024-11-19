@@ -13,6 +13,7 @@ Server::Server(int port, std::string password) : port(port), password(password)
     m_eventList = new struct kevent[MAX_EVENTS];
 
 	//port하고 password 유효성 검사
+	tem_string = "";
 }
 
 Server::~Server(void)
@@ -176,7 +177,6 @@ void Server::handleNewConnection(void)
     registerClientSocket(clientSock);
 
 	// 클라이언트 객체 생성
-	// 클라이언트 객체를 생성하는 매니저 클래스의 함수 필요
 	client_manager.add_client(clientSock);
 	std::cout << "new client obj is created" << std::endl;
 }
@@ -188,21 +188,16 @@ void Server::handleClientData(int clientSock, struct kevent& event)
         disconnectClient(clientSock);
         return;
     }
-    memset(read_buf, 0, BUF_SIZE);
-    ssize_t strLen = read(clientSock, read_buf, BUF_SIZE);
-    if(strLen <= 0)
-	{
-        disconnectClient(clientSock);
-        return;
-    }
+	
+	std::string read_string = receiveMessage(clientSock);
 
+	// std::cout << "read_buf : " << read_buf << std::endl;
+	printAsciiValues(read_string);
 	//PASS, NICK, USER
-	// std::cout << read_buf << std::endl;
-	parse_cmd(clientSock);
+	// t_params t_params = setParams(clientSock, read_string);
+	// printParams(t_params);
 
-
-
-    write(clientSock, write_buf, strLen);
+    // write(clientSock, write_buf, strLen);
 }
 
 void Server::disconnectClient(int clientSock) 
@@ -255,42 +250,78 @@ void Server::cleanup(void)
     }
 }
 
-
-
-//////////////////////////////////////////////// server_cmd
-std::vector<std::string>	Server::parse_cmd(int fd)
+t_params Server::setParams(int &fd, std::string &string)
 {
-	std::vector<std::string>	params;
+	t_params result;
 
-	params = split(read_buf, ' ');
-	// std::cout << params.size() << std::endl;
-	params[0].erase(std::remove(params[0].begin(), params[0].end(), '\n'), params[0].end()); // 클라에서 입력된 패스워드에 개행 제거 
-	if (params[0] == "PASS" && params.size() == 2)
+	result.client_fd = fd;
+	result.tokens = parse.makeTokens(string);
+	result.cmd_type = parse.identifyCommand(result.tokens);
+	result.password = parse.extractPassword(result.tokens);
+	return (result);
+}
+
+std::string	Server::receiveMessage(int clientSock)
+{
+	unsigned long	pos_crlf;
+	std::string		result;
+	// printf("reveciemessage\n");
+	// std::cout << "find : " << result.find("\r\n") << std::endl;
+	// pos_crlf = tem_string.find("\r\n");
+	// if (pos_crlf > 0) // 캐리지 리턴이 나오면
+	// {
+	// 	result = tem_string.substr(0, pos_crlf);
+	// 	tem_string = tem_string.substr(pos_crlf);
+	// 	return (result);
+	// }
+
+	result = tem_string; // 반환 문자열에 임시 저장한 문자열 붙히고
+
+	memset(read_buf, 0, BUF_SIZE);
+    ssize_t strLen = read(clientSock, read_buf, BUF_SIZE);
+    if(strLen <= 0)
 	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		if (this->password == params[1])
-		{
-			client_manager.pass_client(fd);
-			std::cout << "pass password" << std::endl;
-		}
-	}
-	else if (params[0] == "NICK" && params.size() == 2)
+        disconnectClient(clientSock);
+        return("");
+    }
+	result.append(read_buf, strLen);
+	// printAsciiValues(result);
+	std::cout << "input result : " << result << std::endl;
+	pos_crlf = result.find("\r\n"); // 캐리지 리턴의 위치를 찾고
+	if (pos_crlf != std::string::npos) // 캐리지 리턴이 나오면
 	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		client_manager.set_nick_client(fd, params[1]);
-		std::cout << "set nickname" << std::endl;
+		printf("cfrl");
+		tem_string = result.substr(pos_crlf); // tem_string은 캐리지 리턴부터 끝까지 잘라서 저장
+		result = result.substr(0, pos_crlf); // result는 첫 위치부터 캐리지 리턴까지 저장
 	}
-	else if (params[0] == "USER" && params.size() == 2)
+	else //캐리지 리턴이 안 나오면
 	{
-		params[1].erase(std::remove(params[1].begin(), params[1].end(), '\n'), params[1].end()); // 클라에서 입력된 패스워드에 개행 제거 
-		client_manager.set_real_client(fd, params[1]);
-		std::cout << "set realname" << std::endl;
+		printf("no cfrl");
+		tem_string.append(result, result.length());
+		result.clear();
 	}
-	if (params[0] == "NICK" && params.size() == 1)
+	std::cout << "tem string : " << tem_string << std::endl;
+	std::cout << "result : " << result << std::endl;
+	return (result);
+}
+
+// 임시 함수
+
+void Server::printParams(t_params t_params)
+{
+	std::cout << "client fd : " << t_params.client_fd << std::endl;
+	std::cout << "command type : " << t_params.cmd_type << std::endl;
+	std::cout << "password : " << t_params.password << std::endl;
+	std::cout << "tokens : ";
+	for (unsigned long i = 0; i < t_params.tokens.size(); i++)
 	{
-		std::cout << "print NICK" << std::endl;
-		memset(write_buf, 0, BUF_SIZE);
-		send(fd, client_manager.print_client(fd).c_str(), client_manager.print_client(fd).length(), 0);
+		std::cout << t_params.tokens[i] << " | ";
 	}
-	return (params);
+	std::cout << "\n\n";
+}
+
+void Server::printAsciiValues(const std::string& str) {
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+        std::cout << *it << " -> " << static_cast<int>(*it) << std::endl;
+    }
 }
