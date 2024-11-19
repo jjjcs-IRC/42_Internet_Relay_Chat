@@ -67,11 +67,9 @@ const std::vector<User*>& Channel::getParticipants() const {
 
 // invite 모드이면 invite가 허용된 client만 채널에 입장 가능
 bool Channel::addParticipant(Client* participant) {
-    if (mode == "invite") {
-        if (!isInvited(participant)) {
-            std::cout << participant->getName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
-            return false;
-        }
+    if (mode == "I" && !isInvited(participant)) { 
+        std::cout << participant->getName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
+        return false;
     }
     participants.push_back(participant);
     std::cout << participant->getName() << " 입장 완료" << std::endl;
@@ -95,4 +93,15 @@ bool Channel::inviteClient(Client* client) {
 // 초대 여부 확인
 bool Channel::isInvited(Client* client) const {
     return std::find(invitedClients.begin(), invitedClients.end(), client) != invitedClients.end();
+}
+
+// 현재 채널 참여 가능 여부 확인
+bool Channel::isUnderCapacity() const {
+    size_t currentCount = participants.size();
+    return currentCount < maxParticipants;
+}
+
+// L 모드 최대 참여자 설정
+void Channel::setMaxParticipants(size_t max) {
+    maxParticipants = max;
 }

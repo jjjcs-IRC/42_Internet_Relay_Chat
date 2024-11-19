@@ -14,7 +14,11 @@ private:
     Client* leader;
     std::string mode;
     std::vector<Client*> participants;
-    std::vector<Client*> invitedClients; 
+    std::vector<Client*> invitedClients;
+    size_t maxParticipants = 100; // L 모드에서 정한 최대 참여자 수
+
+    bool isInvited(Client* client) const; // 초대 여부 확인
+    size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
 
 public:
     Channel(const std::string& name, const std::string& password = "");
@@ -38,11 +42,11 @@ public:
     void setMode(const std::string& mode);
 
     const std::vector<Client*>& getParticipants() const;
-    bool addParticipant(Client* participant);
+    bool addParticipant(Client* participant); // 클라이언트 채널 입장
    
-    size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
-
     bool inviteClient(Client* client); // 클라이언트 초대
-    bool isInvited(Client* client) const; // 초대 여부 확인
+
+    bool isUnderCapacity() const; // 현재 참여 가능 여부 확인 (최대 인원을 넘지 않았는지)
+    void setMaxParticipants(size_t max); // L 모드 최대 참여자 설정
 };
 #endif
