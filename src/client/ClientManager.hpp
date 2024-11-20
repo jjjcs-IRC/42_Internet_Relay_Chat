@@ -31,7 +31,7 @@ public:
 	void delete_client_byNick(std::string nickname);
 	void delete_clients();
 	//
-	void delete_channel(int fd, std::string ch_name);
+	bool delete_channel(int fd, std::string ch_name);
 	//
 	Client* find_client(int fd);
 	Client* find_client_byNick(std::string nickname);

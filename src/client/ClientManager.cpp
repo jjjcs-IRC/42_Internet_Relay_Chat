@@ -11,7 +11,7 @@ ClientManager::ClientManager(const ClientManager &obj)
 
     for (it = obj.get_clientList().begin(); it != obj.get_clientList().end(); it++)
     {
-        Client tmp_client((*it).get_clientFd(), (*it).get_nickName(), (*it).get_realName(), (*it).get_passed());
+        Client tmp_client((*it).get_clientFd(), (*it).get_userName(), (*it).get_nickName(), (*it).get_realName(), (*it).get_passed());
 	    this->client_list.push_back(tmp_client);
     }
 	// std::cout << "Create and Copy ClientManager" << std::endl;
@@ -23,7 +23,7 @@ ClientManager& ClientManager::operator=(const ClientManager &obj)
 
     for (it = obj.get_clientList().begin(); it != obj.get_clientList().end(); it++)
     {
-        Client tmp_client((*it).get_clientFd(), (*it).get_nickName(), (*it).get_realName(), (*it).get_passed());
+        Client tmp_client((*it).get_clientFd(), (*it).get_nickName(), (*it).get_userName(), (*it).get_realName(), (*it).get_passed());
 	    this->client_list.push_back(tmp_client);
     }
 	// std::cout << "Create and Copy ClientManager" << std::endl;
@@ -42,7 +42,7 @@ std::list<Client> ClientManager::get_clientList() const
     return (this->client_list);
 }
 
-std::string get_server_passwd() const
+std::string ClientManager::get_server_passwd() const
 {
     return (this->server_passwd);
 }
@@ -69,7 +69,7 @@ void ClientManager::set_user_client(int fd, std::string username)
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    tmp_client.set_userName(username);
+    tmp_client->set_userName(username);
 }
 
 bool ClientManager::set_nick_client(int fd, std::string nickname)
@@ -98,7 +98,7 @@ void ClientManager::set_readBuf(int fd, std::string buf)
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    tmp_client.set_readBuf(buf);
+    tmp_client->set_readBuf(buf);
 }
 
 void ClientManager::set_writeBuf(int fd, std::string buf)
@@ -106,7 +106,7 @@ void ClientManager::set_writeBuf(int fd, std::string buf)
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    tmp_client.set_writeBuf(buf);
+    tmp_client->set_writeBuf(buf);
 }
 
 //
@@ -135,12 +135,12 @@ void ClientManager::delete_clients()
 
 //
 
-void CLientManager::delete_channel(int fd, std::string ch_name)
+bool ClientManager::delete_channel(int fd, std::string ch_name)
 {
     Client* tmp_client;
     
     tmp_client = find_client(fd);
-    tmp_client.kick_client_from_channel(ch_name);
+    return tmp_client->kick_client_from_channel(ch_name);
 }
 
 //
@@ -168,30 +168,30 @@ Client* ClientManager::find_client_byNick(std::string nickname)
 
 //
 
-bool check_pass_client(int fd) const
+bool ClientManager::check_pass_client(int fd) const
 {
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    return tmp_client.check_pass_client();
+    return tmp_client->check_pass_client();
 }
 
 //
 
-std::string get_readBuf(int fd)
+std::string ClientManager::get_readBuf(int fd)
 {
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    return tmp_client.get_readBuf();
+    return tmp_client->get_readBuf();
 }
 
-std::string get_writeBuf(int fd)
+std::string ClientManager::get_writeBuf(int fd)
 {
     Client *tmp_client;
 
     tmp_client = find_client(fd);
-    return tmp_client.get_writeBuf();
+    return tmp_client->get_writeBuf();
 }
 
 // std::string ClientManager::print_client(int fd)

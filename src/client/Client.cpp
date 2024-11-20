@@ -1,16 +1,16 @@
 #include <Client.hpp>
 
-Client::Client() : client_fd(-1), userName(NULL), nickName(NULL), realName(NULL), passed(false)
+Client::Client() : client_fd(-1), passed(false)
 {
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd) : client_fd(fd), userName(NULL), nickName(NULL), realName(NULL), passed(false)
+Client::Client(int fd) : client_fd(fd), passed(false)
 {
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd, std::string username, std::string nickname, std::string realname, bool passed) : client_fd(fd), userName(username) nickName(nickname), realName(realname), passed(passed)
+Client::Client(int fd, std::string username, std::string nickname, std::string realname, bool passed) : client_fd(fd), userName(username), nickName(nickname), realName(realname), passed(passed)
 {
 	//std::cout << "Create Client!!!" << std::endl;
 }
@@ -131,7 +131,7 @@ void Client::set_readBuf(std::string buf)
 void Client::set_writeBuf(std::string buf)
 {
 	this->write_buf.clear();
-	this->read_buf = buf.substr();
+	this->write_buf = buf.substr();
 }
 
 //
@@ -162,9 +162,10 @@ bool Client::kick_client_from_channel(std::string channel)
 {
 	std::vector<std::string>::iterator it;
 
-	if = find(this->channels.begin(), this->channels.end(), channel);
+	it = find(this->channels.begin(), this->channels.end(), channel);
 	if (it == this->channels.end())
 		return false;
 	else
 		this->channels.erase(it);
+	return true;
 }

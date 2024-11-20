@@ -17,7 +17,7 @@ protected:
 public:
 	Client();
 	Client(int fd);
-	Client(int fd, std::string nickname, std::string realname, bool passed);
+	Client(int fd, std::string username, std::string nickname, std::string realname, bool passed);
 	Client(const Client &obj);
 	Client& operator=(const Client &obj);
 	virtual ~Client();
@@ -42,7 +42,7 @@ public:
 	//
 	bool check_pass_client() const;
 	bool check_join_channel() const;
-	void kick_client_from_channel(std::string channel);
+	bool kick_client_from_channel(std::string channel);
 	//
 	bool operator==(const Client& obj) const
 	{
