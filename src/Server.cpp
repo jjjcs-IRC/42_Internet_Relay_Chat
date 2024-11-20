@@ -250,9 +250,9 @@ void Server::cleanup(void)
     }
 }
 
-t_params Server::setParams(int &fd, std::string &string)
+tParams Server::setParams(int &fd, std::string &string)
 {
-	t_params result;
+	tParams result;
 
 	result.client_fd = fd;
 	result.tokens = parse.makeTokens(string);
@@ -308,7 +308,7 @@ std::string	Server::receiveMessage(int clientSock)
 
 // 임시 함수
 
-void Server::printParams(t_params t_params)
+void Server::printParams(tParams t_params)
 {
 	std::cout << "client fd : " << t_params.client_fd << std::endl;
 	std::cout << "command type : " << t_params.cmd_type << std::endl;

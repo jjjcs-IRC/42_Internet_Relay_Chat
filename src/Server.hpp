@@ -16,6 +16,7 @@
 #include "ClientManager.hpp"
 #include <string>
 #include <sstream>
+#include "ChannelManager.hpp"
 
 #include "Parse.hpp"
 
@@ -33,13 +34,13 @@ enum Commands {
 
 #ifndef S_PARAMS
 #define S_PARAMS
-typedef struct s_params 
+typedef struct sParams
 {
 	int	client_fd;
 	int	cmd_type;
 	std::string password;
 	std::vector<std::string> tokens;
-} t_params;
+} tParams;
 #endif
 
 class Server {
@@ -49,6 +50,7 @@ class Server {
 		std::string password; // password가 유효한지에 대한 함수 필요
 
 		ClientManager client_manager;
+		ChannelManager channelManager;
 
 		int m_serverSock;           /* 서버 소켓 파일 디스크립터 */
 		int m_kqueue;              /* kqueue 파일 디스크립터 */
@@ -67,6 +69,7 @@ class Server {
 
 	/* 파싱 객체 생성 */
 		Parse parse;
+
 
 	public :
 		Server(int port, std::string password);
@@ -93,10 +96,10 @@ class Server {
 		std::string receiveMessage(int clientSock);
 
 		//server측 command
-		t_params setParams(int &fd, std::string &string);
+		tParams setParams(int &fd, std::string &string);
 
 		//임시 함수
-		void printParams(t_params t_params);
+		void printParams(tParams t_params);
 		void printAsciiValues(const std::string& str);
 };
 
