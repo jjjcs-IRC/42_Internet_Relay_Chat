@@ -1,36 +1,19 @@
-#ifndef NICK_HPP
-# define NICK_HPP
+#include "Nick.hpp"
 
-#include "Command.hpp"
-#include "../Server.hpp"
-
-// typedef struct s_params 
-// {
-// 	int	client_fd;
-// 	int	cmd_type;
-// 	std::string password;
-// 	std::vector<std::string> tokens;
-// } t_params;
-
-class Nick : public Command {
-
-	public :
-		Nick();
-		~Nick();
-		int executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn);
-
-	private :
-		Nick(const Nick &other);
-		Nick* operator=(const Nick &other);
-		bool 		nick_check(std::string nick);
-		
-};
 
 Nick::Nick() {
-	_type = "NICK";
+	// _type = "NICK";
 }
 
 Nick::~Nick() {}
+
+Nick *Nick::operator=(const Nick &other) {
+	(void)other;
+	return (this);
+}
+Nick::Nick(const Nick &other) {
+	(void)other;
+}
 
 int Nick::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn) {
 	// ChannelManager CnManager;
@@ -62,5 +45,3 @@ else if (nick_check(params.tokens[1]) == false) {
 	}
 
 }
-
-#endif

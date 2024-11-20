@@ -1,33 +1,18 @@
-// #ifndef USER_HPP
-// # define USER_HPP
+#include "User.hpp"
 
-#include "../Server.hpp"
-#include "Command.hpp"
-#include "client/Client.hpp"
-
-
-
-
-class User : public Command {
-
-	public :
-		User();
-		~User();
-		int executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn);
-
-	private :
-		User(const User &other);
-		User* operator=(const User &other);
-
-};
-
-
-// #endif
 User::User() {
 	_type = "USER";
 }
 
 User::~User() {}
+
+User *User::operator=(const User &other) {
+	(void)other;
+	return (this);
+}
+User::User(const User &other) {
+	(void)other;
+}
 
 int User::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn) {
 
@@ -43,7 +28,7 @@ int User::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn
 		// "<client> <command> :Not enough parameters"
 		return 461;
 	}
-	else if (client->get_realName() != NULL) {
+	else if (client->get_realName().size() <= 0) {
 		// ERR_ALREADYREGISTERED (462)
 		//   "<client> :You may not reregister"
 		return 462;

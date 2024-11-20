@@ -1,32 +1,19 @@
-// #ifndef PASS_HPP
-// # define PASS_HPP
+#include "Pass.hpp"
 
-#include "../Server.hpp"
-#include "Command.hpp"
-
-
-
-
-class Pass : public Command {
-
-	public :
-		Pass();
-		~Pass();
-		int executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn);
-
-	private :
-		Pass(const Pass &other);
-		Pass* operator=(const Pass &other);
-
-};
-
-
-// #endif
 Pass::Pass() {
-	_type = "PASS";
+	// _type = "PASS";
 }
 
 Pass::~Pass() {}
+
+Pass *Pass::operator=(const Pass &other) {
+	(void)other;
+	return (this);
+}
+
+Pass::Pass(const Pass &other) {
+	(void)other;
+}
 
 int Pass::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn) {
 	Client *client = cl.find_client(params.client_fd);
