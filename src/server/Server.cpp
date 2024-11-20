@@ -250,17 +250,6 @@ void Server::cleanup(void)
     }
 }
 
-tParams Server::setParams(int &fd, std::string &string)
-{
-	tarams result;
-
-	result.client_fd = fd;
-	result.tokens = parse.makeTokens(string);
-	result.cmd_type = parse.identifyCommand(result.tokens);
-	result.password = parse.extractPassword(result.tokens);
-	return (result);
-}
-
 std::string	Server::receiveMessage(int clientSock)
 {
 	unsigned long	pos_crlf;
