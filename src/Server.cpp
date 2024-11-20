@@ -252,7 +252,7 @@ void Server::cleanup(void)
 
 tParams Server::setParams(int &fd, std::string &string)
 {
-	tParams result;
+	tarams result;
 
 	result.client_fd = fd;
 	result.tokens = parse.makeTokens(string);
