@@ -31,6 +31,8 @@ enum Commands {
 	USER
 };
 
+#ifndef S_PARAMS
+#define S_PARAMS
 typedef struct s_params 
 {
 	int	client_fd;
@@ -38,6 +40,7 @@ typedef struct s_params
 	std::string password;
 	std::vector<std::string> tokens;
 } t_params;
+#endif
 
 class Server {
 	private :
@@ -55,8 +58,7 @@ class Server {
     
     /* 데이터 송수신 관련 변수 */
     	char read_buf[BUF_SIZE];    /* 메시지 버퍼 */
-		std::string tem_string;
-		// char write_buf[BUF_SIZE];
+		// char write_buf[BUF_SIZE]; // 필요한가?
     	std::vector<int> m_clientSocks; /* 연결된 클라이언트 소켓 목록 */
     
     /* 서버 상태 관련 변수 */
