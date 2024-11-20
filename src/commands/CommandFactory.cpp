@@ -36,12 +36,3 @@ CommandFactory::~CommandFactory() {
 // 전역 변수 초기화
 CommandFactory* CommandFactory::_instance = nullptr;
 
-// 사용 예시
-
-//   
-//         Command* command = CommandFactory::getInstance()->createCommand(params, cl, cn);
-//         if (command != nullptr) {
-//             return command->executeCommand(messages);
-//         }
-//         return -1; // 에러 코드
-
