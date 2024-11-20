@@ -9,7 +9,7 @@
 class Command {
 	public:
 		virtual ~Command(){};
-		int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) = 0;
+		virtual int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) = 0;
 };
 
 #endif
