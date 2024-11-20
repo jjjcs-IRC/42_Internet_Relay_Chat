@@ -107,12 +107,14 @@ void Channel::setMaxParticipants(size_t max) {
 }
 
 std::vector<Client*>::iterator Channel::findClient(const std::string& name) {
-    return std::find_if(participants.begin(), participants.end(),
-        [&name](Client* client) {
-            return client->get_userName() == name;
-        });
+    return std::find_if(participants.begin(), participants.end(), ClientFinder(name));
 }
 
+Channel::ClientFinder::ClientFinder(const std::string& name) : name(name) {}
+
+bool Channel::ClientFinder::operator()(Client* client) const {
+    return client->get_userName() == name;
+}
 
 // 채널의 참여자 삭제
 bool Channel::removeParticipantByName(const std::string& name) {

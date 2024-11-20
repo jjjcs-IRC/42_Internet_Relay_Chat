@@ -22,7 +22,7 @@ Client::Client(const Client &obj)
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
 	// this->channels = obj.get_channels();
-	for (int i = 0; i < obj.get_channels().size(); i++)
+	for (unsigned long i = 0; i < obj.get_channels().size(); i++)
 		this->channels.push_back(obj.get_channels()[i]);
 	// std::cout << "Create and Copy Client!!!" << std::endl;
 }
@@ -34,7 +34,7 @@ Client& Client::operator=(const Client &obj)
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
 	// this->channels = obj.get_channels();
-	for (int i = 0; i < obj.get_channels().size(); i++)
+	for (unsigned long i = 0; i < obj.get_channels().size(); i++)
 		this->channels.push_back(obj.get_channels()[i]);
 	// std::cout << "Create and Copy Client!!!" << std::endl;
 	return (*this);

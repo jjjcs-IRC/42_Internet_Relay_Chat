@@ -36,7 +36,7 @@ public:
 	Client* find_client(int fd);
 	Client* find_client_byNick(std::string nickname);
 	//
-	bool check_pass_client(int fd) const;
+	bool check_pass_client(int fd);
 	//
 	std::string get_readBuf(int fd);
 	std::string get_writeBuf(int fd);

@@ -10,6 +10,14 @@ class ChannelManager
 private:
     std::vector<Channel*> channels;
 
+    struct ChannelFinder {
+        explicit ChannelFinder(const std::string& name);
+        bool operator()(Channel* channel) const;
+
+    private:
+        const std::string& name;
+    };
+
     
 public:
     ChannelManager();

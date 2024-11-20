@@ -168,7 +168,7 @@ Client* ClientManager::find_client_byNick(std::string nickname)
 
 //
 
-bool ClientManager::check_pass_client(int fd) const
+bool ClientManager::check_pass_client(int fd)
 {
     Client *tmp_client;
 

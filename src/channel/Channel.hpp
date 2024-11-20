@@ -20,7 +20,16 @@ private:
 
     bool isInvited(Client* client) const; // 초대 여부 확인
     size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
-    std::vector<Client*>::iterator findClient(const std::string& name); // 해당 이름의 클라이언트 찾기
+
+     struct ClientFinder {
+        explicit ClientFinder(const std::string& name);
+        bool operator()(Client* client) const;
+
+    private:
+        const std::string& name;
+    };
+
+    std::vector<Client*>::iterator findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
 
 public:
     Channel(const std::string& name, const std::string& password = "");
