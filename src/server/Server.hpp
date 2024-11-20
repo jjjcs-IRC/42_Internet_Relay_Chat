@@ -18,30 +18,14 @@
 #include <sstream>
 #include "../channelManager/ChannelManager.hpp"
 
-// #include "Parse.hpp"
+# include "../parser/IrcParser.hpp"
 
 // 임시 함수 헤더
-
 
 const int BUF_SIZE = 1024; // 전역변수가 됬나?
 const int MAX_EVENTS = 30;
 
-enum Commands {
-	PASS,
-	NICK,
-	USER
-};
-
-#ifndef S_PARAMS
-#define S_PARAMS
-typedef struct sParams
-{
-	int	client_fd;
-	int	cmd_type;
-	std::string password;
-	std::vector<std::string> tokens;
-} tParams;
-#endif
+class IrcParser;
 
 class Server {
 	private :
@@ -68,7 +52,7 @@ class Server {
     	static Server* m_instance;  /* 시그널 핸들러에서 사용할 인스턴스 포인터 */
 
 	/* 파싱 객체 생성 */
-		// Parse parse;
+		IrcParser parse;
 
 
 	public :
