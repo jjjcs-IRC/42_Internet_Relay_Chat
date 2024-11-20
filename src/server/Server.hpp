@@ -13,12 +13,12 @@
 #include <signal.h>
 #include <errno.h>
 
-#include "ClientManager.hpp"
+#include "../client/ClientManager.hpp"
 #include <string>
 #include <sstream>
-#include "ChannelManager.hpp"
+#include "../channelManager/ChannelManager.hpp"
 
-#include "Parse.hpp"
+// #include "Parse.hpp"
 
 // 임시 함수 헤더
 
@@ -68,7 +68,7 @@ class Server {
     	static Server* m_instance;  /* 시그널 핸들러에서 사용할 인스턴스 포인터 */
 
 	/* 파싱 객체 생성 */
-		Parse parse;
+		// Parse parse;
 
 
 	public :

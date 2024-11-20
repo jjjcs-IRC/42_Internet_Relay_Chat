@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, const std::string& password)
-    : channelName(name), password(password), leader(NULL) {}
+    : channelName(name), password(password), leader(NULL), maxParticipants(100) {}
 
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 

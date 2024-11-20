@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector> 
-#include "Client.hpp" 
+#include "../client/Client.hpp" 
 #include <algorithm>
 
 class Channel
@@ -16,7 +16,7 @@ private:
     std::string mode;
     std::vector<Client*> participants;
     std::vector<Client*> invitedClients;
-    size_t maxParticipants = 100; // L 모드에서 정한 최대 참여자 수
+    size_t maxParticipants; // L 모드에서 정한 최대 참여자 수
 
     bool isInvited(Client* client) const; // 초대 여부 확인
     size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인

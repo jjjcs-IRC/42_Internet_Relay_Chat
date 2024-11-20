@@ -1,7 +1,7 @@
 #ifndef CHANNELMANAGER_HPP
 #define CHANNELMANAGER_HPP
 
-#include "Channel.hpp"
+#include "../channel/Channel.hpp"
 #include <iostream>
 #include <vector>
 
