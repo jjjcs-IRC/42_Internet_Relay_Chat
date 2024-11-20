@@ -5,7 +5,7 @@ Channel::Channel(const std::string& name, const std::string& password)
 
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
-      leader(other.leader), channelMode(other.mode), participants(other.participants) {}
+      leader(other.leader), mode(other.mode), participants(other.participants) {}
 
 Channel& Channel::operator=(const Channel& other) {
     if (this != &other) {
@@ -13,7 +13,7 @@ Channel& Channel::operator=(const Channel& other) {
         password = other.password;
         topic = other.topic;
         leader = other.leader;
-        channelMode = other.mode;
+        mode = other.mode;
         participants = other.participants;
     }
     return *this;
@@ -45,7 +45,7 @@ void Channel::setTopic(const std::string& topic) {
     this->topic = topic;
 }
 
-User* Channel::getLeader() const {
+Client* Channel::getLeader() const {
     return leader;
 }
 
@@ -61,19 +61,19 @@ void Channel::setMode(const std::string& mode) {
     this->mode = mode;
 }
 
-const std::vector<User*>& Channel::getParticipants() const {
+const std::vector<Client*>& Channel::getParticipants() const {
     return participants;
 }
 
 // invite 모드이면 invite가 허용된 client만 채널에 입장 가능
 bool Channel::addParticipant(Client* participant) {
     if (mode == "I" && !isInvited(participant)) { 
-        std::cout << participant->getName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
+        std::cout << participant->get_userName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
         return false;
     }
     participants.push_back(participant);
-    std::cout << participant->getName() << " 입장 완료" << std::endl;
-    return true
+    std::cout << participant->get_userName() << " 입장 완료" << std::endl;
+    return true;
 }
 
 size_t Channel::getParticipantCount() const {
@@ -82,11 +82,11 @@ size_t Channel::getParticipantCount() const {
 
 bool Channel::inviteClient(Client* client) {
     if (std::find(invitedClients.begin(), invitedClients.end(), client) != invitedClients.end()) {
-        std::cout << client->getName() << " 채널에 이미 초대된 사용자" << std::endl;
+        std::cout << client->get_userName() << " 채널에 이미 초대된 사용자" << std::endl;
         return false; // 이미 초대된 경우
     }
     invitedClients.push_back(client);
-    std::cout << client->getName() << " 채널 초대 성공" << std::endl;
+    std::cout << client->get_userName() << " 채널 초대 성공" << std::endl;
     return true; // 초대 성공
 }
 
@@ -109,7 +109,7 @@ void Channel::setMaxParticipants(size_t max) {
 std::vector<Client*>::iterator Channel::findClient(const std::string& name) {
     return std::find_if(participants.begin(), participants.end(),
         [&name](Client* client) {
-            return client->getName() == name;
+            return client->get_userName() == name;
         });
 }
 
