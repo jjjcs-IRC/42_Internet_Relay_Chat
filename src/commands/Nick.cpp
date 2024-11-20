@@ -15,7 +15,7 @@ Nick::Nick(const Nick &other) {
 	(void)other;
 }
 
-int Nick::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn) {
+int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	// ChannelManager CnManager;
 	
 	Client *client = cl.find_client(params.client_fd);

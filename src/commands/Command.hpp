@@ -4,16 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "Server.hpp"
 
 class Command {
 	public:
-		virtual ~Command();
-		virtual int executeCommand(std::vector<std::string> &messages, ClientManager &cl, ChannelManager &cn) = 0;
-	protected:
-		std::string _type;
-		//클라매니저
-		//채널매니저
+		virtual ~Command(){};
+		int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) = 0;
 };
-
 
 #endif

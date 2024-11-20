@@ -14,7 +14,7 @@ User::User(const User &other) {
 	(void)other;
 }
 
-int User::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn) {
+int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 
 	Client *client = cl.find_client(params.client_fd);
 	if (client->get_passed() == false) {
@@ -28,7 +28,7 @@ int User::executeCommand(t_params &params, ClientManager &cl, ChannelManager &cn
 		// "<client> <command> :Not enough parameters"
 		return 461;
 	}
-	else if (client->get_realName().size() <= 0) {
+	else if (client->get_realName().size() > 0 || client->get_nickName().size() > 0) {
 		// ERR_ALREADYREGISTERED (462)
 		//   "<client> :You may not reregister"
 		return 462;
