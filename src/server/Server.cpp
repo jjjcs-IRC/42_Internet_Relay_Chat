@@ -191,11 +191,10 @@ void Server::handleClientData(int clientSock, struct kevent& event)
 	std::string read_string = receiveMessage(clientSock);
 
 	std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
-	printAsciiValues(read_string);
+	// printAsciiValues(read_string);
 	//PASS, NICK, USER
-	// t_params t_params = setParams(clientSock, read_string);
-	// printParams(t_params);
-	// client_manager.set_writeBuf(clientSock, "wrtie buffer test\n"); // eof를 
+    /* set tParams */
+    tParams res = parse.IrcParsing( clientSock, read_string );
 
     write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
 }
@@ -301,7 +300,7 @@ void Server::printParams(tParams t_params)
 {
 	std::cout << "client fd : " << t_params.client_fd << std::endl;
 	std::cout << "command type : " << t_params.cmd_type << std::endl;
-	std::cout << "password : " << t_params.password << std::endl;
+	// std::cout << "password : " << t_params.password << std::endl;
 	std::cout << "tokens : ";
 	for (unsigned long i = 0; i < t_params.tokens.size(); i++)
 	{
