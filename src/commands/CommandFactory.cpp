@@ -7,10 +7,11 @@
 
 CommandFactory::CommandFactory() {
     // 각 커맨드 인스턴스를 미리 생성하여 맵에 저장
-    _commandMap[0] = new Join();
-    _commandMap[1] = new Pass();
-    _commandMap[2] = new User();
-    _commandMap[3] = new Nick();
+    _commandMap[PASS] = new Pass();
+    _commandMap[USER] = new User();
+    _commandMap[NICK] = new Nick();
+    _commandMap[JOIN] = new Join();
+    std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가
 }
 

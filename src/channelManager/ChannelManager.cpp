@@ -46,6 +46,7 @@ bool ChannelManager::addChannel(Channel* newChannel) {
     }
 
     channels.push_back(newChannel);
+    std::cout << "채널 추가: " << newChannel->getChannelName() << std::endl;
     return true;
 }
 

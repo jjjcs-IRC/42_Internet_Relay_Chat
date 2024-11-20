@@ -18,6 +18,7 @@ Pass::Pass(const Pass &other) {
 
 int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	Client *client = cl.find_client(params.client_fd);
+	std::cout << "Pass command" << std::endl;
 	// params.tokens[1].erase(std::remove(params.tokens[1].begin(), params.tokens[1].end(), '\n'), params.tokens[1].end());
 	const std::string inputPassword = params.tokens[1];
 	if (client->get_passed()) {// password 통과했는지 확인해주는 함수

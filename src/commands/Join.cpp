@@ -20,6 +20,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	std::string channelName = params.tokens[1]; // # 떼고 채널 이름만 가져옴
 	std::string inputPassword = params.tokens.size() > 1 ? params.tokens[2] : ""; // 채널 비밀번호
 
+	std::cout << "Join command" << std::endl;
 	// CnManager.joinChannel(channelName); // 채널에 유저 추가
 	if (cn.findChannel(channelName)){//채널 존재 여부 확인
 		//ERR_NOSUCHCHANNEL(403)

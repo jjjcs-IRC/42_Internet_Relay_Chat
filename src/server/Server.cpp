@@ -198,6 +198,8 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
     if (command != nullptr) 
         command->executeCommand(res, client_manager, channelManager);
+    else 
+        std::cout << "Unknown command" << res.cmd_type << std::endl;
 
     write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
 }
