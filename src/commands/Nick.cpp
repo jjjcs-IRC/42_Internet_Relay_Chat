@@ -26,12 +26,12 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// "<client> :No nickname given"
 		return 431;
 	}
-else if (nick_check(params.tokens[1]) == false) {
-		// `ERR_ERRONEUSNICKNAME (432)`
-		// `NICK` 명령어로 전송된 닉네임이 잘못되었을 때 발생합니다.
-		// "<client> <nick> :Erroneous nickname"
-		return 432;
-	}
+// else if (nick_check(params.tokens[1]) == false) {
+// 		// `ERR_ERRONEUSNICKNAME (432)`
+// 		// `NICK` 명령어로 전송된 닉네임이 잘못되었을 때 발생합니다.
+// 		// "<client> <nick> :Erroneous nickname"
+// 		return 432;
+// 	}
 	else if (cl.find_client_byNick(params.tokens[1]) != NULL) {
 		// `ERR_NICKNAMEINUSE (433)`
 		// `NICK` 명령어로 전송된 닉네임이 이미 사용 중일 때 발생합니다.
