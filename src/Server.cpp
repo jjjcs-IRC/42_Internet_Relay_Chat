@@ -13,7 +13,6 @@ Server::Server(int port, std::string password) : port(port), password(password)
     m_eventList = new struct kevent[MAX_EVENTS];
 
 	//port하고 password 유효성 검사
-	tem_string = "";
 }
 
 Server::~Server(void)
@@ -191,13 +190,14 @@ void Server::handleClientData(int clientSock, struct kevent& event)
 	
 	std::string read_string = receiveMessage(clientSock);
 
-	// std::cout << "read_buf : " << read_buf << std::endl;
+	std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
 	printAsciiValues(read_string);
 	//PASS, NICK, USER
 	// t_params t_params = setParams(clientSock, read_string);
 	// printParams(t_params);
+	// client_manager.set_writeBuf(clientSock, "wrtie buffer test\n"); // eof를 
 
-    // write(clientSock, write_buf, strLen);
+    write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
 }
 
 void Server::disconnectClient(int clientSock) 
@@ -250,9 +250,9 @@ void Server::cleanup(void)
     }
 }
 
-t_params Server::setParams(int &fd, std::string &string)
+tParams Server::setParams(int &fd, std::string &string)
 {
-	t_params result;
+	tarams result;
 
 	result.client_fd = fd;
 	result.tokens = parse.makeTokens(string);
@@ -264,19 +264,11 @@ t_params Server::setParams(int &fd, std::string &string)
 std::string	Server::receiveMessage(int clientSock)
 {
 	unsigned long	pos_crlf;
+	unsigned long	pos_nl;
 	std::string		result;
-	// printf("reveciemessage\n");
-	// std::cout << "find : " << result.find("\r\n") << std::endl;
-	// pos_crlf = tem_string.find("\r\n");
-	// if (pos_crlf > 0) // 캐리지 리턴이 나오면
-	// {
-	// 	result = tem_string.substr(0, pos_crlf);
-	// 	tem_string = tem_string.substr(pos_crlf);
-	// 	return (result);
-	// }
+	std::string		tem_string;
 
-	result = tem_string; // 반환 문자열에 임시 저장한 문자열 붙히고
-
+	tem_string = client_manager.get_readBuf(clientSock);
 	memset(read_buf, 0, BUF_SIZE);
     ssize_t strLen = read(clientSock, read_buf, BUF_SIZE);
     if(strLen <= 0)
@@ -284,30 +276,39 @@ std::string	Server::receiveMessage(int clientSock)
         disconnectClient(clientSock);
         return("");
     }
-	result.append(read_buf, strLen);
+	tem_string.append(read_buf);
 	// printAsciiValues(result);
-	std::cout << "input result : " << result << std::endl;
-	pos_crlf = result.find("\r\n"); // 캐리지 리턴의 위치를 찾고
-	if (pos_crlf != std::string::npos) // 캐리지 리턴이 나오면
+	std::cout << "input result : " << read_buf << std::endl;
+	pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
+	pos_nl = tem_string.find("\n");
+
+	if ((pos_crlf == std::string::npos) && (pos_nl == std::string::npos)) //캐리지 리턴을 못 찾으면
 	{
-		printf("cfrl");
-		tem_string = result.substr(pos_crlf); // tem_string은 캐리지 리턴부터 끝까지 잘라서 저장
-		result = result.substr(0, pos_crlf); // result는 첫 위치부터 캐리지 리턴까지 저장
+		printf("no cfrl nl\n");
+		// tem_string.append(result, 0, result.length());
+		// result.clear();
 	}
-	else //캐리지 리턴이 안 나오면
+	else if (pos_crlf < pos_nl)
 	{
-		printf("no cfrl");
-		tem_string.append(result, result.length());
-		result.clear();
+		printf("cfrl\n");
+		result = tem_string.substr(0, pos_crlf); // result는 첫 위치부터 캐리지 리턴까지 저장
+		tem_string.erase(0, pos_crlf + 2); // tem_string은 캐리지 리턴부터 끝까지 잘라서 저장
+	}
+	else if (pos_crlf > pos_nl)
+	{
+		printf("nl\n");
+		result = tem_string.substr(0, pos_nl);
+		tem_string.erase(0, pos_nl + 1);
 	}
 	std::cout << "tem string : " << tem_string << std::endl;
 	std::cout << "result : " << result << std::endl;
+	client_manager.set_readBuf(clientSock, tem_string);
 	return (result);
 }
 
 // 임시 함수
 
-void Server::printParams(t_params t_params)
+void Server::printParams(tParams t_params)
 {
 	std::cout << "client fd : " << t_params.client_fd << std::endl;
 	std::cout << "command type : " << t_params.cmd_type << std::endl;
