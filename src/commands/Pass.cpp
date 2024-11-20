@@ -1,4 +1,5 @@
 #include "Pass.hpp"
+#include "../server/Server.hpp"
 
 Pass::Pass() {
 	// _type = "PASS";
@@ -6,9 +7,9 @@ Pass::Pass() {
 
 Pass::~Pass() {}
 
-Pass *Pass::operator=(const Pass &other) {
+Pass &Pass::operator=(const Pass &other) {
 	(void)other;
-	return (this);
+	return (*this);
 }
 
 Pass::Pass(const Pass &other) {

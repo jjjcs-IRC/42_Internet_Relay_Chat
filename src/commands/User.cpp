@@ -1,14 +1,15 @@
 #include "User.hpp"
+#include "../server/Server.hpp"
 
 User::User() {
-	_type = "USER";
+	// _type = "USER";
 }
 
 User::~User() {}
 
-User *User::operator=(const User &other) {
+User &User::operator=(const User &other) {
 	(void)other;
-	return (this);
+	return (*this);
 }
 User::User(const User &other) {
 	(void)other;

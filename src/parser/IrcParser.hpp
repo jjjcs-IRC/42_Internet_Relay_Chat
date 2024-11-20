@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcParser.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
+/*   By: jimchoi <jimchoi@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:37:58 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 20:54:03 by jaeyeuljhan      ###   ########.fr       */
+/*   Updated: 2024/11/20 21:36:09 by jimchoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,7 @@
 # include "UserParser.hpp"
 
 
-#ifndef S_PARAMS
-# define S_PARAMS
 
-typedef struct sParams
-{
-	int							client_fd;
-	int							cmd_type;
-	std::vector<std::string>	tokens;
-} tParams;
-# endif
 
 
 class IrcParser

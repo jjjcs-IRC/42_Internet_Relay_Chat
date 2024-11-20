@@ -1,4 +1,5 @@
 #include "Nick.hpp"
+#include "../server/Server.hpp"
 
 
 Nick::Nick() {
@@ -7,9 +8,9 @@ Nick::Nick() {
 
 Nick::~Nick() {}
 
-Nick *Nick::operator=(const Nick &other) {
+Nick &Nick::operator=(const Nick &other) {
 	(void)other;
-	return (this);
+	return (*this);
 }
 Nick::Nick(const Nick &other) {
 	(void)other;

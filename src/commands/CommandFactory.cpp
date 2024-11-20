@@ -1,11 +1,16 @@
 #include "CommandFactory.hpp"
+// #include "CommandFactory.hpp"
+#include "Join.hpp"
+#include "Pass.hpp"
+#include "User.hpp"
+#include "Nick.hpp"
 
 CommandFactory::CommandFactory() {
     // 각 커맨드 인스턴스를 미리 생성하여 맵에 저장
-    _commandMap["JOIN"] = new Join();
-    _commandMap["PASS"] = new Pass();
-    _commandMap["USER"] = new User();
-    _commandMap["NICK"] = new Nick();
+    _commandMap[0] = new Join();
+    _commandMap[1] = new Pass();
+    _commandMap[2] = new User();
+    _commandMap[3] = new Nick();
     // 다른 커맨드들도 여기에 추가
 }
 
@@ -16,8 +21,9 @@ CommandFactory* CommandFactory::getInstance() {
     return _instance;
 }
 
-Command* CommandFactory::createCommand(const std::string& commandType) {
-    auto it = _commandMap.find(commandType);
+Command* CommandFactory::createCommand(int commandType) {
+    // auto it = _commandMap.find(commandType);
+    std::map<int, Command*>::iterator it = _commandMap.find(commandType);
     if (it != _commandMap.end()) {
         return it->second;
     }
@@ -26,9 +32,13 @@ Command* CommandFactory::createCommand(const std::string& commandType) {
 
 CommandFactory::~CommandFactory() {
     // 맵에 저장된 모든 커맨드 객체들을 삭제
-    for (auto& pair : _commandMap) {
-        delete pair.second;
-    }
+    // for (auto& pair : _commandMap) {
+    //     delete pair.second;
+    // }
+    std::map<int, Command*>::iterator it;
+for (it = _commandMap.begin(); it != _commandMap.end(); ++it) {
+    delete it->second;
+}
     _commandMap.clear();
 }
 

@@ -1,11 +1,12 @@
 #include "Join.hpp"
+#include "../server/Server.hpp"
 
 Join::Join() {}
 Join::~Join() {}
 
-Join *Join::operator=(const Join &other) {
+Join &Join::operator=(const Join &other) {
 	(void)other;
-	return (this);
+	return (*this);
 }
 
 Join::Join(const Join &other) {

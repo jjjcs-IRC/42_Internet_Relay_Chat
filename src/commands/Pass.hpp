@@ -1,8 +1,8 @@
 #ifndef PASS_HPP
 # define PASS_HPP
-
+#include "../parser/IrcType.hpp"  // tParams 정의를 가져오기 위해
 #include "Command.hpp"
-
+// class Command;
 class Pass : public Command {
 
 	public :
@@ -12,7 +12,7 @@ class Pass : public Command {
 
 	private :
 		Pass(const Pass &other);
-		Pass* operator=(const Pass &other);
+		Pass& operator=(const Pass &other);
 
 };
 

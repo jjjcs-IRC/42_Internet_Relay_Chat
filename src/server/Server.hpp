@@ -17,10 +17,13 @@
 #include <string>
 #include <sstream>
 #include "../channelManager/ChannelManager.hpp"
+#include "../commands/CommandFactory.hpp"
+#include "../commands/Command.hpp"
 
 # include "../parser/IrcParser.hpp"
 
 // 임시 함수 헤더
+
 
 const int BUF_SIZE = 1024; // 전역변수가 됬나?
 const int MAX_EVENTS = 30;
