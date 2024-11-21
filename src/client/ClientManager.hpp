@@ -36,8 +36,8 @@ public:
 	Client* find_client(int fd); //fd값으로 client 찾기
 	Client* find_client_byNick(std::string nickname); //nickName으로 client 찾기
 	//
-	bool check_pass_client(int fd); //client의 모든 필드가 저장되었는지 확인
-	bool check_name_client(std::string name) const; //userName, realName 유효성 확인
+	bool check_pass_client(int fd); //해당 fd값의 client의 모든 필드가 저장되었는지 확인
+	bool check_name_client(std::string name) const; //userName, nickName 유효성 확인
 	//
 	std::string get_readBuf(int fd); //fd값으로 client의 readBuf 가져오기
 	std::string get_writeBuf(int fd); //fd값으로 client의 writeBuf 가져오기
