@@ -1,26 +1,18 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   IrcType.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jimchoi <jimchoi@student.42seoul.kr>       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 20:18:45 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 21:44:40 by jimchoi          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef IRCTYPE_HPP
 # define IRCTYPE_HPP
 
 /* Irc Commands Type */
-# define CMD_MAX 3 // Number of commands
+# define CMD_MAX 8 // Number of commands
 
 # define ERROR -1
 # define PASS 0
 # define NICK 1
 # define USER 2
 # define JOIN 3
+# define KICK 4
+# define INVITE 5
+# define TOPIC 6
+# define MODE 7
 
 /* abt fd value */
 # define STDIN 0 // do not use

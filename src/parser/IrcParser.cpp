@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   IrcParser.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 18:37:40 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 18:56:20 by jaeyeuljhan      ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "IrcParser.hpp"
 
 IrcParser::IrcParser(void)
@@ -87,8 +75,8 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 			return (data);
 		}
 		ptr->SetTokens( data.tokens );
-		if (ptr->CmdParser() == false)
-			data.cmd_type = ERROR;
+		ShowParams();
+		ptr->CmdParser();
 		delete ptr;
 	}
 	return (data);
@@ -130,5 +118,15 @@ SuperParser	*IrcParser::NewClassPtr( int type )
 		return ( new NickParser() );
 	if (type == USER)
 		return ( new UserParser() );
+	if (type == JOIN)
+		return ( new JoinParser() );
+	if (type == KICK)
+		return ( new KickParser() );
+	if (type == INVITE)
+		return ( new InviteParser() );
+	if (type == TOPIC)
+		return ( new TopicParser() );
+	if (type == MODE)
+		return ( new ModeParser() );
 	return (NULL);
 }
