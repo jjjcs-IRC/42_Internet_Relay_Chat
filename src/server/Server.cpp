@@ -13,6 +13,12 @@ Server::Server(int port, std::string password) : port(port), password(password)
     m_eventList = new struct kevent[MAX_EVENTS];
 
 	//port하고 password 유효성 검사
+	serverInfo.channelModes = "kost";
+	serverInfo.serverName = "jjjcs_irc";
+	serverInfo.datetime = "2024-11-22";
+	serverInfo.tokens = "CHANNELLEN=32 NICKLEN=9 TOPICLEN=307";
+	serverInfo.userModes = "io";
+	serverInfo.version = "1.1";
 }
 
 Server::~Server(void)
@@ -182,26 +188,41 @@ void Server::handleNewConnection(void)
 
 void Server::handleClientData(int clientSock, struct kevent& event) 
 {
+	Numerics numerics(client_manager, channelManager, serverInfo); // 쓸대없이 리소스를 좀 잡아 먹기는 함.
+
     if(event.flags & EV_EOF)
 	{
         disconnectClient(clientSock);
         return;
     }
-	
-	std::string read_string = receiveMessage(clientSock);
+	else if (event.filter == EVFILT_READ)
+	{
+		std::string read_string = receiveMessage(clientSock);
 
-	std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
-	// printAsciiValues(read_string);
-	//PASS, NICK, USER
-    /* set tParams */
-    tParams res = parse.IrcParsing( clientSock, read_string );
-    Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
-    if (command != nullptr) 
-        command->executeCommand(res, client_manager, channelManager);
-    else 
-        std::cout << "Unknown command" << res.cmd_type << std::endl;
+		std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
+		// printAsciiValues(read_string);
+    	/* set tParams */
+		try
+		{
+    		tParams res = parse.IrcParsing( clientSock, read_string );
+			numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
+    		Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
+    		if (command != nullptr) 
+    		    command->executeCommand(res, client_manager, channelManager);
+    		else 
+    		    std::cout << "Unknown command" << res.cmd_type << std::endl;
+		}
+		catch (int num)
+		{
+			numerics.dispatchByInt(clientSock, num);
+		}
+	}
+	else if (event.filter == EVFILT_WRITE)
+	{		
+    	write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
+		client_manager.set_writeBuf(clientSock, ""); // write buf 지우는 함수
+	}
 
-    write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
 }
 
 void Server::disconnectClient(int clientSock) 
