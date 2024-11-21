@@ -1,7 +1,11 @@
 #include "Channel.hpp"
 
 Channel::Channel(const std::string& name, const std::string& password)
-    : channelName(name), password(password), leader(NULL), maxParticipants(100) {}
+    : channelName(name), password(password), leader(NULL), maxParticipants(100) {
+    if (!isValidateName(name)) {
+        throw std::invalid_argument("유효하지 않은 채널 이름: " + name);
+    }
+}
 
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
@@ -25,8 +29,12 @@ const std::string& Channel::getChannelName() const {
     return channelName;
 }
 
-void Channel::setChannelName(const std::string& name) {
-    channelName = name;
+bool Channel::setChannelName(const std::string& name) {
+    if(isValidateName(name)){
+        channelName = name;
+        return true;
+    }
+    return false;
 }
 
 const std::string& Channel::getPassword() const {
@@ -130,4 +138,29 @@ bool Channel::removeParticipantByName(const std::string& name) {
     return false;
 }
 
-//TODO: 채널의 방장 추가, 제거, 상속
+bool Channel::isValidateName(std::string channelName) const {
+    // 이름이 비어있는지 확인
+    if (channelName.empty()) {
+        return false;
+    }
+
+    // 첫 문자가 # 또는 &인지 확인
+    char firstChar = channelName[0];
+    if (firstChar != '#' && firstChar != '&') {
+        return false;
+    }
+
+    // 채널 이름의 길이가 200자를 초과하는지 확인
+    if (channelName.size() > 200) {
+        return false;
+    }
+
+    // 채널 이름에 허용되지 않는 문자 (' ', ASCII 7 (^G), ',')가 있는지 확인
+    for (std::string::size_type i = 1; i < channelName.size(); ++i) {
+        char c = channelName[i];
+        if (c == ' ' || c == '\a' || c == ',') {
+            return false;
+        }
+    }
+    return true;
+}
