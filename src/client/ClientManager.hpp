@@ -27,20 +27,20 @@ public:
 	void set_readBuf(int fd, std::string buf);
 	void set_writeBuf(int fd, std::string buf);
     //
-	void delete_client(int fd);
-	void delete_client_byNick(std::string nickname);
-	void delete_clients();
+	void delete_client(int fd); //fd값으로 client 삭제
+	void delete_client_byNick(std::string nickname); //nickName으로 client 삭제
+	void delete_clients(); //모든 client 삭제
 	//
-	bool delete_channel(int fd, std::string ch_name);
+	bool delete_channel(int fd, std::string ch_name); //user를 channel에서 삭제
 	//
-	Client* find_client(int fd);
-	Client* find_client_byNick(std::string nickname);
+	Client* find_client(int fd); //fd값으로 client 찾기
+	Client* find_client_byNick(std::string nickname); //nickName으로 client 찾기
 	//
-	bool check_pass_client(int fd);
+	bool check_pass_client(int fd); //해당 fd값의 client의 모든 필드가 저장되었는지 확인
+	bool check_name_client(std::string name) const; //userName, nickName 유효성 확인
 	//
-	std::string get_readBuf(int fd);
-	std::string get_writeBuf(int fd);
-    // std::string print_client(int fd);
+	std::string get_readBuf(int fd); //fd값으로 client의 readBuf 가져오기
+	std::string get_writeBuf(int fd); //fd값으로 client의 writeBuf 가져오기
 };
 
 #endif

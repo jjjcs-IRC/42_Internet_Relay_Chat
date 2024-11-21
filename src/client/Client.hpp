@@ -40,9 +40,9 @@ public:
 	void set_readBuf(std::string buf);
 	void set_writeBuf(std::string buf);
 	//
-	bool check_pass_client() const;
-	bool check_join_channel() const;
-	bool kick_client_from_channel(std::string channel);
+	bool check_pass_client() const; //client의 모든 필드가 저장되었는지 확인
+	bool check_join_channel() const; //client가 추가로 채널에 가입할 수 있는지 확인
+	bool kick_client_from_channel(std::string channel); //client를 채널에서 삭제하고 채널에 없었으면 false 반환
 	//
 	bool operator==(const Client& obj) const
 	{
