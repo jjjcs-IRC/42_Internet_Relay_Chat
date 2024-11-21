@@ -176,7 +176,7 @@ bool ClientManager::check_pass_client(int fd)
     return tmp_client->check_pass_client();
 }
 
-bool Client::check_name_client(std::string name) const //userName, nickName 유효성 확인
+bool ClientManager::check_name_client(std::string name) const //userName, nickName 유효성 확인
 {
 	if (name.length() <= 0)
 		return false;
@@ -186,6 +186,7 @@ bool Client::check_name_client(std::string name) const //userName, nickName 유�
 		return false;
 	if (name.find(" ") != std::string::npos) //name에 공백이 있는지 확인
 		return false;
+    return true;
 }
 
 //
