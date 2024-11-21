@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   UserParser.cpp                                     :+:      :+:    :+:   */
+/*   InviteParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,23 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "UserParser.hpp"
+#include "InviteParser.hpp"
 
-UserParser::UserParser( void )
+InviteParser::InviteParser( void )
 {
 
 }
 
-UserParser::~UserParser( void )
+InviteParser::~InviteParser( void )
 {
 
 }
 
-int	UserParser::CmdParser( void )
+int	InviteParser::CmdParser( void )
 {
-	if (tokens.size()  == 5) // The variable must be number 5
-		throw (461);
-	if (tokens[4][0] != ':') // The last variable must start with ':'
-		throw (461);
 	return (0);
 }

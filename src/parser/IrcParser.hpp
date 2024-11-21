@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcParser.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jimchoi <jimchoi@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 18:37:58 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 21:36:09 by jimchoi          ###   ########.fr       */
+/*   Updated: 2024/11/21 18:43:10 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,11 @@
 # include "PassParser.hpp"
 # include "NickParser.hpp"
 # include "UserParser.hpp"
-
+# include "JoinParser.hpp"
+# include "KickParser.hpp"
+# include "InviteParser.hpp"
+# include "TopicParser.hpp"
+# include "ModeParser.hpp"
 
 
 

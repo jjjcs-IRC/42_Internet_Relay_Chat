@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   UserParser.cpp                                     :+:      :+:    :+:   */
+/*   KickParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 01:41:17 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/21 18:10:36 by jaeyeuljhan      ###   ########.fr       */
+/*   Updated: 2024/11/21 18:42:29 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "UserParser.hpp"
+#include "KickParser.hpp"
 
-UserParser::UserParser( void )
+KickParser::KickParser( void )
 {
 
 }
 
-UserParser::~UserParser( void )
+KickParser::~KickParser( void )
 {
 
 }
 
-int	UserParser::CmdParser( void )
+int	KickParser::CmdParser( void )
 {
-	if (tokens.size()  == 5) // The variable must be number 5
-		throw (461);
-	if (tokens[4][0] != ':') // The last variable must start with ':'
-		throw (461);
 	return (0);
 }

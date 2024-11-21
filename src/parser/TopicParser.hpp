@@ -1,32 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   UserParser.cpp                                     :+:      :+:    :+:   */
+/*   TopicParser.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/20 01:41:17 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/21 18:10:36 by jaeyeuljhan      ###   ########.fr       */
+/*   Created: 2024/11/20 01:41:15 by jaeyeuljhan       #+#    #+#             */
+/*   Updated: 2024/11/20 23:02:38 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "UserParser.hpp"
+#ifndef TOPICPARSER_HPP
+# define TOPICPARSER_HPP
 
-UserParser::UserParser( void )
+#include "SuperParser.hpp"
+
+class SuperParser;
+
+class TopicParser : public SuperParser
 {
+	private:
+		TopicParser( TopicParser const &copy );
+		TopicParser	&operator=( TopicParser const &copy );
+	protected:
+	public:
+		TopicParser( void );
+		~TopicParser( void );
+		int	CmdParser( void );
+};
 
-}
-
-UserParser::~UserParser( void )
-{
-
-}
-
-int	UserParser::CmdParser( void )
-{
-	if (tokens.size()  == 5) // The variable must be number 5
-		throw (461);
-	if (tokens[4][0] != ':') // The last variable must start with ':'
-		throw (461);
-	return (0);
-}
+#endif

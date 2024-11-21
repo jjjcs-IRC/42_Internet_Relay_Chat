@@ -6,7 +6,7 @@
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 01:41:15 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 18:54:02 by jaeyeuljhan      ###   ########.fr       */
+/*   Updated: 2024/11/20 23:02:38 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class UserParser : public SuperParser
 	public:
 		UserParser( void );
 		~UserParser( void );
-		bool	CmdParser( void );
+		int	CmdParser( void );
 };
 
 #endif
