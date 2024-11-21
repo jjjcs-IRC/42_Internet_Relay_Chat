@@ -2,11 +2,15 @@
 
 Channel::Channel(const std::string& name, const std::string& password)
     : channelName(name), password(password), leader(NULL), maxParticipants(100) {
-    if (!isValidateName(name)) {
+    if (!isValideName(name)) {
         throw std::invalid_argument("유효하지 않은 채널 이름: " + name);
     }
-}
 
+    // 비밀번호가 비어 있지 않은 경우에만 유효성 검사
+    if (!password.empty() && !isValidePassword(password)) {
+        throw std::invalid_argument("유효하지 않은 비밀번호: " + password);
+    }
+}
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
       leader(other.leader), mode(other.mode), participants(other.participants) {}
@@ -30,7 +34,7 @@ const std::string& Channel::getChannelName() const {
 }
 
 bool Channel::setChannelName(const std::string& name) {
-    if(isValidateName(name)){
+    if(isValideName(name)){
         channelName = name;
         return true;
     }
@@ -41,8 +45,12 @@ const std::string& Channel::getPassword() const {
     return password;
 }
 
-void Channel::setPassword(const std::string& password) {
-    this->password = password;
+bool Channel::setPassword(const std::string& password) {
+    if(isValidePassword(password)){
+        this->password = password;
+        return true;
+    }
+    return false;
 }
 
 const std::string& Channel::getTopic() const {
@@ -138,15 +146,14 @@ bool Channel::removeParticipantByName(const std::string& name) {
     return false;
 }
 
-bool Channel::isValidateName(std::string channelName) const {
+bool Channel::isValideName(std::string channelName) const {
     // 이름이 비어있는지 확인
     if (channelName.empty()) {
         return false;
     }
 
     // 첫 문자가 # 또는 &인지 확인
-    char firstChar = channelName[0];
-    if (firstChar != '#' && firstChar != '&') {
+    if (channelName[0] != '#') {
         return false;
     }
 
@@ -162,5 +169,21 @@ bool Channel::isValidateName(std::string channelName) const {
             return false;
         }
     }
+    return true;
+}
+
+bool Channel::isValidePassword(std::string password) const {
+   // 비밀번호 길이 확인 (1~32자)
+    if (password.empty() || password.size() > 32) {
+        return false;
+    }
+
+    // 비밀번호에 공백 문자가 있는지 확인
+    for (std::string::size_type i = 0; i < password.size(); ++i) {
+        if (password[i] == ' ') {
+            return false; 
+        }
+    }
+
     return true;
 }

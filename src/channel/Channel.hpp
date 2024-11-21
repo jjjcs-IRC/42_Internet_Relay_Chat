@@ -30,7 +30,8 @@ private:
     };
 
     std::vector<Client*>::iterator findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
-    bool isValidateName(std::string channelName) const;
+    bool isValideName(std::string channelName) const;
+    bool isValidePassword(std::string password) const;
 
 
 
@@ -44,7 +45,7 @@ public:
     bool setChannelName(const std::string& name);
 
     const std::string& getPassword() const;
-    void setPassword(const std::string& password);
+    bool setPassword(const std::string& password);
 
     const std::string& getTopic() const;
     void setTopic(const std::string& topic);
