@@ -6,7 +6,7 @@
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 01:41:17 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 18:51:17 by jaeyeuljhan      ###   ########.fr       */
+/*   Updated: 2024/11/21 01:02:01 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ NickParser::~NickParser( void )
 
 }
 
-bool	NickParser::CmdParser( void )
+int	NickParser::CmdParser( void )
 {
-	if (tokens.size() > 2)
-		return (false);
-	return (true);
+	if (tokens.size() == 1)
+		throw (431);
+	return (0);
 }

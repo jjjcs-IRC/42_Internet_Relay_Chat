@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   UserParser.cpp                                     :+:      :+:    :+:   */
+/*   ModeParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 01:41:17 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/21 18:10:36 by jaeyeuljhan      ###   ########.fr       */
+/*   Updated: 2024/11/21 18:46:24 by jaeyeuljhan      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "UserParser.hpp"
+#include "ModeParser.hpp"
 
-UserParser::UserParser( void )
+ModeParser::ModeParser( void )
 {
 
 }
 
-UserParser::~UserParser( void )
+ModeParser::~ModeParser( void )
 {
 
 }
 
-int	UserParser::CmdParser( void )
+int	ModeParser::CmdParser( void )
 {
 	if (tokens.size()  == 5) // The variable must be number 5
 		throw (461);
