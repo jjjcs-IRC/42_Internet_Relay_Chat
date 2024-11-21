@@ -179,7 +179,7 @@ bool ClientManager::check_pass_client(int fd)
 bool Client::check_name_client(std::string name) const //userName, nickName 유효성 확인
 {
 	if (name.length() <= 0)
-		return falsel;
+		return false;
 	if (name[0] == '#') //name 첫 글자가 #인지 확인
 		return false;
 	if (name.length() >= 10) //name 길이 확인
