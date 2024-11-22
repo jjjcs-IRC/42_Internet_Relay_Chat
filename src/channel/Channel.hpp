@@ -12,7 +12,7 @@ private:
     std::string channelName;
     std::string password;
     std::string topic;
-    Client* leader;
+    std::vector<Client*> operators;
     std::string mode;
     std::vector<Client*> participants;
     std::vector<Client*> invitedClients;
@@ -29,14 +29,13 @@ private:
             const std::string& name;
     };
 
-    std::vector<Client*>::iterator findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
+    Client* findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
     bool isValideName(std::string channelName) const;
     bool isValidePassword(std::string password) const;
 
 
-
 public:
-    Channel(const std::string& name, const std::string& password = "");
+    Channel(const std::string& name, Client *user, const std::string& password = "");
 	Channel(Channel const &other);
 	Channel &operator=(Channel const &other);
 	~Channel();
@@ -50,8 +49,8 @@ public:
     const std::string& getTopic() const;
     void setTopic(const std::string& topic);
 
-    Client* getLeader() const;
-    void setLeader(Client* leader);
+    const std::vector<Client*>& getOperators() const;
+    bool addOperator(Client* user); //operator 추가
 
     const std::string& getMode() const;
     void setMode(const std::string& mode);
@@ -65,6 +64,7 @@ public:
     void setMaxParticipants(size_t max); // L 모드 최대 참여자 설정
 
     bool removeParticipantByName(const std::string& name); // 클라이언트 채널에서 삭제
+    bool isOperator(Client* client) const; // operators 목록에서 클라이언트가 존재하는지 확인
 };
 
 #endif
