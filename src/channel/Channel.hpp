@@ -65,6 +65,7 @@ public:
 
     bool removeParticipantByName(const std::string& name); // 클라이언트 채널에서 삭제
     bool isOperator(Client* client) const; // operators 목록에서 클라이언트가 존재하는지 확인
+    bool removeOperatorByName(const std::string& name); // 오퍼레이터 채널에서 삭제
 };
 
 #endif
