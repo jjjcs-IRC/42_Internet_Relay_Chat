@@ -210,3 +210,17 @@ bool Channel::isValidePassword(std::string password) const {
 
     return true;
 }
+
+// 채널의 오퍼레이터 삭제
+bool Channel::removeOperatorByName(const std::string& name) {
+    for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it) {
+        if ((*it)->get_userName() == name) {
+            operators.erase(it); // 오퍼레이터 삭제
+            std::cout << name << " 오퍼레이터 목록에서 삭제" << std::endl;
+            return true; 
+        }
+    }
+
+    std::cout << name << " 오퍼레이터 목록에 없음" << std::endl;
+    return false; 
+}
