@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, const std::string& password)
-    : channelName(name), password(password), leader(NULL), maxParticipants(100) {
+Channel::Channel(const std::string& name, Client *user, const std::string& password)
+    : channelName(name), password(password), operators(1, user), maxParticipants(100) {
     if (!isValideName(name)) {
         throw std::invalid_argument("유효하지 않은 채널 이름: " + name);
     }
@@ -13,14 +13,14 @@ Channel::Channel(const std::string& name, const std::string& password)
 }
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
-      leader(other.leader), mode(other.mode), participants(other.participants) {}
+      operators(other.operators), mode(other.mode), participants(other.participants) {}
 
 Channel& Channel::operator=(const Channel& other) {
     if (this != &other) {
         channelName = other.channelName;
         password = other.password;
         topic = other.topic;
-        leader = other.leader;
+        operators = other.operators;
         mode = other.mode;
         participants = other.participants;
     }
@@ -61,12 +61,30 @@ void Channel::setTopic(const std::string& topic) {
     this->topic = topic;
 }
 
-Client* Channel::getLeader() const {
-    return leader;
+const std::vector<Client*>& Channel::getOperators() const {
+    return operators;
 }
 
-void Channel::setLeader(Client* leader) {
-    this->leader = leader;
+// operators 목록에서 클라이언트가 존재하는지 확인
+bool Channel::isOperator(Client* client) const {
+    return std::find(operators.begin(), operators.end(), client) != operators.end();
+}
+
+bool Channel::addOperator(Client* user) {
+    // 존재하는 클라이언트인지 확인 -> clientManager에서 해당 client의 존재여부 boolean 값으로 받기
+
+    // 채널에 존재하는 참여자인지 확인
+    Client* client = findClient(user->get_nickName());
+    if (!client) {
+        return false;
+    }
+
+    // 중복 확인 후 추가
+    if (!isOperator(client)) {
+        operators.push_back(client);
+    }
+
+    return true;
 }
 
 const std::string& Channel::getMode() const {
@@ -122,8 +140,13 @@ void Channel::setMaxParticipants(size_t max) {
     maxParticipants = max;
 }
 
-std::vector<Client*>::iterator Channel::findClient(const std::string& name) {
-    return std::find_if(participants.begin(), participants.end(), ClientFinder(name));
+Client* Channel::findClient(const std::string& name) {
+    for (std::vector<Client*>::iterator it = participants.begin(); it != participants.end(); ++it) {
+        if ((*it)->get_userName() == name) {
+            return *it; // 클라이언트를 찾으면 반환
+        }
+    }
+    return NULL; // 찾지 못하면 NULL 반환
 }
 
 Channel::ClientFinder::ClientFinder(const std::string& name) : name(name) {}
@@ -134,10 +157,10 @@ bool Channel::ClientFinder::operator()(Client* client) const {
 
 // 채널의 참여자 삭제
 bool Channel::removeParticipantByName(const std::string& name) {
-     std::vector<Client*>::iterator it = findClient(name);
-    if (it != participants.end()) {
-        delete *it; // 메모리 해제
-        participants.erase(it); // 벡터에서 제거
+    Client* client = findClient(name);
+    if (client != NULL) {
+        participants.erase(std::remove(participants.begin(), participants.end(), client), participants.end());
+        delete client;
         std::cout << name << " 채널에서 삭제" << std::endl;
         return true;
     }
