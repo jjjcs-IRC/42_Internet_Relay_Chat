@@ -2,9 +2,7 @@
 #include "../server/Server.hpp"
 
 
-Nick::Nick() {
-	// _type = "NICK";
-}
+Nick::Nick() {}
 
 Nick::~Nick() {}
 
