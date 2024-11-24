@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+#include <stdio.h> //printf
+
 Server* Server::m_instance = NULL; // 정적맴버 변수 초기화는 소스파일에서
 
 Server::Server(int port, std::string password) : port(port), password(password)
@@ -125,6 +127,16 @@ void Server::registerClientSocket(int clientSock)
     m_changeIdx = (m_changeIdx + 1) % MAX_EVENTS;
     
     m_clientSocks.push_back(clientSock);
+
+	// EV_SET(&m_changeList[m_changeIdx], clientSock, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    // if(kevent(m_kqueue, &m_changeList[m_changeIdx], 1, NULL, 0, NULL) == -1)
+	// {
+    //     std::cerr << "kevent() register error" << std::endl;
+    //     return;
+    // }
+    // m_changeIdx = (m_changeIdx + 1) % MAX_EVENTS;
+    
+    // m_clientSocks.push_back(clientSock);
 }
 
 void Server::runServer(void) 
@@ -187,21 +199,62 @@ void Server::handleClientData(int clientSock, struct kevent& event)
         disconnectClient(clientSock);
         return;
     }
-	
-	std::string read_string = receiveMessage(clientSock);
+	else if (event.filter == EVFILT_READ)
+	{
+		const std::list<Client> &clientList = client_manager.get_clientList();
 
-	std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
-	// printAsciiValues(read_string);
-	//PASS, NICK, USER
-    /* set tParams */
-    tParams res = parse.IrcParsing( clientSock, read_string );
-    Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
-    if (command != nullptr) 
-        command->executeCommand(res, client_manager, channelManager);
-    else 
-        std::cout << "Unknown command" << res.cmd_type << std::endl;
+		std::string read_string = receiveMessage(clientSock);
 
-    write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
+		std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
+		// printAsciiValues(read_string);
+    	/* set tParams */
+    	tParams res = parse.IrcParsing( clientSock, read_string );
+    	Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
+    	if (command != nullptr) 
+    	    command->executeCommand(res, client_manager, channelManager);
+    	else 
+    	    std::cout << "Unknown command" << res.cmd_type << std::endl;
+
+		// write test
+		switch (res.cmd_type)
+		{
+		case 0:
+			client_manager.set_writeBuf(clientSock, "this is PASS\n");
+			break;
+		case 1:
+			client_manager.set_writeBuf(clientSock, "this is NICK\n");
+			break;
+		case 2:
+			client_manager.set_writeBuf(clientSock, "this is USER\n");
+			break;
+		case 3:
+			client_manager.set_writeBuf(clientSock, "this is JOIN\n");
+			break;
+		default:
+			client_manager.set_writeBuf(clientSock, "this is other\n");
+			break;
+		}
+
+		for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
+		{
+			std::cout << "it 확인 : " << it->get_clientFd() << std::endl; 
+			// std::cout << "버프 사이즈 확인 : " << it->get_writeBuf() << std::endl; 이유는 모르겠지만, write 버프가 안 쏴진다. 
+			// if (it->get_writeBuf().size() > 0) // 
+			// {
+				int fd = it->get_clientFd();
+				printf("클라 리스트 확인 : %d\n", fd);
+				write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
+				client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+			// }
+		}
+	}
+	// else if (event.filter == EVFILT_WRITE)
+	// {
+	// 	// printf("write event\n");
+    // 	write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
+	// 	client_manager.set_writeBuf(clientSock, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+	// }
+
 }
 
 void Server::disconnectClient(int clientSock) 
