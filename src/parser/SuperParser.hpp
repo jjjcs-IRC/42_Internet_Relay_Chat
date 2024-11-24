@@ -20,6 +20,7 @@ class SuperParser
 	public:
 		SuperParser( void );
 		void			SetTokens( std::vector<std::string> token );
+		std::vector<std::string> GetTokens( void ) const;
 		virtual			~SuperParser( void );
 		virtual int		CmdParser( void ) = 0;
 };
