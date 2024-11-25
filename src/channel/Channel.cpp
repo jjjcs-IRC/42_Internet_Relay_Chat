@@ -89,8 +89,6 @@ bool Channel::isOperator(Client* client) const {
 }
 
 bool Channel::addOperator(Client* user) {
-    // 존재하는 클라이언트인지 확인 -> clientManager에서 해당 client의 존재여부 boolean 값으로 받기
-
     // 채널에 존재하는 참여자인지 확인
     Client* client = findClient(user->get_nickName());
     if (!client) {
@@ -157,12 +155,6 @@ Client* Channel::findClient(const std::string& name) {
         }
     }
     return NULL; // 찾지 못하면 NULL 반환
-}
-
-Channel::ClientFinder::ClientFinder(const std::string& name) : name(name) {}
-
-bool Channel::ClientFinder::operator()(Client* client) const {
-    return client->get_userName() == name;
 }
 
 // 채널의 참여자 삭제

@@ -19,21 +19,6 @@ private:
     std::vector<Client*> invitedClients;
     size_t maxParticipants; // L 모드에서 정한 최대 참여자 수
 
-    bool isInvited(Client* client) const; // 초대 여부 확인
-    size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
-
-    struct ClientFinder {
-        explicit ClientFinder(const std::string& name);
-        bool operator()(Client* client) const;
-        
-        private:
-            const std::string& name;
-    };
-
-    
-    bool isValidePassword(std::string password) const;
-
-
 public:
     Channel(const std::string& name, Client *user, const std::string& password = "");
 	Channel(Channel const &other);
@@ -57,6 +42,7 @@ public:
     bool addParticipant(Client* participant); // 클라이언트 채널 입장
    
     bool inviteClient(Client* client); // 클라이언트 초대
+    bool isInvited(Client* client) const; // 초대 여부 확인
 
     bool isUnderCapacity() const; // 현재 참여 가능 여부 확인 (최대 인원을 넘지 않았는지)
     void setMaxParticipants(size_t max); // L 모드 최대 참여자 설정
@@ -72,6 +58,9 @@ public:
     void addMode(char mode);      // 모드 추가
     void removeMode(char mode);  // 모드 제거
     bool hasMode(char mode) const; // 모드 존재 여부 확인
+
+    bool isValidePassword(std::string password) const;
+    size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
 };
 
 #endif
