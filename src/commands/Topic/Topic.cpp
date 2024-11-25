@@ -10,7 +10,7 @@ Topic::~Topic() {}
 
 //
 
-int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
+int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
     //채널 존재 여부 확인 ERR_NOSUCHCHANNEL (403)
     Channel* channel = cn.findChannel(params.tokens[1]);
@@ -23,7 +23,7 @@ int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     {
         // 사용자가 채널에 있는지 확인
         // 채널에 없는 경우: ERR_NOTONCHANNEL (442)
-        if (channel->findClient(client->get_nickName()) == channel->getParticipants().end())
+        if (channel->findClient(client->get_nickName()) == NULL)
             return 442;
         // 채널에 있는 경우: 토픽과 토픽 수정 시간 출력
         std::string topic_msg = channel->getChannelName() + " topic: ";
@@ -47,7 +47,7 @@ int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         return 482;
 
     // 토픽 변경 및 수정 시간 업데이트
-    channel->setTopic(params.tokens[2]);
+    channel->setTopic(params.tokens[2], client);
     // 변경된 토픽 출력(채널에 있는 모든 유저에게)
     std::vector<Client*> list =  channel->getParticipants();
     std::string topic_msg = ":" + client->get_userName() + "!" + client->get_userName() +\
