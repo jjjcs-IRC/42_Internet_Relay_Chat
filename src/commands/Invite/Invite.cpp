@@ -25,8 +25,8 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
         return 461;
 
     //실행자(초대자)가 채널에 있는지 확인 (442)
-    // if (channel->findClient(inviter->get_nickName()) == channel->getParticipants().end())
-    //     return 442;
+    if (channel->findClient(inviter->get_nickName()) == channel->getParticipants().end())
+        return 442;
 
     //채널 모드 확인 및 초대자의 운영자 권한 확인
     //초대 제한 모드이고 초대자가 운영자가 아닌 경우: ERR_CHANOPRIVSNEEDED (482)
@@ -34,8 +34,8 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
         return 482;
 
     //대상자가 이미 채널에 있는지 확인 (443)
-    // if (channel->findClient(params.tokens[1]) != channel->getParticipants().end())
-    //     return 443;
+    if (channel->findClient(params.tokens[1]) != channel->getParticipants().end())
+        return 443;
 
     //초대 처리
     //대상자에게 PRIVMSG로 초대 메시지 전송 -> 명령어 불러오지 않고 임의로 처리
