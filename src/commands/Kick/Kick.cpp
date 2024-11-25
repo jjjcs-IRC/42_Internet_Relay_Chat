@@ -22,7 +22,7 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
     //권한 확인
     //채널 참가 확인 (442)
-    if (channel->findClient(inviter->get_nickName()) == channel->getParticipants().end())
+    if (channel->findClient(kicker->get_nickName()) == NULL)
         return 442;
     //채널 권한 확인 (482)
     if (channel->hasMode('i'))
@@ -35,7 +35,7 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     {
         Client *client = cl.find_client_byNick(tmp);
         //사용자가 채널에 존재하지 않는 경우 (441)
-        if (channel->findClient(client->get_nickName()) == channel->getParticipants().end())
+        if (channel->findClient(client->get_nickName()) == NULL)
         {
             res = 441;
             continue;
