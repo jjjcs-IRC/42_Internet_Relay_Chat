@@ -45,6 +45,7 @@ public:
 
     const std::string& getPassword() const;
     bool setPassword(const std::string& password);
+    void removePassword(); // password NULL로 변경 - k모드 비밀 번호 해제하는 경우
 
     const std::string& getTopic() const;
     bool setTopic(const std::string& topic, Client *client);
