@@ -1,8 +1,8 @@
 #ifndef INVITE_CLASS
 #define INVITE_CLASS
 
-#include "../parser/IrcType.hpp"
-#include "Command.hpp"
+#include "../../parser/IrcType.hpp"
+#include "../Command.hpp"
 
 class Invite
 {
