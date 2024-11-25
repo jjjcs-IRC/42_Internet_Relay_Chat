@@ -5,6 +5,7 @@
 #include <vector> 
 #include "../client/Client.hpp" 
 #include <algorithm>
+#include <set>
 
 class Channel
 {
@@ -13,7 +14,7 @@ private:
     std::string password;
     std::string topic;
     std::vector<Client*> operators;
-    std::string mode;
+    std::set<char> modes;
     std::vector<Client*> participants;
     std::vector<Client*> invitedClients;
     size_t maxParticipants; // L 모드에서 정한 최대 참여자 수
@@ -29,8 +30,7 @@ private:
             const std::string& name;
     };
 
-    Client* findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
-    bool isValideName(std::string channelName) const;
+    
     bool isValidePassword(std::string password) const;
 
 
@@ -52,9 +52,6 @@ public:
     const std::vector<Client*>& getOperators() const;
     bool addOperator(Client* user); //operator 추가
 
-    const std::string& getMode() const;
-    void setMode(const std::string& mode);
-
     const std::vector<Client*>& getParticipants() const;
     bool addParticipant(Client* participant); // 클라이언트 채널 입장
    
@@ -66,6 +63,14 @@ public:
     bool removeParticipantByName(const std::string& name); // 클라이언트 채널에서 삭제
     bool isOperator(Client* client) const; // operators 목록에서 클라이언트가 존재하는지 확인
     bool removeOperatorByName(const std::string& name); // 오퍼레이터 채널에서 삭제
+
+    Client* findClient(const std::string& name);// 해당 이름의 클라이언트 찾기
+    bool isValideName(std::string channelName) const; // 유효한 이름인지 확인
+
+    // 모드 관련 메서드
+    void addMode(char mode);      // 모드 추가
+    void removeMode(char mode);  // 모드 제거
+    bool hasMode(char mode) const; // 모드 존재 여부 확인
 };
 
 #endif
