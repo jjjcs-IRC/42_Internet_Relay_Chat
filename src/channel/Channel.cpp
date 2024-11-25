@@ -55,6 +55,10 @@ bool Channel::setPassword(const std::string& password) {
     return false;
 }
 
+void Channel::removePassword(){
+    this->password = "";
+}
+
 const std::string& Channel::getTopic() const {
     return topic;
 }
