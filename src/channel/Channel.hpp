@@ -47,7 +47,7 @@ public:
     bool setPassword(const std::string& password);
 
     const std::string& getTopic() const;
-    void setTopic(const std::string& topic);
+    bool setTopic(const std::string& topic, Client *client);
 
     const std::vector<Client*>& getOperators() const;
     bool addOperator(Client* user); //operator 추가

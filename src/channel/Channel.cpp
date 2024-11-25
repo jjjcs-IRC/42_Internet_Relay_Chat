@@ -13,7 +13,7 @@ Channel::Channel(const std::string& name, Client *user, const std::string& passw
 }
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
-      operators(other.operators), modes(other.modes), participants(other.participants) {}
+      operators(other.operators), modes(other.modes), participants(other.participants), invitedClients(other.invitedClients), maxParticipants(other.maxParticipants) {}
 
 Channel& Channel::operator=(const Channel& other) {
     if (this != &other) {
@@ -23,6 +23,8 @@ Channel& Channel::operator=(const Channel& other) {
         operators = other.operators;
         modes = other.modes;
         participants = other.participants;
+        invitedClients = other.invitedClients;
+        maxParticipants = other.maxParticipants;
     }
     return *this;
 }
@@ -57,8 +59,20 @@ const std::string& Channel::getTopic() const {
     return topic;
 }
 
-void Channel::setTopic(const std::string& topic) {
+bool Channel::setTopic(const std::string& topic, Client* client) {
     this->topic = topic;
+     if (hasMode('t')) { 
+        if(isOperator(client)){
+            std::cout << client->get_userName() << " t모드라서 오페러이터가 토픽 수정함" << std::endl;
+            this->topic = topic;
+            return true;
+
+        }
+        std::cout << client->get_userName() << " t모드인데 오퍼레이터 아님" << std::endl;
+    }
+    std::cout << client->get_userName() << "토픽 수정 성공" << std::endl;
+    this->topic = topic;
+    return true;
 }
 
 const std::vector<Client*>& Channel::getOperators() const {
