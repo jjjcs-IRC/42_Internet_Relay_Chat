@@ -25,7 +25,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     // if (channel->findClient(inviter->get_nickName()) == channel->getParticipants().end())
         // return 442;
     //채널 권한 확인 (482)
-    // if ()
+    // if (channel->hasMode("i"))
+        // return 482;
 
     std::istringstream ss(params.tokens[2]);
     std::string tmp;
@@ -35,7 +36,10 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         Client *client = cl.find_client_byNick(tmp);
         //사용자가 채널에 존재하지 않는 경우 (441)
         // if (channel->findClient(client->get_nickName()) == channel->getParticipants().end())
+        // {
         //     res = 441;
+        //     continue;
+        // }
         //채널에서 사용자 삭제
         channel->removeParticipantByName(client->get_nickName());
         //사용자의 채널 목록에서 채널 삭제
