@@ -30,9 +30,8 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
 
     //채널 모드 확인 및 초대자의 운영자 권한 확인
     //초대 제한 모드이고 초대자가 운영자가 아닌 경우: ERR_CHANOPRIVSNEEDED (482)
-    // if (channel->isUnderCapacity() && && )
-    //초대 모드가 아니라도 진행
-    //????????????????????????
+    if (channel->getLeader() != inviter)
+        return 482;
 
     //대상자가 이미 채널에 있는지 확인 (443)
     // if (channel->findClient(params.tokens[1]) != channel->getParticipants().end())
@@ -43,7 +42,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     std::string invite_msg = ":" + inviter->get_nickName() + "!" + inviter->get_userName() + "@"\
                             + inviter->get_realName() + " INVITE " + invitee->get_nickName() + " :"\
                             + channel->getChannelName();
-    cl.find_client_byNick(params.tokens[1])->get_writeBuf() = invite_msg;
+    cl.find_client_byNick(params.tokens[1])->set_writeBuf(invite_msg);
     //채널의 초대 리스트에 대상자 추가
     channel->inviteClient(invitee);
     //초대자에게 RPL_INVITING (341) 전송
