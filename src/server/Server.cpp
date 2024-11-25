@@ -197,6 +197,8 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     }
 	else if (event.filter == EVFILT_READ)
 	{
+		const std::list<Client> &clientList = client_manager.get_clientList();
+
 		std::string read_string = receiveMessage(clientSock);
 
 		std::cout << "client read buf : " << client_manager.get_readBuf(clientSock) << std::endl;
@@ -216,12 +218,14 @@ void Server::handleClientData(int clientSock, struct kevent& event)
 		{
 			numerics.dispatchByInt(clientSock, num);
 		}
+		for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
+		{
+			int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
+			write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
+			client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+		}
 	}
-	else if (event.filter == EVFILT_WRITE)
-	{		
-    	write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
-		client_manager.set_writeBuf(clientSock, ""); // write buf 지우는 함수
-	}
+    
 
 }
 

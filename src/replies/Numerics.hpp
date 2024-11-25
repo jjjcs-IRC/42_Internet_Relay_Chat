@@ -34,7 +34,6 @@ class Numerics {
 		~Numerics() {};
 		void setParams(tParams &params);
 		std::string makeUserId(int fd); //":" + nickname + "!" + username + "@localhost" 문구를 만드는 함수
-		void sendMsg(int fd, std::string msg); //해당 fd로 메세지를 보내는 함수
 		void dispatchByInt(int fd, int errNum);
 
 		// numeric_replies
