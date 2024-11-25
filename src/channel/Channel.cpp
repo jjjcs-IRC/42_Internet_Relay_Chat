@@ -13,7 +13,7 @@ Channel::Channel(const std::string& name, Client *user, const std::string& passw
 }
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
-      operators(other.operators), mode(other.mode), participants(other.participants) {}
+      operators(other.operators), modes(other.modes), participants(other.participants) {}
 
 Channel& Channel::operator=(const Channel& other) {
     if (this != &other) {
@@ -21,7 +21,7 @@ Channel& Channel::operator=(const Channel& other) {
         password = other.password;
         topic = other.topic;
         operators = other.operators;
-        mode = other.mode;
+        modes = other.modes;
         participants = other.participants;
     }
     return *this;
@@ -87,21 +87,13 @@ bool Channel::addOperator(Client* user) {
     return true;
 }
 
-const std::string& Channel::getMode() const {
-    return mode;
-}
-
-void Channel::setMode(const std::string& mode) {
-    this->mode = mode;
-}
-
 const std::vector<Client*>& Channel::getParticipants() const {
     return participants;
 }
 
 // invite 모드이면 invite가 허용된 client만 채널에 입장 가능
 bool Channel::addParticipant(Client* participant) {
-    if (mode == "I" && !isInvited(participant)) { 
+    if (hasMode('i') && !isInvited(participant)) { 
         std::cout << participant->get_userName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
         return false;
     }
@@ -223,4 +215,19 @@ bool Channel::removeOperatorByName(const std::string& name) {
 
     std::cout << name << " 오퍼레이터 목록에 없음" << std::endl;
     return false; 
+}
+
+// 모드 추가
+void Channel::addMode(char mode) {
+    modes.insert(mode);
+}
+
+// 모드 제거
+void Channel::removeMode(char mode) {
+    modes.erase(mode);
+}
+
+// 모드 존재 여부 확인
+bool Channel::hasMode(char mode) const {
+    return modes.find(mode) != modes.end();
 }
