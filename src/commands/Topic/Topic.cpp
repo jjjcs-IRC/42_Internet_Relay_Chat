@@ -23,8 +23,8 @@ int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     {
         // 사용자가 채널에 있는지 확인
         // 채널에 없는 경우: ERR_NOTONCHANNEL (442)
-        // if (channel->findClient(client->get_nickName()) == channel->getParticipants().end())
-        //     return 442;
+        if (channel->findClient(client->get_nickName()) == channel->getParticipants().end())
+            return 442;
         // 채널에 있는 경우: 토픽과 토픽 수정 시간 출력
         std::string topic_msg = channel->getChannelName() + " topic: ";
         if (channel->getTopic().length() > 0)
@@ -43,8 +43,8 @@ int executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     // 't' 모드가 아닌 경우: 진행
     // 't' 모드인 경우: 사용자 권한 확인
         // 권한이 없는 경우: ERR_CHANOPRIVSNEEDED (482) 에러 발생
-    // if (channel->hasMode('t') && (channel->getLeader() != client))
-    //     return 482;
+    if (channel->hasMode('t') && !channel->isOperator(client))
+        return 482;
 
     // 토픽 변경 및 수정 시간 업데이트
     channel->setTopic(params.tokens[2]);
