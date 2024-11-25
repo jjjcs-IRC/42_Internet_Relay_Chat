@@ -3,12 +3,7 @@
 Channel::Channel(const std::string& name, Client *user, const std::string& password)
     : channelName(name), password(password), operators(1, user), maxParticipants(100) {
     if (!isValideName(name)) {
-        throw std::invalid_argument("유효하지 않은 채널 이름: " + name);
-    }
-
-    // 비밀번호가 비어 있지 않은 경우에만 유효성 검사
-    if (!password.empty() && !isValidePassword(password)) {
-        throw std::invalid_argument("유효하지 않은 비밀번호: " + password);
+        throw 476; // ERR_BADCHANMASK
     }
 }
 
