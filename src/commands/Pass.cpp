@@ -1,9 +1,7 @@
 #include "Pass.hpp"
 #include "../server/Server.hpp"
 
-Pass::Pass() {
-	// _type = "PASS";
-}
+Pass::Pass() {}
 
 Pass::~Pass() {}
 
@@ -21,11 +19,11 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	std::cout << "Pass command" << std::endl;
 	// params.tokens[1].erase(std::remove(params.tokens[1].begin(), params.tokens[1].end(), '\n'), params.tokens[1].end());
 	const std::string inputPassword = params.tokens[1];
-	if (client->get_passed()) {// password 통과했는지 확인해주는 함수
 		// `ERR_NEEDMOREPARAMS (461)`
-		//클라이언트가 등록을 완료한 후에 다시 `PASS`(비밀번호) 또는 `USER`(사용자 정보) 명령어를 재전송하려고 하면 이 에러가 발생합니다.
 		//   "<client> <command> :Not enough parameters"
-		throw 461;
+	if (client->get_passed()) {// password 통과했는지 확인해주는 함수
+		//클라이언트가 등록을 완료한 후에 다시 `PASS`(비밀번호) 또는 `USER`(사용자 정보) 명령어를 재전송하려고 하면 이 에러가 발생합니다.
+		throw 462;
 	}
 	if (cl.get_server_passwd() != params.tokens[1]) {
 		// `ERR_PASSWDMISMATCH (464)`
