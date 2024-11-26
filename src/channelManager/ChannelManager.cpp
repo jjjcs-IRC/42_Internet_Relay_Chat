@@ -33,6 +33,12 @@ bool ChannelManager::ChannelFinder::operator()(Channel* channel) const {
 Channel* ChannelManager::findChannel(const std::string& channelName) const {
     std::vector<Channel*>::const_iterator it = std::find_if(
         channels.begin(), channels.end(), ChannelFinder(channelName));
+    
+     if (it != channels.end()) {
+        std::cout << "채널 찾기: " << (*it) << std::endl;
+    } else {
+        std::cout << "채널을 찾지 못함" << std::endl;
+    }
 
     return (it != channels.end()) ? *it : NULL;
 }
