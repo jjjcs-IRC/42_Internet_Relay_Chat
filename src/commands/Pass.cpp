@@ -34,4 +34,5 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		client->set_passed();
 	}
 	std::cout << "Pass command end" << std::endl;
+	return 0;
 }

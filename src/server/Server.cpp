@@ -208,7 +208,7 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     		tParams res = parse.IrcParsing( clientSock, read_string );
 			numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
     		Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
-            std::cout << "1 : " << res.cmd_type << res.tokens[0] << std::endl;
+            std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
     		if (command != nullptr) 
     		    command->executeCommand(res, client_manager, channelManager);
     		else 
