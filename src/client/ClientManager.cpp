@@ -5,6 +5,11 @@ ClientManager::ClientManager()
 	// std::cout << "Create ClientManager" << std::endl;
 }
 
+ClientManager::ClientManager(std::string server_passwd) : server_passwd(server_passwd)
+{
+	// std::cout << "Create ClientManager" << std::endl;
+}
+
 ClientManager::ClientManager(const ClientManager &obj)
 {
 	std::list<Client>::iterator it;

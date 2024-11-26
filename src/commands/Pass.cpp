@@ -17,8 +17,9 @@ Pass::Pass(const Pass &other) {
 int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	Client *client = cl.find_client(params.client_fd);
 	std::cout << "Pass command" << std::endl;
+		std::cout << "test : " << params.tokens[1]<<"|" << cl.get_server_passwd() << std::endl;
+
 	const std::string inputPassword = params.tokens[1];
-		// `ERR_NEEDMOREPARAMS (461) Not enough parameters"
 	if (client->get_passed()) {// password 통과했는지 확인해주는 함수
 		//클라이언트가 등록을 완료한 후에 다시 `PASS`(비밀번호) 또는 `USER`(사용자 정보) 명령어를 재전송하려고 하면 이 에러가 발생합니다.
 		throw 462;
@@ -31,7 +32,7 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	else {
 		//클라이언트 pass를 true로 바꿔주기
 		client->set_passed();
-		throw 0;
 	}
 	std::cout << "Pass command end" << std::endl;
+	return 0;
 }

@@ -2,7 +2,7 @@
 
 Server* Server::m_instance = NULL; // 정적맴버 변수 초기화는 소스파일에서
 
-Server::Server(int port, std::string password) : port(port), password(password), client_manager(ClientManager()), channelManager(ChannelManager()), numerics(client_manager, channelManager, serverInfo)
+Server::Server(int port, std::string password) : port(port), password(password), client_manager(ClientManager(password)), channelManager(ChannelManager()), numerics(client_manager, channelManager, serverInfo)
 {
 	m_serverSock = -1;
     m_kqueue = -1;
@@ -208,7 +208,7 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     		tParams res = parse.IrcParsing( clientSock, read_string );
 			numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
     		Command* command = CommandFactory::getInstance()->createCommand(res.cmd_type); 
-            std::cout << "1 : " << res.cmd_type << res.tokens[0] << std::endl;
+            std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
     		if (command != nullptr) 
     		    command->executeCommand(res, client_manager, channelManager);
     		else 
