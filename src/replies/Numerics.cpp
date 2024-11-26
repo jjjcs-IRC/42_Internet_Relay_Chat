@@ -178,7 +178,7 @@ void Numerics::RPL_WELCOME_001(int fd)
 }
 void Numerics::RPL_YOURHOST_002(int fd)
 {
-	// sendMsg(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
+	sendMsg(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
 }
 void Numerics::RPL_CREATED_003(int fd)
 {
@@ -438,7 +438,8 @@ void Numerics::RPL_PRIVMSG(int fd)
 // TOPIC
 void Numerics::RPL_TOPIC_332(int fd)
 {
-	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
+	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + topic + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
