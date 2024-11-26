@@ -3,6 +3,10 @@
 #include "Pass.hpp"
 #include "User.hpp"
 #include "Nick.hpp"
+#include "./privmsg/Privmsg.hpp"
+#include "./Invite/Invite.hpp"
+#include "./Kick/Kick.hpp"
+#include "./Topic/Topic.hpp"
 
 CommandFactory::CommandFactory() {
     // 각 커맨드 인스턴스를 미리 생성하여 맵에 저장
@@ -10,7 +14,11 @@ CommandFactory::CommandFactory() {
     _commandMap[USER] = new User();
     _commandMap[NICK] = new Nick();
     _commandMap[JOIN] = new Join();
-    // std::cout << "CommandFactory 생성자" << std::endl;
+    _commandMap[PRIVMSG] = new Privmsg();
+    _commandMap[INVITE] = new Invite();
+    _commandMap[KICK] = new Kick();
+    _commandMap[TOPIC] = new Topic();
+    std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가
 }
 

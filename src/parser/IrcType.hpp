@@ -1,26 +1,18 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   IrcType.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jimchoi <jimchoi@student.42seoul.kr>       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 20:18:45 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 21:44:40 by jimchoi          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef IRCTYPE_HPP
 # define IRCTYPE_HPP
 
 /* Irc Commands Type */
-# define CMD_MAX 3 // Number of commands
+# define CMD_MAX 8 // Number of commands
 
 # define ERROR -1
 # define PASS 0
 # define NICK 1
 # define USER 2
 # define JOIN 3
+# define KICK 4
+# define INVITE 5
+# define TOPIC 6
+# define MODE 7
 
 /* abt fd value */
 # define STDIN 0 // do not use
@@ -41,5 +33,17 @@ typedef struct sParams
 	std::vector<std::string>	tokens;
 } tParams;
 # endif
+
+// template <typename T1, typename T2, typename T3>
+// struct Triple {
+//     T1 first;
+//     T2 second;
+//     T3 third;
+
+//     // 생성자
+//     Triple(const T1& first, const T2& second, const T3& third)
+//         : first(first), second(second), third(third) {}
+// };
+
 
 #endif

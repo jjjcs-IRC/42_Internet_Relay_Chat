@@ -4,6 +4,7 @@
 #include "../channel/Channel.hpp"
 #include <iostream>
 #include <vector>
+#include "../client/Client.hpp" 
 
 class ChannelManager
 {
@@ -26,7 +27,7 @@ public:
     ~ChannelManager();
 
     Channel* findChannel(const std::string& channelName) const;
-    bool addChannel(Channel* newChannel);
+    int addChannel(std::string channelName, Client *userName, std::string password);
     bool deleteChannel(const std::string& channelName);
     void clear();
 };

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   IrcParser.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jimchoi <jimchoi@student.42seoul.kr>       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 18:37:58 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 21:36:09 by jimchoi          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 #ifndef IRCPARSER_HPP
 # define IRCPARSER_HPP
@@ -27,7 +15,11 @@
 # include "PassParser.hpp"
 # include "NickParser.hpp"
 # include "UserParser.hpp"
-
+# include "JoinParser.hpp"
+# include "KickParser.hpp"
+# include "InviteParser.hpp"
+# include "TopicParser.hpp"
+# include "ModeParser.hpp"
 
 
 
