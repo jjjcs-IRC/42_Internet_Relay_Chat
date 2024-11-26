@@ -116,6 +116,7 @@ class Numerics {
 
 		// PASS
 		void ERR_PASSWDMISMATCH_464(int fd);
+		void ERR_NOTREGISTERED_451(int fd);
 
 		// PING
 		void RPL_PONG(int fd);
