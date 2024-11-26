@@ -15,7 +15,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     Channel *channel = cn.findChannel(params.tokens[2]);
     Client* inviter = cl.find_client(params.client_fd);
     Client* invitee = cl.find_client_byNick(params.tokens[1]);
-    
+    std::cout << "Invite command::executeCommand" << std::endl;
     //개인 존재 유무 확인 (401)
     if (cl.find_client_byNick(params.tokens[1]) == NULL)
         return 401;

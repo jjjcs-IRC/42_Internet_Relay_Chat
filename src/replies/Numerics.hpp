@@ -32,9 +32,12 @@ class Numerics {
 	public :
 		Numerics(ClientManager &cl, ChannelManager &cn, tServerInfo &serverInfo);
 		~Numerics() {};
+		Numerics(const Numerics &other);
+		Numerics& operator=(const Numerics &other);
 		void setParams(tParams &params);
 		std::string makeUserId(int fd); //":" + nickname + "!" + username + "@localhost" 문구를 만드는 함수
 		void dispatchByInt(int fd, int errNum);
+		void sendMsg(int fd, std::string msg);
 
 		// numeric_replies
 		void RPL_WELCOME_001(int fd);
@@ -82,6 +85,7 @@ class Numerics {
 		void ERR_CHANOPRIVSNEEDED_482(int fd);
 		void ERR_INVALIDMODEPARAM_696(int fd);
 		void RPL_ADDVOICE(int fd);
+		void ERR_UNKNOWNMODE_472(int fd, int errNum);
 
 		// MOTD
 		void ERR_NOSUCHSERVER_402(int fd);
