@@ -26,6 +26,7 @@ class ModeParser : public SuperParser
 		std::string	MakeToken( char flag, char sign, std::string param );
 		int			IsFlag(char c);
 		inline bool	IsSignString( std::string str );
+		bool		Is_L_FlagConditions( std::string num );
 		void		InitArr( std::string arr[][ARG_NUM] );
 		int			IsValidFlag( std::vector<std::string> &flag, std::vector<std::string> &params );
 		std::vector<std::string>	ModeParsing( std::vector<std::string>::iterator &it );

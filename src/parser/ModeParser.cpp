@@ -40,6 +40,18 @@ inline bool	ModeParser::IsSignString( std::string str )
 	return (false);
 }
 
+bool	ModeParser::Is_L_FlagConditions( std::string num )
+{
+	std::string::iterator	it = num.begin();
+	std::string::iterator	end = num.end();
+	for ( ; it != end ; ++it )
+	{
+		if (!std::isdigit(*it))
+			return (false);
+	}
+	return (true);
+}
+
 
 // CMD
 // options:sign:parameter
@@ -74,7 +86,7 @@ int	ModeParser::IsValidFlag( std::vector<std::string>	&flag, std::vector<std::st
 					throw (472 * 1000 + static_cast<int>(*str_start));
 			}
 		}
-		if (num > params.size())
+		if (num < params.size())
 			throw (461);
 	}
 	return ( num );
@@ -124,6 +136,15 @@ int	ModeParser::CmdParser( void )
 					reVal.push_back(MakeToken(sign, flag, ""));
 				else if (sign == '-' && flag != 'o')
 					reVal.push_back(MakeToken(sign, flag, ""));
+				else if (sign == '+' && flag == 'l')
+				{
+					if (!Is_L_FlagConditions(*params_start))
+					{
+						params_start++;
+						continue;
+					}
+					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
+				}
 				else
 					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
 			}
