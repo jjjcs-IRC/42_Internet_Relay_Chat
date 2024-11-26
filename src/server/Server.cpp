@@ -2,7 +2,7 @@
 
 Server* Server::m_instance = NULL; // 정적맴버 변수 초기화는 소스파일에서
 
-Server::Server(int port, std::string password) : port(port), password(password)
+Server::Server(int port, std::string password) : port(port), password(password), client_manager(ClientManager()), channelManager(ChannelManager()), numerics(client_manager, channelManager, serverInfo)
 {
 	m_serverSock = -1;
     m_kqueue = -1;
@@ -19,6 +19,7 @@ Server::Server(int port, std::string password) : port(port), password(password)
 	serverInfo.tokens = "CHANNELLEN=32 NICKLEN=9 TOPICLEN=307";
 	serverInfo.userModes = "io";
 	serverInfo.version = "1.1";
+
 }
 
 Server::~Server(void)
@@ -188,8 +189,6 @@ void Server::handleNewConnection(void)
 
 void Server::handleClientData(int clientSock, struct kevent& event) 
 {
-	Numerics numerics(client_manager, channelManager, serverInfo); // 쓸대없이 리소스를 좀 잡아 먹기는 함.
-
     if(event.flags & EV_EOF)
 	{
         disconnectClient(clientSock);
