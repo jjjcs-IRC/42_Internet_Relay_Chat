@@ -19,31 +19,25 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	Client *client = cl.find_client(params.client_fd);
 	if (client->get_passed() == false) {
-		// `ERR_NOTREGISTERED (451)`
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
-		// "<client> :You have not registered"
-		return 451;
+		throw 451;
 	}
 	else if(params.tokens.size() < 5){ //매개변수가 충분하지 않음
-		// ERR_NEEDMOREPARAMS (461)
-		// "<client> <command> :Not enough parameters"
-		return 461;
+		throw 461;
 	}
 	else if (client->get_realName().size() > 0 || client->get_nickName().size() > 0) {
-		// ERR_ALREADYREGISTERED (462)
-		//   "<client> :You may not reregister"
-		return 462;
+		//   "You may not reregister" 재등록 하려고 할 때
+		throw 462;
 	}
 	else {
-		//클라이언트 user를 true로 바꿔주기
-
 		client->set_userName(params.tokens[1]);
 		client->set_realName(params.tokens[4]);
-		if (client->get_passed()) {
+		
+		//클라이언트 등록 완료 문구 전송
+		if (client->check_pass_client()) {
 			client->set_passed();
 			throw 1;
 		}
-		;
 		return 0;
 	}
 }
