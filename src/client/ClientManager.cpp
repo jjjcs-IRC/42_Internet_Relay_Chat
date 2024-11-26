@@ -5,9 +5,8 @@ ClientManager::ClientManager()
 	// std::cout << "Create ClientManager" << std::endl;
 }
 
-ClientManager::ClientManager(std::string server_passwd)
+ClientManager::ClientManager(std::string server_passwd) : server_passwd(server_passwd)
 {
-    this->server_passwd = server_passwd;
 	// std::cout << "Create ClientManager" << std::endl;
 }
 

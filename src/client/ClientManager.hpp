@@ -9,10 +9,10 @@ class ClientManager
 private:
 	std::list<Client> client_list;
 	const std::string server_passwd;
-	ClientManager();
-	ClientManager(const ClientManager&obj);
 	ClientManager& operator=(const ClientManager&obj);
 public:
+	ClientManager();
+	ClientManager(const ClientManager&obj);
 	ClientManager(std::string server_passwd);
 	virtual ~ClientManager();
 	//
