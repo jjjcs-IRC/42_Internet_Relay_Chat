@@ -18,15 +18,15 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     Client* kicker = cl.find_client(params.client_fd);
     //채널 존재 확인 (403)
     if (channel == NULL)
-        return 403;
+        throw 403;
 
     //권한 확인
     //채널 참가 확인 (442)
     if (channel->findClient(kicker->get_nickName()) == NULL)
-        return 442;
+        throw 442;
     //채널 권한 확인 (482)
     if (channel->hasMode('i'))
-        return 482;
+        throw 482;
 
     std::istringstream ss(params.tokens[2]);
     std::string tmp;
@@ -50,5 +50,5 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
                                 " " + tmp + " :" + params.tokens[3];
         client->set_writeBuf(kick_msg);
     }
-    return res;
+    throw res;
 }
