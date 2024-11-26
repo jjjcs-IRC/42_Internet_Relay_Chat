@@ -22,7 +22,25 @@
 
 # include "../parser/IrcParser.hpp"
 
+#include "../replies/Numerics.hpp"
+
 // 임시 함수 헤더
+
+#ifndef SERVER_INFO
+#define SERVER_INFO
+
+typedef struct sServerInfo
+{
+	std::string serverName;
+	std::string version;
+	std::string userModes;
+	std::string channelModes;
+	std::string tokens;
+	std::string datetime;
+} tServerInfo;
+
+
+#endif
 
 
 const int BUF_SIZE = 1024; // 전역변수가 됬나?
@@ -38,6 +56,7 @@ class Server {
 
 		ClientManager client_manager;
 		ChannelManager channelManager;
+		tServerInfo serverInfo;
 
 		int m_serverSock;           /* 서버 소켓 파일 디스크립터 */
 		int m_kqueue;              /* kqueue 파일 디스크립터 */
