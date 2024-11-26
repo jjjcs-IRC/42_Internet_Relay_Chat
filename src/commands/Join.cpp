@@ -22,12 +22,12 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	std::cout << "Join command" << std::endl;
 	// CnManager.joinChannel(channelName); // 채널에 유저 추가
-	if (cn.findChannel(channelName)){//채널 존재 여부 확인
-		//ERR_NOSUCHCHANNEL(403)
-		// "<client> <channel> :No such channel"
-		return (403);
-	} 
-	else if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
+	// if (cn.findChannel(channelName)){//채널 존재 여부 확인
+	// 	//ERR_NOSUCHCHANNEL(403)
+	// 	// "<client> <channel> :No such channel"
+	// 	return (403);
+	// } 
+	if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
 		//ERR_TOOMANYCHANNELS(405)
 		//  "<client> <channel> :You have joined too many channels"
 		return (405);
@@ -49,6 +49,10 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	}
 	else {
+		if(cn.findChannel(channelName) == NULL) {
+			// cn.addChannel(channelName);
+			
+		}
 		// 채널에 유저 추가
 		if (channel->addParticipant(client) == false) {
 		//ERR_INVITEONLYCHAN(473)

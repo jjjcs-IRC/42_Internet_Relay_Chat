@@ -36,6 +36,13 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	else {
 		//클라이언트 user를 true로 바꿔주기
+
+		client->set_userName(params.tokens[1]);
+		client->set_realName(params.tokens[4]);
+		if (client->get_passed()) {
+			client->set_passed();
+			throw 1;
+		}
 		;
 		return 0;
 	}
