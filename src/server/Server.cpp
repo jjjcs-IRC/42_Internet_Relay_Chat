@@ -2,7 +2,7 @@
 
 Server* Server::m_instance = NULL; // 정적맴버 변수 초기화는 소스파일에서
 
-Server::Server(int port, std::string password) : port(port), password(password), client_manager(ClientManager()), channelManager(ChannelManager()), numerics(client_manager, channelManager, serverInfo)
+Server::Server(int port, std::string password) : port(port), password(password), client_manager(ClientManager(password)), channelManager(ChannelManager()), numerics(client_manager, channelManager, serverInfo)
 {
 	m_serverSock = -1;
     m_kqueue = -1;
@@ -213,6 +213,7 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     		    command->executeCommand(res, client_manager, channelManager);
     		else 
     		    std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
+			throw (2);
 		}
 		catch (int num)
 		{
