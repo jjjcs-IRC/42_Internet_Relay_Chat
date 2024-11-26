@@ -1,13 +1,22 @@
-#include "IrcParser.hpp"
+// #include "IrcParser.hpp"
 
-int	main(void)
-{
-	IrcParser test;
-	std::string	input = "  MODE +tikoll username 123 123123 123 "; // put the case;
-	tParams	res;
+// int	main(void)
+// {
+// 	IrcParser test;
+// 	std::string	input = "  MODE +tikoll -ktio username 123 123123 123 jimchoi"; // put the case;
+// 	tParams	res;
 	
-	res = test.IrcParsing(3, input);
-	test.ShowParams();
+// 	try
+// 	{
+// 		/* code */
+// 		res = test.IrcParsing(3, input);
+// 		test.ShowParams();
+// 	}
+// 	catch(int a)
+// 	{
+// 		std::cerr << "error: " << a << '\n';
+// 	}
 	
-	return (0);
-}
+	
+// 	return (0);
+// }

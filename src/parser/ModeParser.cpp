@@ -10,23 +10,23 @@ ModeParser::~ModeParser( void )
 
 }
 
-std::string	ModeParser::MakeToken( std::string flag, std::string sign, std::string param )
+std::string	ModeParser::MakeToken( char flag, char sign, std::string param )
 {
-	return (flag + ':' + sign + ':' + param);
+	return (std::string(1, flag) + ":" + std::string(1, sign) + ":" + param);
 }
 
 int	ModeParser::IsFlag(char	c)
 {
 	if ('i' == c)
-		return (iFlag);
+		return (true);
 	if ('t' == c)
-		return (tFlag);
+		return (true);
 	if ('k' == c)
-		return (kFlag);
+		return (true);
 	if ('o' == c)
-		return (oFlag);
+		return (true);
 	if ('l' == c)
-		return (lFlag);
+		return (true);
 	return (false);
 }
 
@@ -45,71 +45,96 @@ inline bool	ModeParser::IsSignString( std::string str )
 // options:sign:parameter
 void	ModeParser::InitArr( std::string arr[][ARG_NUM] )
 {
-	arr[iFlag][FLAG] = "i";
-	arr[iFlag][SIGN] = "X";
-	arr[tFlag][FLAG] = "t";
-	arr[tFlag][SIGN] = "X";
-	arr[kFlag][FLAG] = "k";
-	arr[kFlag][SIGN] = "X";
-	arr[oFlag][FLAG] = "o";
-	arr[oFlag][SIGN] = "X";
-	arr[lFlag][FLAG] = "l";
-	arr[lFlag][SIGN] = "X";
+}
+
+int	ModeParser::IsValidFlag( std::vector<std::string>	&flag, std::vector<std::string> &params )
+{
+	int	num = 0;
+	int	k_sign = 0;
+
+	{
+		std::vector<std::string>::iterator	start = flag.begin();
+		std::vector<std::string>::iterator	end = flag.end();
+		for ( ; start != end ; ++start )
+		{
+			std::string::iterator	str_start = start->begin();
+			char	sign = *str_start++;
+			std::string::iterator	str_end = start->end();
+			for ( ; str_start != str_end ; ++str_start )
+			{
+				if (*str_start == 'o')
+					num++;
+				if (*str_start == 'l' && sign == '+')
+					num++;
+				if (*str_start == 'k' && sign == '+')
+					num++;
+				if (*str_start == 'k' && sign == '-')
+					k_sign++;
+				if (IsFlag(*str_start) == false)
+					throw (472 * 1000 + static_cast<int>(*str_start));
+			}
+		}
+		if (num > params.size())
+			throw (461);
+	}
+	return ( num );
 }
 
 int	ModeParser::CmdParser( void )
 {
 	if (tokens.size() < 2)
 		throw (461);
-	std::string	arr[FLAG_NUM][ARG_NUM];
-	InitArr(arr);
-	std::vector<std::string>::iterator it = tokens.begin();
-	if (*it == "MODE")
-		++it;
-	for ( ; it != tokens.end(); ++it )
+	/* sorting strings(flag and parameters ) */
+	std::vector<std::string>	flag;
+	std::vector<std::string>	params;
 	{
-		if ((*it)[0] == '+' || (*it)[0] == '-')
+		std::vector<std::string>::iterator	start = tokens.begin();
+		std::vector<std::string>::iterator	end = tokens.end();
+		for ( ; start != end; ++start)
 		{
-			char sign = (*it)[0];
-			std::vector<std::string>::iterator	temp = it++;
-			std::string::iterator ait = temp->begin();
-			std::string::iterator end = temp->end();
-			++temp;
-			for (; ait != end; ait++ )
+			if (IsSignString(*start))
+				flag.push_back(*start);
+			else if (start != tokens.begin())
+				params.push_back(*start);
+		}
+	}
+	/* Is valid Number of parameters? */
+	{
+		IsValidFlag( flag, params );
+	}
+	/* Make executing strings */
+	std::vector<std::string>	reVal;
+	{
+
+		reVal.push_back("MODE");
+		std::vector<std::string>::iterator	flag_start = flag.begin();
+		std::vector<std::string>::iterator	flag_end = flag.end();
+		std::vector<std::string>::iterator	params_start = params.begin();
+		std::vector<std::string>::iterator	params_end = params.end();
+		for ( ; flag_start != flag_end; ++flag_start )
+		{
+			std::string::iterator	str_start = flag_start->begin();
+			char	sign = *str_start;
+			str_start++;
+			std::string::iterator	str_end = flag_start->end();
+			for ( ; str_start != str_end ; ++str_start )
 			{
-				char	flag = (*ait);
-				int	flagNum = IsFlag(flag);
-				arr[flagNum][SIGN] = sign;
-				if (sign == '+' && flag == 'k')
-				{
-					arr[flagNum][ARG] = *temp;
-					temp++;
-				}
-				if (sign == '-' && flag == 'k')
-					arr[flagNum][ARG] = "";
-				if (sign == '+' && flag == 'l')
-				{
-					arr[flagNum][ARG] = *temp;
-					temp++;
-				}
-				if (sign == '-' && flag == 'l')
-					arr[flagNum][ARG] = "";
-				if (sign == '+' && flag == 'o')
-				{
-					arr[flagNum][ARG] += *temp;
-					temp++;
-				}
-				if (sign == '-' && flag == 'o')
-					arr[flagNum][ARG] = "";
+				char flag = *str_start;
+				if (flag == 'i' || flag == 't')
+					reVal.push_back(MakeToken(sign, flag, ""));
+				else if (sign == '-' && flag != 'o')
+					reVal.push_back(MakeToken(sign, flag, ""));
+				else
+					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
 			}
 		}
 	}
-	std::vector<std::string> newAnswer(5);
-	for (int i = 0; i < FLAG_NUM; i++)
+	/* Make return string -> 
+	execute functions must do it what stack data type */
+	tokens = reVal;
+	for (int i = 0; i < reVal.size(); i++)
 	{
-		std::cout << arr[i][FLAG] << ":" << arr[i][SIGN] << ":" << arr[i][ARG] <<std::endl;
-		newAnswer[i] = MakeToken(arr[i][FLAG], arr[i][SIGN], arr[i][ARG]);
+		std::cout << reVal[i] << std::endl;
 	}
-	tokens = newAnswer;
 	return (0);
 }
