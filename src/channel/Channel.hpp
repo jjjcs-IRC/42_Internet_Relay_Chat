@@ -20,7 +20,7 @@ private:
     size_t maxParticipants; // L 모드에서 정한 최대 참여자 수
 
 public:
-    Channel(const std::string& name, Client *user, const std::string& password = "");
+    Channel(const std::string& name, Client *user);
 	Channel(Channel const &other);
 	Channel &operator=(Channel const &other);
 	~Channel();

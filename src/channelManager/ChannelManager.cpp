@@ -37,11 +37,11 @@ Channel* ChannelManager::findChannel(const std::string& channelName) const {
     return (it != channels.end()) ? *it : NULL;
 }
 
-int ChannelManager::addChannel(std::string channelName, Client *userName, std::string password) {
+int ChannelManager::addChannel(std::string channelName, Client *userName) {
     // 채널이 없는 경우만 addChannel 실행함.
    try {
         // 채널 생성 및 추가
-        Channel* newChannel = new Channel(channelName, userName, password);
+        Channel* newChannel = new Channel(channelName, userName);
         channels.push_back(newChannel);
         std::cout << "채널 추가: " << channelName << std::endl;
         return true;

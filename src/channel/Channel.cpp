@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, Client *user, const std::string& password)
-    : channelName(name), password(password), operators(1, user), maxParticipants(100) {
+Channel::Channel(const std::string& name, Client *user)
+    : channelName(name), password(""), operators(1, user), maxParticipants(100) {
     if (!isValideName(name)) {
         throw 476; // ERR_BADCHANMASK
     }
