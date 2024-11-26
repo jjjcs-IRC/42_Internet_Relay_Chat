@@ -74,21 +74,21 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 {
 	//수신자 지정 안됨
 	if (params.tokens[1].length() == 0)
-		return 411;
+		throw 411;
 
 	//보낼 텍스트 없음
 	if (params.tokens[2].length() == 0)
-		return 412;
+		throw 412;
 
 	parsing_receiver(params);
 
 	//단일 상대에게 전송
 	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
-		return check_client(params, cl, this->v_client[0]);
+		throw check_client(params, cl, this->v_client[0]);
 
 	//단일 채널에 전송
 	if (this->v_client.size() == 0 && this->v_channel.size() == 1)
-		return check_channel(params, cl, cn, this->v_channel[0]);
+		throw check_channel(params, cl, cn, this->v_channel[0]);
 
 	//다중 대상에게 전송
 	//사용자에 전송
@@ -108,5 +108,5 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 		else
 			sendMsgToCh(params, cl, cn, this->v_channel[i]);
 	}
-	return res;
+	throw res;
 }

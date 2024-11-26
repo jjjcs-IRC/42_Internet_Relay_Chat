@@ -2,6 +2,17 @@
 
 Numerics::Numerics(ClientManager &cl, ChannelManager &cn, tServerInfo &serverInfo) : cl(cl), cn(cn), serverInfo(serverInfo) {};
 
+Numerics::Numerics(const Numerics &other) : cl(other.cl), cn(other.cn), serverInfo(other.serverInfo) {};
+
+Numerics& Numerics::operator=(const Numerics &other)
+{
+	if (this != &other)
+	{
+		this->params = other.params;
+	}
+	return (*this);
+}
+
 void Numerics::setParams(tParams &params)
 {
 	this->params = params;
@@ -9,20 +20,25 @@ void Numerics::setParams(tParams &params)
 
 void Numerics::dispatchByInt(int fd, int errNum)
 {
+	if (472000 <= errNum && errNum <= 472127)
+	{
+		ERR_UNKNOWNMODE_472(fd, errNum);
+		return ;
+	}
 	switch (errNum)
 	{
 	case 1:
 		RPL_WELCOME_001(fd);
-		break;
+		// break;
 	case 2:
 		RPL_YOURHOST_002(fd);
-		break;
+		// break;
 	case 3:
 		RPL_CREATED_003(fd);
-		break;
+		// break;
 	case 4:
 		RPL_MYINFO_004(fd);
-		break;
+		// break;
 	case 5:
 		RPL_ISUPPORT_005(fd);
 		break;
@@ -95,9 +111,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 376:
 		RPL_ENDOFMOTD_376(fd);
 		break;
+	case 332:
+		RPL_TOPIC_332(fd);
+		// break;
 	case 353:
 		RPL_NAMREPLY_353(fd);
-		break;
+		// break;
 	case 366:
 		RPL_ENDOFNAMES_366(fd);
 		break;
@@ -128,9 +147,6 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 412:
 		ERR_NOTEXTTOSEND_412(fd);
 		break;
-	case 332:
-		RPL_TOPIC_332(fd);
-		break;
 	case 331:
 		RPL_NOTOPIC_331(fd);
 		break;
@@ -148,26 +164,33 @@ std::string Numerics::makeUserId(int fd)
 	return (":" + cl.find_client(fd)->get_nickName() + "!" + cl.find_client(fd)->get_userName() + "@localhost");
 }
 
+void Numerics::sendMsg(int fd, std::string msg)
+{
+	cl.set_writeBuf(fd, msg);
+	write(fd, cl.get_writeBuf(fd).c_str(), cl.get_writeBuf(fd).length());
+	cl.set_writeBuf(fd, "");
+}
+
 // numeric_replies
 void Numerics::RPL_WELCOME_001(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 001 " + cl.find_client(fd)->get_nickName() + " :Welcome to the Internet Relay Network " + makeUserId(fd) + "\r\n");
+	sendMsg(fd, ":localhost 001 " + cl.find_client(fd)->get_nickName() + " :Welcome to the Internet Relay Network " + makeUserId(fd) + "\r\n");
 }
 void Numerics::RPL_YOURHOST_002(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
+	sendMsg(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
 }
 void Numerics::RPL_CREATED_003(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 003 " + cl.find_client(fd)->get_nickName() + " :This server was created " + serverInfo.datetime + "\r\n");
+	sendMsg(fd, ":localhost 003 " + cl.find_client(fd)->get_nickName() + " :This server was created " + serverInfo.datetime + "\r\n");
 }
 void Numerics::RPL_MYINFO_004(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 004 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.serverName + " " + serverInfo.version + " " + serverInfo.userModes + " " + serverInfo.channelModes + "k\r\n");
+	sendMsg(fd, ":localhost 004 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.serverName + " " + serverInfo.version + " " + serverInfo.userModes + " " + serverInfo.channelModes + "k\r\n");
 }
 void Numerics::RPL_ISUPPORT_005(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 005 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.tokens + " :are supported by this server\r\n");
+	sendMsg(fd, ":localhost 005 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.tokens + " :are supported by this server\r\n");
 }
 void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 {
@@ -178,7 +201,7 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 // INVITE
 void Numerics::ERR_NEEDMOREPARAMS_461(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	// cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
@@ -318,11 +341,17 @@ void Numerics::RPL_ENDOFMOTD_376(int fd)
 // NAMES
 void Numerics::RPL_NAMREPLY_353(int fd)
 {
-	// cl.set_writeBuf(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " " + symbol + " #" + params.tokens[1] + " :" + list_of_nicks + "\r\n");
+	std::vector<Client *> clientList = cn.findChannel(params.tokens[1])->getParticipants();
+	std::string nickList;
+	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++)
+	{
+		nickList.append(" " + (*it)->get_nickName());
+	}
+	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = #" + params.tokens[1] + " :" + nickList + "\r\n");
 }
 void Numerics::RPL_ENDOFNAMES_366(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :End of /NAMES list.\r\n");
+	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :End of /NAMES list.\r\n");
 }
 
 
@@ -409,7 +438,8 @@ void Numerics::RPL_PRIVMSG(int fd)
 // TOPIC
 void Numerics::RPL_TOPIC_332(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
+	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + topic + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
@@ -420,4 +450,10 @@ void Numerics::RPL_NOTOPIC_331(int fd)
 void Numerics::ERR_ALREADYREGISTERED_462(int fd)
 {
 	cl.set_writeBuf(fd, ":localhost 462 " + cl.find_client(fd)->get_nickName() + " :You may not reregister.\r\n");
+}
+
+void Numerics::ERR_UNKNOWNMODE_472(int fd, int errNum)
+{
+	char modechar = errNum % 1000;
+	cl.set_writeBuf(fd, ":localhost 472 " + cl.find_client(fd)->get_nickName() + modechar + " :is unknown mode char to me");
 }
