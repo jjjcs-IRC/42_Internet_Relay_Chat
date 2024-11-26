@@ -57,6 +57,7 @@ class Server {
 		ClientManager client_manager;
 		ChannelManager channelManager;
 		tServerInfo serverInfo;
+		Numerics numerics;
 
 		int m_serverSock;           /* 서버 소켓 파일 디스크립터 */
 		int m_kqueue;              /* kqueue 파일 디스크립터 */
