@@ -32,7 +32,6 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	else {
 		//클라이언트 pass를 true로 바꿔주기
 		client->set_passed();
-		throw 0;
 	}
 	std::cout << "Pass command end" << std::endl;
 }
