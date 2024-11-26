@@ -19,6 +19,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	Client *client = cl.find_client(params.client_fd);
 	if (client->get_passed() == false) {
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
+		std::cout <<"PASS 를 먼저 입력해야함"<<std::endl;
 		throw 451;
 	}
 	
