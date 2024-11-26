@@ -176,6 +176,15 @@ bool ClientManager::check_pass_client(int fd)
     return tmp_client->check_pass_client();
 }
 
+bool check_special_char(char c)
+{
+    if (c == '!' || c == '@' || c == '$')
+        return true;
+    if (c == '%' || c == '^' || c == '&' || c == '*')
+        return true;
+    return false;
+}
+
 bool ClientManager::check_name_client(std::string name) const //userName, nickName 유효성 확인
 {
 	if (name.length() <= 0)
@@ -184,6 +193,9 @@ bool ClientManager::check_name_client(std::string name) const //userName, nickNa
 		return false;
 	if (name.length() >= 10) //name 길이 확인
 		return false;
+    for (int i = 0; i < name.length(); i++) //숫자, 알파벳, 정해진 특수 문자로 이루어졌는지 확인
+        if (isalnum(name[i]) != 0 && !check_special_char(name[i]))
+            return false;
 	if (name.find(" ") != std::string::npos) //name에 공백이 있는지 확인
 		return false;
     return true;

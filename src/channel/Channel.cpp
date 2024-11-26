@@ -1,20 +1,25 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name, const std::string& password)
-    : channelName(name), password(password), leader(NULL), maxParticipants(100) {}
-
+Channel::Channel(const std::string& name, Client *user)
+    : channelName(name), password(""), operators(1, user), maxParticipants(100) {
+    if (!isValideName(name)) {
+        throw 476; // ERR_BADCHANMASK
+    }
+}
 
 Channel::Channel(const Channel& other): channelName(other.channelName), password(other.password), topic(other.topic), 
-      leader(other.leader), mode(other.mode), participants(other.participants) {}
+      operators(other.operators), modes(other.modes), participants(other.participants), invitedClients(other.invitedClients), maxParticipants(other.maxParticipants) {}
 
 Channel& Channel::operator=(const Channel& other) {
     if (this != &other) {
         channelName = other.channelName;
         password = other.password;
         topic = other.topic;
-        leader = other.leader;
-        mode = other.mode;
+        operators = other.operators;
+        modes = other.modes;
         participants = other.participants;
+        invitedClients = other.invitedClients;
+        maxParticipants = other.maxParticipants;
     }
     return *this;
 }
@@ -25,40 +30,72 @@ const std::string& Channel::getChannelName() const {
     return channelName;
 }
 
-void Channel::setChannelName(const std::string& name) {
-    channelName = name;
+bool Channel::setChannelName(const std::string& name) {
+    if(isValideName(name)){
+        channelName = name;
+        return true;
+    }
+    return false;
 }
 
 const std::string& Channel::getPassword() const {
     return password;
 }
 
-void Channel::setPassword(const std::string& password) {
-    this->password = password;
+bool Channel::setPassword(const std::string& password) {
+    if(isValidePassword(password)){
+        this->password = password;
+        return true;
+    }
+    return false;
+}
+
+void Channel::removePassword(){
+    this->password = "";
 }
 
 const std::string& Channel::getTopic() const {
     return topic;
 }
 
-void Channel::setTopic(const std::string& topic) {
+bool Channel::setTopic(const std::string& topic, Client* client) {
     this->topic = topic;
+     if (hasMode('t')) { 
+        if(isOperator(client)){
+            std::cout << client->get_userName() << " t모드라서 오페러이터가 토픽 수정함" << std::endl;
+            this->topic = topic;
+            return true;
+
+        }
+        std::cout << client->get_userName() << " t모드인데 오퍼레이터 아님" << std::endl;
+    }
+    std::cout << client->get_userName() << "토픽 수정 성공" << std::endl;
+    this->topic = topic;
+    return true;
 }
 
-Client* Channel::getLeader() const {
-    return leader;
+const std::vector<Client*>& Channel::getOperators() const {
+    return operators;
 }
 
-void Channel::setLeader(Client* leader) {
-    this->leader = leader;
+// operators 목록에서 클라이언트가 존재하는지 확인
+bool Channel::isOperator(Client* client) const {
+    return std::find(operators.begin(), operators.end(), client) != operators.end();
 }
 
-const std::string& Channel::getMode() const {
-    return mode;
-}
+bool Channel::addOperator(Client* user) {
+    // 채널에 존재하는 참여자인지 확인
+    Client* client = findClient(user->get_nickName());
+    if (!client) {
+        return false;
+    }
 
-void Channel::setMode(const std::string& mode) {
-    this->mode = mode;
+    // 중복 확인 후 추가
+    if (!isOperator(client)) {
+        operators.push_back(client);
+    }
+
+    return true;
 }
 
 const std::vector<Client*>& Channel::getParticipants() const {
@@ -67,7 +104,7 @@ const std::vector<Client*>& Channel::getParticipants() const {
 
 // invite 모드이면 invite가 허용된 client만 채널에 입장 가능
 bool Channel::addParticipant(Client* participant) {
-    if (mode == "I" && !isInvited(participant)) { 
+    if (hasMode('i') && !isInvited(participant)) { 
         std::cout << participant->get_userName() << " 채널 입장 안됨." << std::endl; // 확인용 출력 
         return false;
     }
@@ -106,22 +143,21 @@ void Channel::setMaxParticipants(size_t max) {
     maxParticipants = max;
 }
 
-std::vector<Client*>::iterator Channel::findClient(const std::string& name) {
-    return std::find_if(participants.begin(), participants.end(), ClientFinder(name));
-}
-
-Channel::ClientFinder::ClientFinder(const std::string& name) : name(name) {}
-
-bool Channel::ClientFinder::operator()(Client* client) const {
-    return client->get_userName() == name;
+Client* Channel::findClient(const std::string& name) {
+    for (std::vector<Client*>::iterator it = participants.begin(); it != participants.end(); ++it) {
+        if ((*it)->get_userName() == name) {
+            return *it; // 클라이언트를 찾으면 반환
+        }
+    }
+    return NULL; // 찾지 못하면 NULL 반환
 }
 
 // 채널의 참여자 삭제
 bool Channel::removeParticipantByName(const std::string& name) {
-     std::vector<Client*>::iterator it = findClient(name);
-    if (it != participants.end()) {
-        delete *it; // 메모리 해제
-        participants.erase(it); // 벡터에서 제거
+    Client* client = findClient(name);
+    if (client != NULL) {
+        participants.erase(std::remove(participants.begin(), participants.end(), client), participants.end());
+        delete client;
         std::cout << name << " 채널에서 삭제" << std::endl;
         return true;
     }
@@ -130,4 +166,73 @@ bool Channel::removeParticipantByName(const std::string& name) {
     return false;
 }
 
-//TODO: 채널의 방장 추가, 제거, 상속
+bool Channel::isValideName(std::string channelName) const {
+    // 이름이 비어있는지 확인
+    if (channelName.empty()) {
+        return false;
+    }
+
+    // 첫 문자가 # 또는 &인지 확인
+    if (channelName[0] != '#') {
+        return false;
+    }
+
+    // 채널 이름의 길이가 200자를 초과하는지 확인
+    if (channelName.size() > 200) {
+        return false;
+    }
+
+    // 채널 이름에 허용되지 않는 문자 (' ', ASCII 7 (^G), ',')가 있는지 확인
+    for (std::string::size_type i = 1; i < channelName.size(); ++i) {
+        char c = channelName[i];
+        if (c == ' ' || c == '\a' || c == ',') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Channel::isValidePassword(std::string password) const {
+   // 비밀번호 길이 확인 (1~32자)
+    if (password.empty() || password.size() > 32) {
+        return false;
+    }
+
+    // 비밀번호에 공백 문자가 있는지 확인
+    for (std::string::size_type i = 0; i < password.size(); ++i) {
+        if (password[i] == ' ') {
+            return false; 
+        }
+    }
+
+    return true;
+}
+
+// 채널의 오퍼레이터 삭제
+bool Channel::removeOperatorByName(const std::string& name) {
+    for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it) {
+        if ((*it)->get_userName() == name) {
+            operators.erase(it); // 오퍼레이터 삭제
+            std::cout << name << " 오퍼레이터 목록에서 삭제" << std::endl;
+            return true; 
+        }
+    }
+
+    std::cout << name << " 오퍼레이터 목록에 없음" << std::endl;
+    return false; 
+}
+
+// 모드 추가
+void Channel::addMode(char mode) {
+    modes.insert(mode);
+}
+
+// 모드 제거
+void Channel::removeMode(char mode) {
+    modes.erase(mode);
+}
+
+// 모드 존재 여부 확인
+bool Channel::hasMode(char mode) const {
+    return modes.find(mode) != modes.end();
+}

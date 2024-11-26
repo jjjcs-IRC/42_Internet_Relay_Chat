@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   PassParser.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/20 01:41:15 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 18:51:53 by jaeyeuljhan      ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PASSPARSER_HPP
 # define PASSPARSER_HPP
 
@@ -26,7 +14,7 @@ class PassParser : public SuperParser
 	public:
 		PassParser( void );
 		~PassParser( void );
-		bool	CmdParser( void );
+		int	CmdParser( void );
 };
 
 #endif

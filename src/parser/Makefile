@@ -1,62 +1,26 @@
-# # **************************************************************************** #
-# #                                                                              #
-# #                                                         :::      ::::::::    #
-# #    Makefile                                           :+:      :+:    :+:    #
-# #                                                     +:+ +:+         +:+      #
-# #    By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+         #
-# #                                                 +#+#+#+#+#+   +#+            #
-# #    Created: 2024/10/31 11:20:27 by jjhang            #+#    #+#              #
-# #    Updated: 2024/11/20 20:48:23 by jaeyeuljhan      ###   ########.fr        #
-# #                                                                              #
-# # **************************************************************************** #
+SRCS := $(shell find . -name "*.cpp")
+NAME := test
+CXXFLAGS := 
+# -Wall -Wextra -Werror -std=c++98
+CXX = c++
+SANITIZE = -fsanitize=address -g
 
-# CPP = c++
-# CPP_FLAGS = -std=c++98 -Wall -Wextra -Werror -g -fsanitize=address
-# LIB_NAME = libparser.a
-# AR = ar rcs
+OBJS  = $(SRCS:.cpp=.o)
 
-# SRCS_DIR = ./
-# OBJ_DIR = obj
+all: $(NAME)
 
-# SUB_DIR = ./SubParsers/
-# SUB_FILES = SuperParser.cpp \
-# 			NickParser.cpp \
-#             PassParser.cpp \
-#             UserParser.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $^ -o $@ $(SANITIZE)
+$(NAME):$(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(SANITIZE)
 
-# SRCS_FILES = IrcParser.cpp \
-#              IrcExceptions.cpp \
-#              $(addprefix $(SUB_DIR), $(SUB_FILES))
+clean: 
+	rm -f $(OBJS)
 
-# HEADER = ./Include ./Include/SubParsers
-# HEADER_FLAGS = $(addprefix -I, $(HEADER))
+fclean: clean
+	rm -f $(NAME)
 
-# OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS_FILES:.cpp=.o)))
+re: fclean
+	$(MAKE) all
 
-# all : $(LIB_NAME)  # 아카이브 파일만 만들도록 설정
-
-# $(LIB_NAME): $(OBJS)
-# 	@$(AR) $@ $^
-# 	@echo ✅[$(LIB_NAME)] has been created
-
-# $(OBJ_DIR)/%.o : $(SRCS_DIR)/%.cpp | $(OBJ_DIR)
-# 	@$(CPP) $(CPP_FLAGS) -c -o $@ $< $(HEADER_FLAGS)
-
-# $(OBJ_DIR)/%.o : $(SUB_DIR)%.cpp | $(OBJ_DIR)
-# 	@$(CPP) $(CPP_FLAGS) -c -o $@ $< $(HEADER_FLAGS)
-
-# $(OBJ_DIR) :
-# 	@mkdir -p $@
-
-# clean :
-# 	@rm -f $(OBJS)
-# 	@rm -rf $(OBJ_DIR)
-
-# fclean : clean
-# 	@rm -f $(LIB_NAME)
-
-# re :
-# 	$(MAKE) fclean
-# 	$(MAKE) all
-
-# .PHONY : all clean fclean re
+.PHONY: all clean fclean re

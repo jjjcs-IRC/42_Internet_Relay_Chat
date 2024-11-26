@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   SuperParser.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jaeyeuljhang <jaeyeuljhang@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/20 17:15:09 by jaeyeuljhan       #+#    #+#             */
-/*   Updated: 2024/11/20 18:54:59 by jaeyeuljhan      ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "SuperParser.hpp"
 
 
@@ -23,6 +11,10 @@ void	SuperParser::SetTokens( std::vector<std::string> token )
 	this->tokens = token;
 }
 
+std::vector<std::string> SuperParser::GetTokens( void ) const
+{
+	return (tokens);
+}
 
 SuperParser::~SuperParser( void )
 {

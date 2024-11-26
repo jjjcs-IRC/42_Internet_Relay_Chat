@@ -37,17 +37,18 @@ Channel* ChannelManager::findChannel(const std::string& channelName) const {
     return (it != channels.end()) ? *it : NULL;
 }
 
-bool ChannelManager::addChannel(Channel* newChannel) {
-    if (!newChannel) return false;
-
-    if (findChannel(newChannel->getChannelName())) {
-        std::cout << "이미 존재하는 채널 이름: " << newChannel->getChannelName() << std::endl;
-        return false;
+int ChannelManager::addChannel(std::string channelName, Client *userName) {
+    // 채널이 없는 경우만 addChannel 실행함.
+   try {
+        // 채널 생성 및 추가
+        Channel* newChannel = new Channel(channelName, userName);
+        channels.push_back(newChannel);
+        std::cout << "채널 추가: " << channelName << std::endl;
+        return true;
+    } catch (int errorCode) {
+       throw errorCode;
     }
-
-    channels.push_back(newChannel);
-    std::cout << "채널 추가: " << newChannel->getChannelName() << std::endl;
-    return true;
+    return false; 
 }
 
 bool ChannelManager::deleteChannel(const std::string& channelName) {
