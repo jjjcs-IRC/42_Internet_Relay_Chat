@@ -20,7 +20,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	std::string channelName = params.tokens[1]; // # 떼고 채널 이름만 가져옴
 	std::string inputPassword = params.tokens.size() > 1 ? params.tokens[2] : ""; // 채널 비밀번호
 
-	std::cout << "Join command" << std::endl;
+	std::cout << "Join command::executeCommand" << std::endl;
 	// CnManager.joinChannel(channelName); // 채널에 유저 추가
 
 	if (client->get_passed() == false) {
@@ -52,7 +52,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	}
 	else {
-		if (cn.addChannel(channelName)){//채널 존재 여부 확인
+		if (cn.addChannel(channelName, client)){//채널 존재 여부 확인
 		//ERR_NOSUCHCHANNEL(403)
 		// "<client> <channel> :No such channel"
 			throw (476);
@@ -90,7 +90,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// :<닉네임>!~<유저네임>@<호스트정보> JOIN #channel 
 		// :user123123123!~choijimin@crs.42seoul.kr JOIN #jimchoiiii
 				// client->set_writeBuf();
-		return (332);
-
+		throw (332);
+		
 	}
 }

@@ -13,6 +13,7 @@
 # define INVITE 5
 # define TOPIC 6
 # define MODE 7
+# define PRIVMSG 8
 
 /* abt fd value */
 # define STDIN 0 // do not use

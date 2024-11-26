@@ -48,10 +48,11 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	else {
 		//클라이언트 닉네임 세팅
 		client->set_nickName(params.tokens[1]);
-
 		//클라이언트 등록 완료 문구 전송
-		if (client->check_pass_client())
+		if (client->check_pass_client()) {
+			client->set_passed();
 			throw 1;
+		}
 	}
 
 }

@@ -4,7 +4,7 @@
 #include "../../parser/IrcType.hpp"
 #include "../Command.hpp"
 
-class Invite
+class Invite : public Command
 {
 private:
     Invite(const Invite &obj);

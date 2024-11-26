@@ -40,8 +40,10 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		client->set_realName(params.tokens[4]);
 		
 		//클라이언트 등록 완료 문구 전송
-		if (client->check_pass_client())
+		if (client->check_pass_client()) {
+			client->set_passed();
 			throw 1;
+		}
 		return 0;
 	}
 }

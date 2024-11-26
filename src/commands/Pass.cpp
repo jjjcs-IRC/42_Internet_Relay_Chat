@@ -28,6 +28,7 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (cl.get_server_passwd() != params.tokens[1]) {
 		// `ERR_PASSWDMISMATCH (464)`
 		// `PASS` 명령어로 전송된 비밀번호가 서버에 설정된 비밀번호와 일치하지 않을 때 발생합니다.
+		std::cout << "password : " << params.tokens[1]<<"|" << cl.get_server_passwd() << std::endl;
 		throw 464;
 	}
 	else {
@@ -35,4 +36,5 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		client->set_passed();
 		throw 0;
 	}
+	std::cout << "Pass command end" << std::endl;
 }
