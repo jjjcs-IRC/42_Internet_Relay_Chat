@@ -25,27 +25,27 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (cn.findChannel(channelName)){//채널 존재 여부 확인
 		//ERR_NOSUCHCHANNEL(403)
 		// "<client> <channel> :No such channel"
-		return (403);
+		throw (403);
 	} 
 	else if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
 		//ERR_TOOMANYCHANNELS(405)
 		//  "<client> <channel> :You have joined too many channels"
-		return (405);
+		throw (405);
 	}
 	else if (channel->getPassword() != inputPassword) { // 채널 비밀번호 확인
 		//ERR_BADCHANNELKEY(475)
 		// "<client> <channel> :Cannot join channel (+k)"
-		return (475);
+		throw (475);
 	}
-	else if (0) { // 사용자 밴 여부 확인
-		//ERR_BANNEDFROMCHAN(474)
-		// "<client> <channel> :Cannot join channel (+b)"
-		return (474);
-	}
+	// else if (0) { // 사용자 밴 여부 확인
+	// 	//ERR_BANNEDFROMCHAN(474)
+	// 	// "<client> <channel> :Cannot join channel (+b)"
+	// 	throw (474);
+	// }
 	else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
 		//ERR_CHANNELISFULL(471)
 		// "<client> <channel> :Cannot join channel (+l)"
-		return (471);
+		throw (471);
 
 	}
 	else {
@@ -53,14 +53,14 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		if (channel->addParticipant(client) == false) {
 		//ERR_INVITEONLYCHAN(473)
 		// "<client> <channel> :Cannot join channel (+i)"
-			return (473);
+			throw (473);
 		}
 		//유저에게 채널 추가
 		if (client->set_channels(channelName) == false) {
 			//위에서 검사하긴 함
 			//ERR_TOOMANYCHANNELS(405)
 			// "<client> <channel> :You have joined too many channels"
-			return (405);
+			throw (405);
 		}
 		return (0);
 

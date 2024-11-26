@@ -1,5 +1,4 @@
 #include "CommandFactory.hpp"
-// #include "CommandFactory.hpp"
 #include "Join.hpp"
 #include "Pass.hpp"
 #include "User.hpp"
@@ -11,7 +10,7 @@ CommandFactory::CommandFactory() {
     _commandMap[USER] = new User();
     _commandMap[NICK] = new Nick();
     _commandMap[JOIN] = new Join();
-    std::cout << "CommandFactory 생성자" << std::endl;
+    // std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가
 }
 
@@ -23,7 +22,6 @@ CommandFactory* CommandFactory::getInstance() {
 }
 
 Command* CommandFactory::createCommand(int commandType) {
-    // auto it = _commandMap.find(commandType);
     std::map<int, Command*>::iterator it = _commandMap.find(commandType);
     if (it != _commandMap.end()) {
         return it->second;
@@ -33,9 +31,6 @@ Command* CommandFactory::createCommand(int commandType) {
 
 CommandFactory::~CommandFactory() {
     // 맵에 저장된 모든 커맨드 객체들을 삭제
-    // for (auto& pair : _commandMap) {
-    //     delete pair.second;
-    // }
     std::map<int, Command*>::iterator it;
 for (it = _commandMap.begin(); it != _commandMap.end(); ++it) {
     delete it->second;

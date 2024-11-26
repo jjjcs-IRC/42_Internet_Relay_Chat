@@ -25,16 +25,16 @@ int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// `ERR_NEEDMOREPARAMS (461)`
 		//클라이언트가 등록을 완료한 후에 다시 `PASS`(비밀번호) 또는 `USER`(사용자 정보) 명령어를 재전송하려고 하면 이 에러가 발생합니다.
 		//   "<client> <command> :Not enough parameters"
-		return 461;
+		throw 461;
 	}
 	if (cl.get_server_passwd() != params.tokens[1]) {
 		// `ERR_PASSWDMISMATCH (464)`
 		// `PASS` 명령어로 전송된 비밀번호가 서버에 설정된 비밀번호와 일치하지 않을 때 발생합니다.
-		return 464;
+		throw 464;
 	}
 	else {
 		//클라이언트 pass를 true로 바꿔주기
 		client->set_passed();
-		return 0;
+		throw 0;
 	}
 }
