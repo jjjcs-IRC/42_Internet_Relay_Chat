@@ -74,7 +74,7 @@ int	ModeParser::IsValidFlag( std::vector<std::string>	&flag, std::vector<std::st
 					throw (472 * 1000 + static_cast<int>(*str_start));
 			}
 		}
-		if (num > params.size())
+		if (num < params.size())
 			throw (461);
 	}
 	return ( num );
