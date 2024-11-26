@@ -83,4 +83,5 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw (332);
 		
 	}
+	return 0;
 }

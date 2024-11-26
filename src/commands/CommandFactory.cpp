@@ -3,7 +3,7 @@
 #include "Pass.hpp"
 #include "User.hpp"
 #include "Nick.hpp"
-#include "Mode.hpp"
+// #include "Mode.hpp"
 #include "./privmsg/Privmsg.hpp"
 #include "./Invite/Invite.hpp"
 #include "./Kick/Kick.hpp"
@@ -19,7 +19,7 @@ CommandFactory::CommandFactory() {
     _commandMap[INVITE] = new Invite();
     _commandMap[KICK] = new Kick();
     _commandMap[TOPIC] = new Topic();
-    _commandMap[MODE] = new Mode();
+    // _commandMap[MODE] = new Mode();
 
     std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가
