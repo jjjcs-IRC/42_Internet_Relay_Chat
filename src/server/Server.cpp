@@ -213,7 +213,6 @@ void Server::handleClientData(int clientSock, struct kevent& event)
     		    command->executeCommand(res, client_manager, channelManager);
     		else 
     		    std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
-			throw (2);
 		}
 		catch (int num)
 		{
