@@ -75,8 +75,8 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 			return (data);
 		}
 		ptr->SetTokens( data.tokens );
-		ShowParams();
 		ptr->CmdParser();
+		data.tokens = ptr->GetTokens();
 		delete ptr;
 	}
 	return (data);
@@ -107,6 +107,16 @@ int	IrcParser::GetCmdType( std::string &str )
 		return (NICK);
 	else if (str == "USER")
 		return (USER);
+	else if (str == "JOIN")
+		return (JOIN);
+	else if (str == "KICK")
+		return (KICK);
+	else if (str == "INVITE")
+		return (INVITE);
+	else if (str == "TOPIC")
+		return (TOPIC);
+	else if (str == "MODE")
+		return (MODE);
 	return (ERROR);
 }
 
