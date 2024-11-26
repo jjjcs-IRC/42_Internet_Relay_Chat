@@ -3,7 +3,7 @@
 
 #include "../Command.hpp"
 
-class Topic : Command
+class Topic : public Command
 {
 private:
     Topic(const Topic &obj);
