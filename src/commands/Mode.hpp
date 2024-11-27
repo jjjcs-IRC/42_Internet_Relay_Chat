@@ -4,6 +4,7 @@
 #include "Command.hpp"
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 class Mode : public Command {
 
@@ -18,14 +19,20 @@ class Mode : public Command {
 		std::vector<std::string> modeSplit(std::string str, char Delimiter);
 		bool removeMode(std::string mode, std::string token);
 		bool addMode(std::string mode, std::string token);
-		std::string modeI (std::vector<std::string> &cmd);
-		std::string modeO (std::vector<std::string> &cmd);
-		std::string modeL (std::vector<std::string> &cmd);
-		std::string modeK (std::vector<std::string> &cmd);
-		std::string modeT (std::vector<std::string> &cmd);
+		std::string modeI ();
+		std::string modeO ();
+		std::string modeL ();
+		std::string modeK ();
+		std::string modeT ();
+		bool findOperator(const Client *client);
+		bool isNumber(const std::string& str);
 
-		
-		
+		bool op;
+		std::string resultOp;
+		std::string resultToken;
+		std::vector<std::string> modeCmd;
+		Channel *channel;
+		Client *client;
 
 };
 
