@@ -17,8 +17,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     Channel* channel = cn.findChannel(params.tokens[1]);
     Client* kicker = cl.find_client(params.client_fd);
 
-    //사용자의 모든 정보가 저장되었는지 확인
-    if (!inviter->check_pass_client())
+    //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+    if (!kicker->check_pass_client())
         throw 451;
 
     //채널 존재 확인 (403)

@@ -12,8 +12,9 @@ Topic::~Topic() {}
 
 int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
-    //사용자의 모든 정보가 저장되었는지 확인
-    if (!inviter->check_pass_client())
+    Client* client = cl.find_client(params.client_fd);
+    //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+    if (!client->check_pass_client())
         throw 451;
 
     //채널 존재 여부 확인 ERR_NOSUCHCHANNEL (403)
@@ -21,7 +22,6 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
     if (channel == NULL)
         throw 403;
 
-    Client* client = cl.find_client(params.client_fd);
     // 파라미터가 1개일 경우 (토픽 조회)
     if (params.tokens.size() < 3)
     {

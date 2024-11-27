@@ -16,7 +16,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     Client* inviter = cl.find_client(params.client_fd);
     Client* invitee = cl.find_client_byNick(params.tokens[1]);
 
-    //사용자의 모든 정보가 저장되었는지 확인
+    //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
     if (!inviter->check_pass_client())
         throw 451;
 
