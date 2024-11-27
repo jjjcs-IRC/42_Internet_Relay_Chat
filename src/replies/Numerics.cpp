@@ -152,9 +152,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		break;
 	case 462:
 		ERR_ALREADYREGISTERED_462(fd);
-		break;	
+		break;
+	case 451:
+		ERR_NOTREGISTERED_451(fd);
+		break;
 	default:
-		cl.set_writeBuf(fd, "No defined Numeric Reply\n");
+		// std::cout << fd << " No defined Numeric Reply" << std::endl;
 		break;
 	}
 }
@@ -201,7 +204,7 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 // INVITE
 void Numerics::ERR_NEEDMOREPARAMS_461(int fd)
 {
-	// cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
@@ -209,7 +212,7 @@ void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :The user is not on this channel.\r\n");
+	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :The user is not on this channel.\r\n");
 }
 void Numerics::ERR_USERONCHANNEL_443(int fd)
 {
@@ -358,7 +361,7 @@ void Numerics::RPL_ENDOFNAMES_366(int fd)
 // NICK
 void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :There is no nickname.\r\n");
+	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :No nickname given\r\n");
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
@@ -399,6 +402,11 @@ void Numerics::RPL_PART(int fd)
 void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 {
 	cl.set_writeBuf(fd, ":localhost 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
+}
+
+void Numerics::ERR_NOTREGISTERED_451(int fd)
+{
+	cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
 }
 
 // PING
