@@ -72,6 +72,10 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 
 int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
+	//사용자의 모든 정보가 저장되었는지 확인
+    if (!inviter->check_pass_client())
+        throw 451;
+
 	//수신자 지정 안됨
 	if (params.tokens[1].length() == 0)
 		throw 411;

@@ -12,6 +12,10 @@ Topic::~Topic() {}
 
 int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
+    //사용자의 모든 정보가 저장되었는지 확인
+    if (!inviter->check_pass_client())
+        throw 451;
+
     //채널 존재 여부 확인 ERR_NOSUCHCHANNEL (403)
     Channel* channel = cn.findChannel(params.tokens[1]);
     if (channel == NULL)
