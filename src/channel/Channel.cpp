@@ -110,6 +110,15 @@ bool Channel::addParticipant(Client* participant) {
     }
     participants.push_back(participant);
     std::cout << participant->get_userName() << " 입장 완료" << std::endl;
+     // 채널 참가자 출력
+        std::cout << "채널 참가자: ";
+        for (size_t i = 0; i < participants.size(); ++i) {
+            std::cout << participants[i]->get_nickName();
+            if (i < participants.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << std::endl;
     return true;
 }
 
@@ -144,11 +153,16 @@ void Channel::setMaxParticipants(size_t max) {
 }
 
 Client* Channel::findClient(const std::string& name) {
+    std::cout << "찾으려는 사용자 이름: " << name << std::endl;
+
     for (std::vector<Client*>::iterator it = participants.begin(); it != participants.end(); ++it) {
-        if ((*it)->get_userName() == name) {
+        std::cout << "현재 검사 중: " << (*it)->get_nickName() << std::endl;
+        if ((*it)->get_nickName() == name) {
+            std::cout << "사용자 발견: " << (*it)->get_nickName() << std::endl;
             return *it; // 클라이언트를 찾으면 반환
         }
     }
+    std::cout << "사용자 " << name << "를 찾지 못함." << std::endl;
     return NULL; // 찾지 못하면 NULL 반환
 }
 
