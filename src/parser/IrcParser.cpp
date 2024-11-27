@@ -75,7 +75,8 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 			return (data);
 		}
 		ptr->SetTokens( data.tokens );
-		ptr->CmdParser();
+		if (ptr->CmdParser())
+			data.cmd_type = ERROR;
 		data.tokens = ptr->GetTokens();
 		delete ptr;
 	}
@@ -117,6 +118,7 @@ int	IrcParser::GetCmdType( std::string &str )
 		return (TOPIC);
 	else if (str == "MODE")
 		return (MODE);
+	else if (str == "PRIVMSG")
 	return (ERROR);
 }
 
@@ -138,5 +140,7 @@ SuperParser	*IrcParser::NewClassPtr( int type )
 		return ( new TopicParser() );
 	if (type == MODE)
 		return ( new ModeParser() );
+	if (type == PRIVMSG)
+		return ( new PrivParser() );
 	return (NULL);
 }

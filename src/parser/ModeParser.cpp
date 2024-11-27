@@ -15,7 +15,7 @@ std::string	ModeParser::MakeToken( char flag, char sign, std::string param )
 	return (std::string(1, flag) + ":" + std::string(1, sign) + ":" + param);
 }
 
-int	ModeParser::IsFlag(char	c)
+int	ModeParser::IsFlag(char	c) const
 {
 	if ('i' == c)
 		return (true);
@@ -30,7 +30,7 @@ int	ModeParser::IsFlag(char	c)
 	return (false);
 }
 
-inline bool	ModeParser::IsSignString( std::string str )
+inline bool	ModeParser::IsSignString( std::string &str ) const
 {
 	char	c;
 
@@ -40,44 +40,41 @@ inline bool	ModeParser::IsSignString( std::string str )
 	return (false);
 }
 
-
-// CMD
-// options:sign:parameter
-void	ModeParser::InitArr( std::string arr[][ARG_NUM] )
-{
-}
-
-int	ModeParser::IsValidFlag( std::vector<std::string>	&flag, std::vector<std::string> &params )
+int	ModeParser::IsValidFlag( std::string &flag ) const
 {
 	int	num = 0;
-	int	k_sign = 0;
 
 	{
-		std::vector<std::string>::iterator	start = flag.begin();
-		std::vector<std::string>::iterator	end = flag.end();
+		std::string::iterator	start = flag.begin();
+		std::string::iterator	end = flag.end();
+		char sign = *start;
+		start++;
 		for ( ; start != end ; ++start )
 		{
-			std::string::iterator	str_start = start->begin();
-			char	sign = *str_start++;
-			std::string::iterator	str_end = start->end();
-			for ( ; str_start != str_end ; ++str_start )
-			{
-				if (*str_start == 'o')
-					num++;
-				if (*str_start == 'l' && sign == '+')
-					num++;
-				if (*str_start == 'k' && sign == '+')
-					num++;
-				if (*str_start == 'k' && sign == '-')
-					k_sign++;
-				if (IsFlag(*str_start) == false)
-					throw (472 * 1000 + static_cast<int>(*str_start));
-			}
+			if (*start == 'o')
+				num++;
+			if (*start == 'l' && sign == '+')
+				num++;
+			if (*start == 'k' && sign == '+')
+				num++;
+			if (IsFlag(*start) == false)
+				throw (472 * 1000 + static_cast<int>(*start));
 		}
-		if (num < params.size())
-			throw (461);
 	}
 	return ( num );
+}
+
+bool	ModeParser::IsDigit( std::string str ) const
+{
+	std::string::iterator	start = str.begin();
+	std::string::iterator	end = str.end();
+
+	for ( ; start != end ; ++start )
+	{
+		if (!std::isdigit(*start))
+			return (false);
+	}
+	return (true);
 }
 
 int	ModeParser::CmdParser( void )
@@ -90,17 +87,34 @@ int	ModeParser::CmdParser( void )
 	{
 		std::vector<std::string>::iterator	start = tokens.begin();
 		std::vector<std::string>::iterator	end = tokens.end();
+		bool cycle = true;
+		++start;
 		for ( ; start != end; ++start)
 		{
-			if (IsSignString(*start))
-				flag.push_back(*start);
-			else if (start != tokens.begin())
-				params.push_back(*start);
+			int	ParaNum = 0;
+			/* flag */
+			if ( cycle )
+			{
+				if (IsSignString(*start))
+				{
+					ParaNum = IsValidFlag(*start);
+					flag.push_back(*start);
+					cycle = false;
+				}
+				else
+				{
+					std::cout << *start << ": ERROR: is not sign string" << std::endl;
+					return (ERROR);
+				}
+			}
+			/* parameters */
+			else
+			{
+				for (int i = 0; i < ParaNum; i++)
+					params.push_back(*start);
+				cycle = true;
+			}
 		}
-	}
-	/* Is valid Number of parameters? */
-	{
-		IsValidFlag( flag, params );
 	}
 	/* Make executing strings */
 	std::vector<std::string>	reVal;
@@ -124,6 +138,12 @@ int	ModeParser::CmdParser( void )
 					reVal.push_back(MakeToken(sign, flag, ""));
 				else if (sign == '-' && flag != 'o')
 					reVal.push_back(MakeToken(sign, flag, ""));
+				else if (sign == '+' && flag == 'l')
+				{
+					if (!IsDigit(*params_start))
+						continue;
+					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
+				}
 				else
 					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
 			}
