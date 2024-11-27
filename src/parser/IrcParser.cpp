@@ -119,6 +119,7 @@ int	IrcParser::GetCmdType( std::string &str )
 	else if (str == "MODE")
 		return (MODE);
 	else if (str == "PRIVMSG")
+		return (PRIVMSG);
 	return (ERROR);
 }
 
