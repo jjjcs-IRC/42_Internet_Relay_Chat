@@ -36,6 +36,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		if (channel == NULL) {
 			throw (403);
 		}
+
 	}
 	else {
 		if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
@@ -46,9 +47,10 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 			throw (475);
 		}
 		else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
-
 			throw (471);
+		}
 	}
+
 	// 채널에 유저 추가
 	if (channel->addParticipant(client) == false) {
 	//ERR_INVITEONLYCHAN(473) // 초대 여부
@@ -61,6 +63,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw (405);
 	}
 
+	throw (332);
 		/*
 		1. RPL_TOPIC (332)
 		"<client> <channel> :<topic>" //<channel>현재 주제 를 알려줍니다.
@@ -80,8 +83,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// :<닉네임>!~<유저네임>@<호스트정보> JOIN #channel 
 		// :user123123123!~choijimin@crs.42seoul.kr JOIN #jimchoiiii
 				// client->set_writeBuf();
-		throw (332);
 		
-	}
 	return 0;
 }
