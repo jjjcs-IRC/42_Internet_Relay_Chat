@@ -204,7 +204,7 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 // INVITE
 void Numerics::ERR_NEEDMOREPARAMS_461(int fd)
 {
-	// cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
@@ -361,7 +361,7 @@ void Numerics::RPL_ENDOFNAMES_366(int fd)
 // NICK
 void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :There is no nickname.\r\n");
+	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :No nickname given\r\n");
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
