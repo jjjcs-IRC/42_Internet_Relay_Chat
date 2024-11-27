@@ -56,7 +56,7 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
     std::vector<Client*> list =  channel->getParticipants();
     std::string topic_msg = ":" + client->get_userName() + "!" + client->get_userName() +\
                             "@" + client->get_realName() + " TOPIC " + channel->getChannelName()\
-                            + " :" + params.tokens[2];
+                            + " :" + params.tokens[2] + "\n";
 	for (int i = 0; i < list.size(); i++)
 		list[i]->set_writeBuf(topic_msg);
     throw 332;

@@ -59,7 +59,7 @@ int Privmsg::check_channel(tParams &params, ClientManager &cl, ChannelManager &c
 
 void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client)
 {
-	cl.find_client_byNick(client)->get_writeBuf() = params.tokens[2];
+	cl.find_client_byNick(client)->get_writeBuf() = params.tokens[2] + "\n";
 }
 
 void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
@@ -67,7 +67,7 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
 
 	for (int i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf(params.tokens[2]);
+		list[i]->set_writeBuf(params.tokens[2] + "\n");
 }
 
 int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)

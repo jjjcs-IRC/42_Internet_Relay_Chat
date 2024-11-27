@@ -46,7 +46,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     //대상자에게 PRIVMSG로 초대 메시지 전송 -> 명령어 불러오지 않고 임의로 처리
     std::string invite_msg = ":" + inviter->get_nickName() + "!" + inviter->get_userName() + "@"\
                             + inviter->get_realName() + " INVITE " + invitee->get_nickName() + " :"\
-                            + channel->getChannelName();
+                            + channel->getChannelName() + "\n";
     cl.find_client_byNick(params.tokens[1])->set_writeBuf(invite_msg);
     //채널의 초대 리스트에 대상자 추가
     channel->inviteClient(invitee);
