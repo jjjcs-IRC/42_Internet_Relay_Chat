@@ -50,12 +50,12 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
-		if (data.tokens.size() == 1)
-		{
-			std::cerr << "invalid argument: Multiple colons" << std::endl;
-			data.cmd_type = ERROR;
-			return (data);
-		}
+		// if (data.tokens.size() == 1)
+		// {
+		// 	std::cerr << "invalid argument: Multiple colons" << std::endl;
+		// 	data.cmd_type = ERROR;
+		// 	return (data);
+		// }
 		if (temp.size() == 2)
 		{
 			line = *it++;
