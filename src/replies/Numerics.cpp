@@ -346,12 +346,14 @@ void Numerics::RPL_ENDOFMOTD_376(int fd)
 void Numerics::RPL_NAMREPLY_353(int fd)
 {
 	std::vector<Client *> clientList = cn.findChannel(params.tokens[1])->getParticipants();
+	// std::string operator;
 	std::string nickList;
+	
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++)
 	{
-		nickList.append(" " + (*it)->get_nickName());
+		nickList.append((*it)->get_nickName() + " ");
 	}
-	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = #" + params.tokens[1] + " :" + nickList + "\r\n");
+	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = " + params.tokens[1] + " :" + nickList + "\r\n");
 }
 void Numerics::RPL_ENDOFNAMES_366(int fd)
 {
@@ -448,7 +450,7 @@ void Numerics::RPL_PRIVMSG(int fd)
 void Numerics::RPL_TOPIC_332(int fd)
 {
 	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
-	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + topic + "\r\n");
+	sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
