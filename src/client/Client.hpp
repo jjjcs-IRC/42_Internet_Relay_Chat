@@ -7,6 +7,7 @@
 class Client{
 protected:
 	int client_fd;
+	std::string client_ip;
 	std::string userName;
 	std::string nickName;
 	std::string realName;
@@ -16,13 +17,14 @@ protected:
 	std::string write_buf;
 public:
 	Client();
-	Client(int fd);
-	Client(int fd, std::string username, std::string nickname, std::string realname, bool passed);
+	Client(int fd, std::string ip);
+	Client(int fd, std::string ip, std::string username, std::string nickname, std::string realname, bool passed);
 	Client(const Client &obj);
 	Client& operator=(const Client &obj);
 	virtual ~Client();
 	//
 	int get_clientFd() const;
+	std::string get_clientIp() const;
 	std::string get_userName() const;
 	std::string get_nickName() const;
 	std::string get_realName() const;
