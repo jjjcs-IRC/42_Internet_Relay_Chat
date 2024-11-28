@@ -5,6 +5,7 @@
 
 class SuperParser;
 
+# define ERROR -1
 # define FLAG 0
 # define SIGN 1
 # define ARG 2
@@ -24,11 +25,10 @@ class ModeParser : public SuperParser
 		ModeParser( ModeParser const &copy );
 		ModeParser	&operator=( ModeParser const &copy );
 		std::string	MakeToken( char flag, char sign, std::string param );
-		int			IsFlag(char c);
-		inline bool	IsSignString( std::string str );
-		void		InitArr( std::string arr[][ARG_NUM] );
-		int			IsValidFlag( std::vector<std::string> &flag, std::vector<std::string> &params );
-		std::vector<std::string>	ModeParsing( std::vector<std::string>::iterator &it );
+		int			IsFlag(char c) const;
+		inline bool	IsSignString( std::string &str ) const;
+		int			IsValidFlag( std::string &flag ) const ;
+		bool		IsDigit( std::string str ) const;
 	protected:
 	public:
 		ModeParser( void );
