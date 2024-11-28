@@ -63,8 +63,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     kickee->kick_client_from_channel(params.tokens[1]);
     
     //강퇴당한 사용자에게 강퇴 메세지 전달
-    std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_realName() +\
-                            " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
+    std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_clientIp()\
+                             + " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
     if (params.tokens.size() == 4)
         kick_msg += " :" + params.tokens[3];
     for (int i = 0; i < client_list.size(); i++)
