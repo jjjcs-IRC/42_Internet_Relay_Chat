@@ -12,12 +12,16 @@ Topic::~Topic() {}
 
 int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
+    Client* client = cl.find_client(params.client_fd);
+    //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+    if (!client->check_pass_client())
+        throw 451;
+
     //채널 존재 여부 확인 ERR_NOSUCHCHANNEL (403)
     Channel* channel = cn.findChannel(params.tokens[1]);
     if (channel == NULL)
         throw 403;
 
-    Client* client = cl.find_client(params.client_fd);
     // 파라미터가 1개일 경우 (토픽 조회)
     if (params.tokens.size() < 3)
     {
@@ -52,7 +56,7 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
     std::vector<Client*> list =  channel->getParticipants();
     std::string topic_msg = ":" + client->get_userName() + "!" + client->get_userName() +\
                             "@" + client->get_realName() + " TOPIC " + channel->getChannelName()\
-                            + " :" + params.tokens[2];
+                            + " :" + params.tokens[2] + "\n";
 	for (int i = 0; i < list.size(); i++)
 		list[i]->set_writeBuf(topic_msg);
     throw 332;

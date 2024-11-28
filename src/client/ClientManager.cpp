@@ -16,7 +16,7 @@ ClientManager::ClientManager(const ClientManager &obj)
 
     for (it = obj.get_clientList().begin(); it != obj.get_clientList().end(); it++)
     {
-        Client tmp_client((*it).get_clientFd(), (*it).get_userName(), (*it).get_nickName(), (*it).get_realName(), (*it).get_passed());
+        Client tmp_client((*it).get_clientFd(), (*it).get_clientIp(), (*it).get_userName(), (*it).get_nickName(), (*it).get_realName(), (*it).get_passed());
 	    this->client_list.push_back(tmp_client);
     }
 	// std::cout << "Create and Copy ClientManager" << std::endl;
@@ -28,7 +28,7 @@ ClientManager& ClientManager::operator=(const ClientManager &obj)
 
     for (it = obj.get_clientList().begin(); it != obj.get_clientList().end(); it++)
     {
-        Client tmp_client((*it).get_clientFd(), (*it).get_nickName(), (*it).get_userName(), (*it).get_realName(), (*it).get_passed());
+        Client tmp_client((*it).get_clientFd(), (*it).get_clientIp(), (*it).get_nickName(), (*it).get_userName(), (*it).get_realName(), (*it).get_passed());
 	    this->client_list.push_back(tmp_client);
     }
 	// std::cout << "Create and Copy ClientManager" << std::endl;
@@ -54,9 +54,9 @@ std::string ClientManager::get_server_passwd() const
 
 //
 
-void ClientManager::add_client(int fd)
+void ClientManager::add_client(int fd, std::string ip)
 {
-    Client tmp_client(fd);
+    Client tmp_client(fd, ip);
 
     this->client_list.push_back(tmp_client);
 }
@@ -118,7 +118,7 @@ void ClientManager::set_writeBuf(int fd, std::string buf)
 
 void ClientManager::delete_client(int fd)
 {
-    Client tmp_client(fd);
+    Client tmp_client(fd, "");
 
     std::list<Client>::iterator it = std::find(this->client_list.begin(), this->client_list.end(), tmp_client);
     this->client_list.erase(it);
@@ -152,7 +152,7 @@ bool ClientManager::delete_channel(int fd, std::string ch_name)
 
 Client* ClientManager::find_client(int fd)
 {
-    Client tmp_client(fd);
+    Client tmp_client(fd, "");
 
     std::list<Client>::iterator it = std::find(this->client_list.begin(), this->client_list.end(), tmp_client);
     if (it != client_list.end())
