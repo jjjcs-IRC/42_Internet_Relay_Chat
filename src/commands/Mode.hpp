@@ -6,6 +6,9 @@
 #include <vector>
 #include <algorithm>
 
+#define PLUS 1
+#define MINUS 0
+
 class Mode : public Command {
 
 	public :
@@ -27,7 +30,7 @@ class Mode : public Command {
 		bool findOperator(const Client *client);
 		bool isNumber(const std::string& str);
 
-		bool op;
+		int flag;
 		std::string resultOp;
 		std::string resultToken;
 		std::vector<std::string> modeCmd;
@@ -35,6 +38,7 @@ class Mode : public Command {
 		Client *client;
 
 };
+
 
 
 #endif

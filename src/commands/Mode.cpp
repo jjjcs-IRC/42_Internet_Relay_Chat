@@ -2,7 +2,7 @@
 #include "../server/Server.hpp"
 
 
-Mode::Mode():op(true) ,channel(NULL), client(NULL)  {}
+Mode::Mode() {}
 
 Mode::~Mode() {}
 
@@ -25,17 +25,15 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel == NULL) { //  채널이 없을 때
 		throw 403;
 	}
-	if (client == NULL) { //  클라이언트가 없을 때
-		std::cout << "유효하지 않은 클라이언트" << std::endl;
-		throw 0;
+	if (findOperator(client)) { // 클라이언트가 오퍼레이터가 아닐 때
+		throw 482;
 	}
-	this->op = true;
-	if (params.tokens[1][0] == '+')
-		this->op = false;
+	this->flag = -1;
+
 	memset(&this->resultOp, 0, sizeof(this->resultOp));
 	memset(&this->resultToken, 0, sizeof(this->resultToken));
 	for (size_t i = 1; i < params.tokens.size(); i++) {
-		std::cout << "params.tokens[" << i << "] : " << params.tokens[i] << std::endl;
+		// std::cout << "params.tokens[" << i << "] : " << params.tokens[i] << std::endl;
 		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
 		modeCmd = modeSplit(params.tokens[i], ':');
 
@@ -61,36 +59,46 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		}
 	}
 
-std::cout << "resultOp : "<< resultOp << std::endl;
-std::cout <<"resultToken : " << resultToken << std::endl;
+// std::cout << "resultOp : "<< resultOp << std::endl;
+// std::cout <<"resultToken : " << resultToken << std::endl;
 
+// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
+// :jimchoi1!~1@crs.42seoul.kr MODE #jimchoii +i
+// :<nickname>!<username>@<host> MODE <channel> <mode> <mode params>
+if (resultOp.size() > 0) {
+    std::vector<Client*> list =  channel->getParticipants();
+    std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
+                            "@" + "<host 정보가 들어가야함>" + " MODE " + channel->getChannelName()
+							+ " " + resultOp + " " + resultToken;
+	for (int i = 0; i < list.size(); i++)
+		list[i]->set_writeBuf(mode_msg);
+}
 	return 0;
 }
 
 std::string Mode::modeI () {
-	if (channel->hasMode('i') && modeCmd[0] == "+") {
-		return "";
-	}
-	else if (!channel->hasMode('i') && modeCmd[0] == "-") {
+
+	// 이미 적용된 옵션인 경우
+	if ((channel->hasMode('i') && modeCmd[0] == "+") ||(!channel->hasMode('i') && modeCmd[0] == "-")) {
 		return "";
 	}
 
 	if (modeCmd[0] == "+") {
 		channel->addMode('i');
-		if (this->op == true) {
+		if (this->flag == PLUS) {
 			return "i";
 		}
 		else {
-			this->op = false;
+			this->flag = PLUS;
 			return "+i";
 		}
 	}
 	else {
 		channel->removeMode('i');
-		if (this->op == false)
+		if (this->flag == MINUS)
 			return "i";
 		else {
-			this->op = false;
+			this->flag = MINUS;
 			return "-i";
 		}
 	}
@@ -105,10 +113,10 @@ std::string Mode::modeO () {
 		if (findOperator(client) == true)
 			return "";
 		channel->addOperator(client);
-		if (this->op == true)
+		if (this->flag == PLUS)
 			return "o";
 		else {
-			this->op = true;
+			this->flag = PLUS;
 			return "+o";
 		}
 	}
@@ -116,10 +124,10 @@ std::string Mode::modeO () {
 		if (findOperator(client) == false)
 			return "";
 		channel->removeOperatorByName(client->get_userName());
-		if (this->op == false)
+		if (this->flag == MINUS)
 			return "o";
 		else {
-			this->op = false;
+			this->flag = MINUS;
 			return "-o";
 		}
 	}
@@ -135,20 +143,20 @@ std::string Mode::modeL () {
 	if (modeCmd[0] == "+") {
 		channel->addMode('l');
 		channel->setMaxParticipants(atoi(modeCmd[2].c_str()));
-		if (this->op == true)
+		if (this->flag == PLUS)
 			return "l";
 		else {
-			this->op = true;
+			this->flag = PLUS;
 			return "+l";
 		}
 	}
 	else {
 		channel->removeMode('l');
 		channel->setMaxParticipants(100); // 기본값
-		if (this->op == false)
+		if (this->flag == MINUS)
 			return "l";
 		else {
-			this->op = false;
+			this->flag = MINUS;
 			return "-l";
 		}
 	}
@@ -162,48 +170,45 @@ std::string Mode::modeK () {
 		if (channel->setPassword(modeCmd[2]) == false)
 			return "";
 		channel->addMode('k');
-		if (this->op == true)
+		if (this->flag == PLUS)
 			return "k";
 		else {
-			this->op = true;
+			this->flag = PLUS;
 			return "+k";
 		}
 	}
 	else {
 		channel->removeMode('k');
 		channel->removePassword();
-		if (this->op == false)
+		if (this->flag == MINUS)
 			return "k";
 		else {
-			this->op = false;
+			this->flag = MINUS;
 			return "-k";
 		}
 	}
 }
 
 std::string Mode::modeT () {
-	if (channel->hasMode('t') && modeCmd[0] == "+") {
+	if ((channel->hasMode('t') && modeCmd[0] == "+") || (!channel->hasMode('t') && modeCmd[0] == "-")) {
 		return "";
 	}
-	else if (!channel->hasMode('t') && modeCmd[0] == "-") {
-		return "";
-	}
-
+	
 	if (modeCmd[0] == "+") {
 		channel->addMode('t');
-		if (this->op == true)
+		if (this->flag == PLUS)
 			return "t";
 		else{
-			this->op = true;
+			this->flag = PLUS;
 			return "+t";
 		}
 	}
 	else {
 		channel->removeMode('t');
-		if (this->op == false)
+		if (this->flag == MINUS)
 			return "t";
 		else {
-			this->op = false;
+			this->flag = MINUS;
 			return "-t";
 		}
 	}
