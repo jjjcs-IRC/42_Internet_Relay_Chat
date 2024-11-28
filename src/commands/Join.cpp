@@ -51,6 +51,12 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		}
 	}
 
+	if(channel->findClient(client->get_nickName())){
+		// 이미 채널에 클라이언트가 존재하면 끝내기
+		std::cout << "이미 참여중인 채널임" << std::endl;
+		return 0;
+	}
+
 	// 채널에 유저 추가
 	if (channel->addParticipant(client) == false) {
 	//ERR_INVITEONLYCHAN(473) // 초대 여부
