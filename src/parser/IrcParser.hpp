@@ -20,9 +20,7 @@
 # include "InviteParser.hpp"
 # include "TopicParser.hpp"
 # include "ModeParser.hpp"
-
-
-
+# include "PrivParser.hpp"
 
 class IrcParser
 {
