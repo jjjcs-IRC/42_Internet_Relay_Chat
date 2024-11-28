@@ -152,9 +152,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		break;
 	case 462:
 		ERR_ALREADYREGISTERED_462(fd);
-		break;	
+		break;
+	case 451:
+		ERR_NOTREGISTERED_451(fd);
+		break;
 	default:
-		cl.set_writeBuf(fd, "No defined Numeric Reply\n");
+		// std::cout << fd << " No defined Numeric Reply" << std::endl;
 		break;
 	}
 }
@@ -178,7 +181,7 @@ void Numerics::RPL_WELCOME_001(int fd)
 }
 void Numerics::RPL_YOURHOST_002(int fd)
 {
-	// sendMsg(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
+	sendMsg(fd, ":localhost 002 " + cl.find_client(fd)->get_nickName() + " :Your host is " + serverInfo.serverName + " (localhost), running version " + serverInfo.version + "\r\n");
 }
 void Numerics::RPL_CREATED_003(int fd)
 {
@@ -199,17 +202,19 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 
 
 // INVITE
-void Numerics::ERR_NEEDMOREPARAMS_461(int fd)
+void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 토큰이 안 들어온 것 같은데.
 {
-	cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	std::cout << "reply 461" << std::endl;
+	// cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
+	// cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
+	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :The user is not on this channel.\r\n");
+	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :The user is not on this channel.\r\n");
 }
 void Numerics::ERR_USERONCHANNEL_443(int fd)
 {
@@ -358,7 +363,7 @@ void Numerics::RPL_ENDOFNAMES_366(int fd)
 // NICK
 void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :There is no nickname.\r\n");
+	cl.set_writeBuf(fd, ":localhost 431 " + cl.find_client(fd)->get_nickName() + " :No nickname given\r\n");
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
@@ -401,6 +406,11 @@ void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 	cl.set_writeBuf(fd, ":localhost 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
 }
 
+void Numerics::ERR_NOTREGISTERED_451(int fd)
+{
+	cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
+}
+
 // PING
 void Numerics::RPL_PONG(int fd)
 {
@@ -438,7 +448,8 @@ void Numerics::RPL_PRIVMSG(int fd)
 // TOPIC
 void Numerics::RPL_TOPIC_332(int fd)
 {
-	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
+	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + topic + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {

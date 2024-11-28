@@ -15,37 +15,33 @@ Nick::Nick(const Nick &other) {
 }
 
 int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	// ChannelManager CnManager;
 	
+	std::cout << "Nick executeCommand" << std::endl;
 	Client *client = cl.find_client(params.client_fd);
-
+	if (client->get_passed() == false) {
+		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
+		std::cout <<"PASS 를 먼저 입력해야함"<<std::endl;
+		throw 451;
+	}
+	
 	if (params.tokens[1] == "") {
-		// `ERR_NONICKNAMEGIVEN (431)`
 		// `NICK` 명령어로 전송된 닉네임이 없을 때 발생합니다.
-		// "<client> :No nickname given"
-		return 431;
+		throw 431;
 	}
-// else if (nick_check(params.tokens[1]) == false) {
-// 		// `ERR_ERRONEUSNICKNAME (432)`
-// 		// `NICK` 명령어로 전송된 닉네임이 잘못되었을 때 발생합니다.
-// 		// "<client> <nick> :Erroneous nickname"
-// 		return 432;
-// 	}
 	else if (cl.find_client_byNick(params.tokens[1]) != NULL) {
-		// `ERR_NICKNAMEINUSE (433)`
 		// `NICK` 명령어로 전송된 닉네임이 이미 사용 중일 때 발생합니다.
-		// "<client> <nick> :Nickname is already in use"
-		return 433;
+		throw 433;
 	}
-	else {
-		//클라이언트 닉네임 세팅
-		client->set_nickName(params.tokens[1]);
-
-		if (client->get_passed()) {
-			client->set_passed();
-			throw 1;
-		}
-		return 0;
+	//클라이언트 닉네임 세팅
+	if (!cl.set_nick_client(params.client_fd, params.tokens[1])) {
+		// `NICK` 명령어로 전송된 닉네임이 서버에서 허용되지 않을 때 발생합니다.
+		throw 432;
 	}
-
+	//클라이언트 등록 완료 문구 전송
+	if (client->check_pass_client()) {
+		client->set_passed();
+		throw 1;
+	}
+	std::cout << "Nick executeCommand end" << std::endl;
+	return 0;
 }

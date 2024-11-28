@@ -15,58 +15,71 @@ Join::Join(const Join &other) {
 
 
 int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	Channel *channel = cn.findChannel(params.tokens[1]);
+	Channel *channel = cn.findChannel(params.tokens[1]);;
 	Client *client = cl.find_client(params.client_fd);
 	std::string channelName = params.tokens[1]; // # 떼고 채널 이름만 가져옴
 	std::string inputPassword = params.tokens.size() > 1 ? params.tokens[2] : ""; // 채널 비밀번호
 
-	std::cout << "Join command" << std::endl;
-	// CnManager.joinChannel(channelName); // 채널에 유저 추가
-	// if (cn.findChannel(channelName)){//채널 존재 여부 확인
-	// 	//ERR_NOSUCHCHANNEL(403)
-	// 	// "<client> <channel> :No such channel"
-	// 	return (403);
-	// } 
-	if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
-		//ERR_TOOMANYCHANNELS(405)
-		//  "<client> <channel> :You have joined too many channels"
-		return (405);
+	std::cout << "Join command::executeCommand" << std::endl;
+
+	if (client->get_passed() == false) {
+		// `ERR_NOTREGISTERED (451)`
+		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
+		throw 451;
 	}
-	else if (channel->getPassword() != inputPassword) { // 채널 비밀번호 확인
-		//ERR_BADCHANNELKEY(475)
-		// "<client> <channel> :Cannot join channel (+k)"
-		return (475);
-	}
-	else if (0) { // 사용자 밴 여부 확인
-		//ERR_BANNEDFROMCHAN(474)
-		// "<client> <channel> :Cannot join channel (+b)"
-		return (474);
-	}
-	else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
-		//ERR_CHANNELISFULL(471)
-		// "<client> <channel> :Cannot join channel (+l)"
-		return (471);
+	if (channel == NULL) {//채널 존재 여부 확인
+		if (!cn.addChannel(channelName, client)){
+
+			throw (476);
+		} 
+		channel = cn.findChannel(params.tokens[1]);
+		if (channel == NULL) {
+			throw (403);
+		}
 
 	}
 	else {
-		if(cn.findChannel(channelName) == NULL) {
-			// cn.addChannel(channelName);
-			
+		if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
+			throw (405);
 		}
-		// 채널에 유저 추가
-		if (channel->addParticipant(client) == false) {
-		//ERR_INVITEONLYCHAN(473)
-		// "<client> <channel> :Cannot join channel (+i)"
-			return (473);
+		else if (channel->getPassword() != inputPassword && channel->getPassword() != "") { // 채널 비밀번호 확인
+			//   k 모드 아니면 확인 안해도 됨
+			throw (475);
 		}
-		//유저에게 채널 추가
-		if (client->set_channels(channelName) == false) {
-			//위에서 검사하긴 함
-			//ERR_TOOMANYCHANNELS(405)
-			// "<client> <channel> :You have joined too many channels"
-			return (405);
+		else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
+			throw (471);
 		}
-		return (0);
-
 	}
+
+	if(channel->findClient(client->get_nickName())){
+		// 이미 채널에 클라이언트가 존재하면 끝내기
+		std::cout << "이미 참여중인 채널임" << std::endl;
+		return 0;
+	}
+
+	// 채널에 유저 추가
+	if (channel->addParticipant(client) == false) {
+	//ERR_INVITEONLYCHAN(473) // 초대 여부
+		throw (473);
+	}
+	//유저에게 채널 추가
+	if (client->set_channels(channelName) == false) {
+		//위에서 검사하긴 함
+		// "<client> <channel> :You have joined too many channels"
+		throw (405);
+	}
+
+		//채널의 모두에게
+		// :dan-!d@localhost JOIN #test    ; //dan- is joining the channel #test
+		// :<닉네임>!~<유저네임>@<호스트정보> JOIN #channel 
+		// :user123123123!~choijimin@crs.42seoul.kr JOIN #jimchoiiii
+				// client->set_writeBuf();
+	std::vector<Client*> list =  channel->getParticipants();
+    std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
+                            "@" + "<host 정보가 들어가야함>" + " JOIN " + channel->getChannelName();
+	for (int i = 0; i < list.size(); i++)
+		list[i]->set_writeBuf(mode_msg);
+	
+	throw (332);
+	return 0;
 }

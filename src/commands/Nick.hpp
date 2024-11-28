@@ -1,4 +1,3 @@
-
 #ifndef NICK_HPP
 # define NICK_HPP
 
