@@ -34,41 +34,30 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     if (!channel->isOperator(kicker))
         throw 482;
 
-    std::istringstream ss(params.tokens[2]);
-    std::string tmp;
-    int res = 0;
-    while (getline(ss, tmp, ',')) //','로 구분
-    {
-        Client *kickee = cl.find_client_byNick(tmp);
-        //사용자가 채널에 존재하지 않는 경우 (441)
-        if (channel->findClient(kickee->get_nickName()) == NULL)
-        {
-            res = 441;
-            continue;
-        }
 
-        //삭제하려는 사용자가 본인인 경우
-        if (kicker->get_nickName() == tmp)
-        {
-            res = 441;
-            continue;
-        }
+    Client *kickee = cl.find_client_byNick(tokens[2]);
+    //사용자가 채널에 존재하지 않는 경우 (441)
+    if (channel->findClient(kickee->get_nickName()) == NULL)
+        throw 441;
 
-        //채널에서 사용자 삭제
-        channel->removeParticipantByName(kickee->get_nickName());
+    //삭제하려는 사용자가 본인인 경우
+    if (kicker->get_nickName() == tmp)
+        throw 441;
 
-        //사용자의 채널 목록에서 채널 삭제
-        kickee->kick_client_from_channel(params.tokens[1]);
+    //채널에서 사용자 삭제
+    channel->removeParticipantByName(kickee->get_nickName());
 
-        //강퇴당한 사용자에게 강퇴 메세지 전달
-        std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_realName() +\
-                             " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
-        if (params.tokens.size() == 4)
-            kick_msg += " :" + params.tokens[3];
-        std::vector<Client*> client_list = channel->getParticipants();
-        for (int i = 0; i < client_list.size(); i++)
-            client_list[i]->set_writeBuf(kick_msg);
-        kickee->set_writeBuf(kick_msg);
-    }
+    //사용자의 채널 목록에서 채널 삭제
+    kickee->kick_client_from_channel(params.tokens[1]);
+
+    //강퇴당한 사용자에게 강퇴 메세지 전달
+    std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_realName() +\
+                            " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
+    if (params.tokens.size() == 4)
+        kick_msg += " :" + params.tokens[3];
+    std::vector<Client*> client_list = channel->getParticipants();
+    for (int i = 0; i < client_list.size(); i++)
+        client_list[i]->set_writeBuf(kick_msg);
+    kickee->set_writeBuf(kick_msg);
     throw res;
 }
