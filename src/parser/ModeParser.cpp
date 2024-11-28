@@ -79,6 +79,14 @@ bool	ModeParser::IsDigit( std::string str ) const
 
 int	ModeParser::CmdParser( void )
 {
+	if (DEBUG)
+	{
+		std::cout << "ModeParser On" << std::endl;
+		std::cout << "tokens.size: " << tokens.size() << std::endl;
+		std::cout << "========TOKENs==========" << std::endl;
+		for (int i = 0; i < tokens.size(); i++)
+			std::cout <<"[" << i<< "]" << tokens[i] << std::endl;
+	}
 	if (tokens.size() < 2)
 		throw (461);
 	/* sorting strings(flag and parameters ) */
@@ -88,10 +96,13 @@ int	ModeParser::CmdParser( void )
 		std::vector<std::string>::iterator	start = tokens.begin();
 		std::vector<std::string>::iterator	end = tokens.end();
 		bool cycle = true;
-		++start;
+		for (int i = 0; start != end &&  i < 2 ; i++)
+		{
+			++start;
+		}
+		int	ParaNum = 0;
 		for ( ; start != end; ++start)
 		{
-			int	ParaNum = 0;
 			/* flag */
 			if ( cycle )
 			{
@@ -103,24 +114,38 @@ int	ModeParser::CmdParser( void )
 				}
 				else
 				{
-					std::cout << *start << ": ERROR: is not sign string" << std::endl;
-					return (ERROR);
+					// std::cout << *start << ": ERROR: is not sign string" << std::endl;
+					// return (ERROR);
+					break ;
 				}
 			}
 			/* parameters */
 			else
 			{
-				for (int i = 0; i < ParaNum; i++)
+				for (int i = 0; start != end && i < ParaNum; i++)
 					params.push_back(*start);
+				ParaNum = 0;
 				cycle = true;
 			}
+		}
+	}
+	if ( DEBUG )
+	{
+		
+		std::cout << "DEBUGER::PARAMS" << std::endl;
+		std::cout << "params_size: " << params.size() << std::endl;
+		for (int i = 0 ; i < params.size(); i++)
+		{
+			std::cout << params[i] << std::endl;
 		}
 	}
 	/* Make executing strings */
 	std::vector<std::string>	reVal;
 	{
-
-		reVal.push_back("MODE");
+		if (tokens.size() > 1 && (tokens[1].at(0) == '#' || tokens[1].at(0) == '&'))
+			reVal.push_back(tokens[1]);
+		else
+			reVal.push_back("MODE");
 		std::vector<std::string>::iterator	flag_start = flag.begin();
 		std::vector<std::string>::iterator	flag_end = flag.end();
 		std::vector<std::string>::iterator	params_start = params.begin();
@@ -129,9 +154,9 @@ int	ModeParser::CmdParser( void )
 		{
 			std::string::iterator	str_start = flag_start->begin();
 			char	sign = *str_start;
-			str_start++;
+			++str_start;
 			std::string::iterator	str_end = flag_start->end();
-			for ( ; str_start != str_end ; ++str_start )
+			for ( ; str_start != str_end; ++str_start )
 			{
 				char flag = *str_start;
 				if (flag == 'i' || flag == 't')
@@ -140,21 +165,27 @@ int	ModeParser::CmdParser( void )
 					reVal.push_back(MakeToken(sign, flag, ""));
 				else if (sign == '+' && flag == 'l')
 				{
-					if (!IsDigit(*params_start))
+					if (params_start != params_end && !IsDigit(*params_start))
 						continue;
-					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
+					if (params_start != params_end)
+						reVal.push_back(MakeToken(sign, flag, *(params_start++)));
 				}
 				else
-					reVal.push_back(MakeToken(sign, flag, *(params_start++)));
+				{
+					if (params_start != params_end)
+						reVal.push_back(MakeToken(sign, flag, *(params_start++)));
+				}
 			}
 		}
 	}
 	/* Make return string -> 
 	execute functions must do it what stack data type */
 	tokens = reVal;
-	for (int i = 0; i < reVal.size(); i++)
-	{
-		std::cout << reVal[i] << std::endl;
-	}
+	// for (int i = 0; i < reVal.size(); i++)
+	// {
+	// 	std::cout << reVal[i] << std::endl;
+	// }
+	if ( DEBUG )
+		std::cout << "MODE parser off " << std::endl;
 	return (0);
 }

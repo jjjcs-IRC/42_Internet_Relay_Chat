@@ -4,6 +4,8 @@
 #include "SuperParser.hpp"
 
 class SuperParser;
+/* DEBUG FLAG */
+# define DEBUG 0
 
 # define ERROR -1
 # define FLAG 0
