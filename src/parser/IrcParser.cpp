@@ -50,7 +50,7 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
-		std::cout << data.tokens.size() << std::endl;
+		// std::cout << data.tokens.size() << std::endl;
 		if (data.tokens.size() == 0)
 		{
 			std::cerr << "Error: there is no argument" << std::endl;
