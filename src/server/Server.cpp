@@ -182,7 +182,8 @@ void Server::handleNewConnection(void)
 	registerClientSocket(clientSock);
 
 	// 클라이언트 객체 생성
-	client_manager.add_client(clientSock);
+	std::string ip = inet_ntoa(clientAddr.sin_addr);
+	client_manager.add_client(clientSock, ip);
 	std::cout << "new client obj is created" << std::endl;
 }
 
