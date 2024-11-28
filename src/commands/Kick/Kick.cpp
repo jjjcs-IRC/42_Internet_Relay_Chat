@@ -35,14 +35,24 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         throw 482;
 
 
-    Client *kickee = cl.find_client_byNick(tokens[2]);
+    Client *kickee = cl.find_client_byNick(params.tokens[2]);
     //사용자가 채널에 존재하지 않는 경우 (441)
     if (channel->findClient(kickee->get_nickName()) == NULL)
         throw 441;
 
-    //삭제하려는 사용자가 본인인 경우
-    if (kicker->get_nickName() == tmp)
-        throw 441;
+    std::vector<Client*> client_list = channel->getParticipants();
+    //강퇴하려는 사용자가 본인이면서 권한을 가진 사람이 본인 하나라면 가장 오래된 사용자에게 권한 위임
+    if (kicker->get_nickName() == params.tokens[2] && channel->getOperators().size() == 1)
+    {
+        for (int i = 0; i < client_list.size(); i++)
+        {
+            if (client_list[i] != kicker)
+            {
+                channel->addOperator(client_list[i]);
+                break;
+            }
+        }
+    }
 
     //채널에서 사용자 삭제
     channel->removeParticipantByName(kickee->get_nickName());
@@ -55,9 +65,13 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
                             " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
     if (params.tokens.size() == 4)
         kick_msg += " :" + params.tokens[3];
-    std::vector<Client*> client_list = channel->getParticipants();
     for (int i = 0; i < client_list.size(); i++)
         client_list[i]->set_writeBuf(kick_msg);
     kickee->set_writeBuf(kick_msg);
-    throw res;
+
+    //채널에 참여자가 아무도 없는 경우, 채널 삭제
+    if (channel->getParticipants().size() == 0)
+        cn.deleteChannel(channel->getChannelName());
+
+    throw 0;
 }
