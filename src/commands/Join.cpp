@@ -69,26 +69,17 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw (405);
 	}
 
-	throw (332);
-		/*
-		1. RPL_TOPIC (332)
-		"<client> <channel> :<topic>" //<channel>현재 주제 를 알려줍니다.
-
-
-		3.	RPL_NAMREPLY (353) - 채널 멤버 목록
-		"<client> <channel> :<nick1> <nick2> <nick3> ... <nickN>" //<channel>의 멤버 목록을 알려줍니다.
-		//나누어 보낼지 한번에 보낼지 결정해야함
-
-		4. RPL_ENDOFNAMES (366) - 채널 멤버 목록 끝
-		"<client> <channel> :End of /NAMES list." //<channel>의 멤버 목록을 모두 알려준 후 마무리를 알려줍니다.
-	*/
-
-
 		//채널의 모두에게
 		// :dan-!d@localhost JOIN #test    ; //dan- is joining the channel #test
 		// :<닉네임>!~<유저네임>@<호스트정보> JOIN #channel 
 		// :user123123123!~choijimin@crs.42seoul.kr JOIN #jimchoiiii
 				// client->set_writeBuf();
-		
+	std::vector<Client*> list =  channel->getParticipants();
+    std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
+                            "@" + "<host 정보가 들어가야함>" + " JOIN " + channel->getChannelName();
+	for (int i = 0; i < list.size(); i++)
+		list[i]->set_writeBuf(mode_msg);
+	
+	throw (332);
 	return 0;
 }
