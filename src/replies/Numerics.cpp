@@ -346,18 +346,30 @@ void Numerics::RPL_ENDOFMOTD_376(int fd)
 void Numerics::RPL_NAMREPLY_353(int fd)
 {
 	std::vector<Client *> clientList = cn.findChannel(params.tokens[1])->getParticipants();
-	// std::string operator;
+	std::vector<Client *> operators = cn.findChannel(params.tokens[1])->getOperators();
+	int op_flag = 0;
 	std::string nickList;
 	
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++)
 	{
-		nickList.append((*it)->get_nickName() + " ");
+		for (std::vector<Client *>::iterator op = operators.begin(); op != operators.end(); op++)
+		{
+			if ((*it)->get_nickName() == (*op)->get_nickName())
+			{
+				op_flag = 1;
+			}
+		}
+			if (op_flag == 1)
+				nickList.append("@" + (*it)->get_nickName() + " ");
+			else
+				nickList.append((*it)->get_nickName() + " ");
+			op_flag = 0;
 	}
 	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = " + params.tokens[1] + " :" + nickList + "\r\n");
 }
 void Numerics::RPL_ENDOFNAMES_366(int fd)
 {
-	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :End of /NAMES list.\r\n");
+	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :End of /NAMES list.\r\n");
 }
 
 
