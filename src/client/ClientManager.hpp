@@ -19,7 +19,7 @@ public:
 	std::list<Client> get_clientList() const;
 	std::string get_server_passwd()const;
 	//
-	void add_client(int fd);
+	void add_client(int fd, std::string ip);
     void pass_client(int fd);
 	void set_user_client(int fd, std::string username);
     bool set_nick_client(int fd, std::string nickname);

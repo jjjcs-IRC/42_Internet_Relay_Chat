@@ -5,12 +5,12 @@ Client::Client() : client_fd(-1), passed(false)
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd) : client_fd(fd), passed(false)
+Client::Client(int fd, std::string ip) : client_fd(fd), client_ip(ip), passed(false)
 {
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd, std::string username, std::string nickname, std::string realname, bool passed) : client_fd(fd), userName(username), nickName(nickname), realName(realname), passed(passed)
+Client::Client(int fd, std::string ip, std::string username, std::string nickname, std::string realname, bool passed) : client_fd(fd), client_ip(ip), userName(username), nickName(nickname), realName(realname), passed(passed)
 {
 	//std::cout << "Create Client!!!" << std::endl;
 }
@@ -50,6 +50,11 @@ Client::~Client()
 int Client::get_clientFd() const
 {
 	return (this->client_fd);
+}
+
+std::string Client::get_clientIp() const
+{
+	return (this->client_ip);
 }
 
 std::string Client::get_userName() const
