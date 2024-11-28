@@ -59,7 +59,7 @@ int Privmsg::check_channel(tParams &params, ClientManager &cl, ChannelManager &c
 
 void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client)
 {
-	cl.find_client_byNick(client)->get_writeBuf() = params.tokens[2];
+	cl.find_client_byNick(client)->set_writeBuf(params.tokens[2] + "\n");
 }
 
 void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
@@ -67,11 +67,16 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
 
 	for (int i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf(params.tokens[2]);
+		list[i]->set_writeBuf(params.tokens[2] + "\n");
 }
 
 int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
+	Client *executor = cl.find_client(params.client_fd);
+	//사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+    if (!executor->check_pass_client())
+        throw 451;
+
 	//수신자 지정 안됨
 	if (params.tokens[1].length() == 0)
 		throw 411;
@@ -84,11 +89,20 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 
 	//단일 상대에게 전송
 	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
-		throw check_client(params, cl, this->v_client[0]);
+	{
+		if (check_client(params, cl, this->v_client[0]) != 0)
+			throw 441;
+		sendMsgToCl(params, cl, this->v_client[0]);
+	}
 
 	//단일 채널에 전송
 	if (this->v_client.size() == 0 && this->v_channel.size() == 1)
-		throw check_channel(params, cl, cn, this->v_channel[0]);
+	{
+		int res = check_channel(params, cl, cn, this->v_channel[0]);
+		if (res != 0)
+			throw res;
+		sendMsgToCh(params, cl, cn, v_channel[0]);
+	}
 
 	//다중 대상에게 전송
 	//사용자에 전송

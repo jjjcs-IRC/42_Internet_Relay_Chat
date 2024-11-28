@@ -15,6 +15,11 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     Channel *channel = cn.findChannel(params.tokens[2]);
     Client* inviter = cl.find_client(params.client_fd);
     Client* invitee = cl.find_client_byNick(params.tokens[1]);
+
+    //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+    if (!inviter->check_pass_client())
+        throw 451;
+
     std::cout << "Invite command::executeCommand" << std::endl;
     //개인 존재 유무 확인 (401)
     if (cl.find_client_byNick(params.tokens[1]) == NULL)
@@ -41,7 +46,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     //대상자에게 PRIVMSG로 초대 메시지 전송 -> 명령어 불러오지 않고 임의로 처리
     std::string invite_msg = ":" + inviter->get_nickName() + "!" + inviter->get_userName() + "@"\
                             + inviter->get_realName() + " INVITE " + invitee->get_nickName() + " :"\
-                            + channel->getChannelName();
+                            + channel->getChannelName() + "\n";
     cl.find_client_byNick(params.tokens[1])->set_writeBuf(invite_msg);
     //채널의 초대 리스트에 대상자 추가
     channel->inviteClient(invitee);
