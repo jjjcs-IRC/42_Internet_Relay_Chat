@@ -14,6 +14,7 @@
 # define TOPIC 6
 # define MODE 7
 # define PRIVMSG 8
+# define PONG 9
 
 /* abt fd value */
 # define STDIN 0 // do not use
