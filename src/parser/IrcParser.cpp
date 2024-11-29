@@ -150,5 +150,7 @@ SuperParser	*IrcParser::NewClassPtr( int type )
 		return ( new ModeParser() );
 	if (type == PRIVMSG)
 		return ( new PrivParser() );
+	if (type == PONG)
+		return ( new PongParser() );
 	return (NULL);
 }

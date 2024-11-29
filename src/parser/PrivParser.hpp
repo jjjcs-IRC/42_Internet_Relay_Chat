@@ -1,5 +1,5 @@
-#ifndef PrivParser_HPP
-# define PrivParser_HPP
+#ifndef PRIVPARSER_HPP
+# define PRIVPARSER_HPP
 
 #include "SuperParser.hpp"
 
