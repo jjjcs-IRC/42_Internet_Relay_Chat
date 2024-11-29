@@ -257,6 +257,7 @@ void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 	std::cout << "reply 482" << std::endl;
 	// cl.set_writeBuf(fd, "482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :You're not channel operator\r\n");
 }
+
 void Numerics::RPL_KICK(int fd)
 {
 	// cl.set_writeBuf(fd, makeUserId(fd) + " KICK #" + params.tokens[1] + " " + kicked + " " + reason + "\r\n");
