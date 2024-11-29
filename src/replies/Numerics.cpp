@@ -156,6 +156,9 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 451:
 		ERR_NOTREGISTERED_451(fd);
 		break;
+	case 1000:
+		RPL_PONG(fd);
+		break;
 	default:
 		// std::cout << fd << " No defined Numeric Reply" << std::endl;
 		break;
@@ -251,9 +254,10 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 }
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
-	cl.set_writeBuf(fd, "482 " + cl.find_client(fd)->get_nickName() + " #" + " :You're not channel operator\r\n");
-	// cl.set_writeBuf(fd, "482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens.at(1) + " :You're not channel operator\r\n");
+	std::cout << "reply 482" << std::endl;
+	// cl.set_writeBuf(fd, "482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :You're not channel operator\r\n");
 }
+
 void Numerics::RPL_KICK(int fd)
 {
 	// cl.set_writeBuf(fd, makeUserId(fd) + " KICK #" + params.tokens[1] + " " + kicked + " " + reason + "\r\n");
@@ -429,7 +433,10 @@ void Numerics::ERR_NOTREGISTERED_451(int fd)
 // PING
 void Numerics::RPL_PONG(int fd)
 {
-	// cl.set_writeBuf(fd, makeUserId(fd) + " PONG " + token + "\r\n");
+	if (params.tokens.size() == 2)
+		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
+	else if (params.tokens.size() > 2)
+		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
 }
 
 // QUIT
