@@ -128,9 +128,9 @@ int	IrcParser::GetCmdType( std::string &str )
 	else if (str == "PRIVMSG")
 		return (PRIVMSG);
 	else if (str == "PING")
-		return (PING);
-	else if (str == "PONG")
 		return (PONG);
+	else if (str == "PONG")
+		return (PING);
 	return (ERROR);
 }
 
@@ -154,7 +154,9 @@ SuperParser	*IrcParser::NewClassPtr( int type )
 		return ( new ModeParser() );
 	if (type == PRIVMSG)
 		return ( new PrivParser() );
-	if (type == PING)
+	if (type == PONG)
 		return ( new PongParser() );
+	if (type == PING)
+		return ( NULL );
 	return (NULL);
 }
