@@ -7,6 +7,7 @@ Client::Client() : client_fd(-1), passed(false)
 
 Client::Client(int fd, std::string ip) : client_fd(fd), client_ip(ip), passed(false)
 {
+	this->nickName = "*"
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
