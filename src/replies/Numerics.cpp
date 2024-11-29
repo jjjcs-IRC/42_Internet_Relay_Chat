@@ -156,6 +156,9 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 451:
 		ERR_NOTREGISTERED_451(fd);
 		break;
+	case 1000:
+		RPL_PONG(fd);
+		break;
 	default:
 		// std::cout << fd << " No defined Numeric Reply" << std::endl;
 		break;
