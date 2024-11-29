@@ -171,7 +171,6 @@ bool Channel::removeParticipantByName(const std::string& name) {
     Client* client = findClient(name);
     if (client != NULL) {
         participants.erase(std::remove(participants.begin(), participants.end(), client), participants.end());
-        delete client;
         std::cout << name << " 채널에서 삭제" << std::endl;
         return true;
     }
