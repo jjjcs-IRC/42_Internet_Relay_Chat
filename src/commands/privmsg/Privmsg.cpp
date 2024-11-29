@@ -65,9 +65,15 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
 {
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
+	Client *sender = cl.find_client(params.client_fd);
 
 	for (int i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf( list[i]->get_nickName() + "!root@127.0.0.1" + params.tokens[0] + " " + params.tokens[1] + " " + params.tokens[2]);
+	{
+		std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
+                            	 + sender->get_clientIp() + " PRIVMSG " + list[i]->get_nickName() + " :"\
+                            	 + params.tokens[2] + "\n";
+		list[i]->set_writeBuf(priv_msg);
+	}
 }
 
 int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
