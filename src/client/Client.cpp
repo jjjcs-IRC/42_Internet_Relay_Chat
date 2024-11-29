@@ -18,6 +18,7 @@ Client::Client(int fd, std::string ip, std::string username, std::string nicknam
 Client::Client(const Client &obj)
 {
 	this->client_fd = obj.client_fd;
+	this->client_ip = obj.get_clientIp();
 	this->userName = obj.get_userName();
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
@@ -30,6 +31,7 @@ Client::Client(const Client &obj)
 Client& Client::operator=(const Client &obj)
 {
 	this->client_fd = obj.get_clientFd();
+	this->client_ip = obj.get_clientIp();
 	this->userName = obj.get_userName();
 	this->nickName = obj.get_nickName();
 	this->realName = obj.get_realName();
