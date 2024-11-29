@@ -344,19 +344,33 @@ void Numerics::RPL_ENDOFMOTD_376(int fd)
 }
 
 // NAMES
-void Numerics::RPL_NAMREPLY_353(int fd)
+void Numerics::RPL_NAMREPLY_353(int fd) //클라로 보내줘야할 명단이 5명이상이면 5명씩 끊어줘야하는 것 나중에 구현
 {
 	std::vector<Client *> clientList = cn.findChannel(params.tokens[1])->getParticipants();
+	std::vector<Client *> operators = cn.findChannel(params.tokens[1])->getOperators();
+	int op_flag = 0;
 	std::string nickList;
+	
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++)
 	{
-		nickList.append(" " + (*it)->get_nickName());
+		for (std::vector<Client *>::iterator op = operators.begin(); op != operators.end(); op++)
+		{
+			if ((*it)->get_nickName() == (*op)->get_nickName())
+			{
+				op_flag = 1;
+			}
+		}
+			if (op_flag == 1)
+				nickList.append("@" + (*it)->get_nickName() + " ");
+			else
+				nickList.append((*it)->get_nickName() + " ");
+			op_flag = 0;
 	}
-	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = #" + params.tokens[1] + " :" + nickList + "\r\n");
+	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = " + params.tokens[1] + " :" + nickList + "\r\n");
 }
 void Numerics::RPL_ENDOFNAMES_366(int fd)
 {
-	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :End of /NAMES list.\r\n");
+	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :End of /NAMES list.\r\n");
 }
 
 
@@ -369,9 +383,9 @@ void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
 	cl.set_writeBuf(fd, ":localhost 432 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Erroneus nickname\r\n");
 }
-void Numerics::ERR_NICKNAMEINUSE_433(int fd)
+void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
-	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Nickname is already in use.\r\n");
+	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
 }
 void Numerics::RPL_NICK(int fd)
 {
@@ -449,7 +463,7 @@ void Numerics::RPL_PRIVMSG(int fd)
 void Numerics::RPL_TOPIC_332(int fd)
 {
 	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
-	sendMsg(fd, ":localhost 332 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + topic + "\r\n");
+	sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
