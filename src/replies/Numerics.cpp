@@ -343,7 +343,7 @@ void Numerics::RPL_ENDOFMOTD_376(int fd)
 }
 
 // NAMES
-void Numerics::RPL_NAMREPLY_353(int fd)
+void Numerics::RPL_NAMREPLY_353(int fd) //클라로 보내줘야할 명단이 5명이상이면 5명씩 끊어줘야하는 것 나중에 구현
 {
 	std::vector<Client *> clientList = cn.findChannel(params.tokens[1])->getParticipants();
 	std::vector<Client *> operators = cn.findChannel(params.tokens[1])->getOperators();
@@ -382,9 +382,9 @@ void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
 	cl.set_writeBuf(fd, ":localhost 432 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Erroneus nickname\r\n");
 }
-void Numerics::ERR_NICKNAMEINUSE_433(int fd)
+void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
-	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Nickname is already in use.\r\n");
+	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
 }
 void Numerics::RPL_NICK(int fd)
 {
