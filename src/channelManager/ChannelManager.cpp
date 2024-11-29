@@ -52,9 +52,9 @@ int ChannelManager::addChannel(std::string channelName, Client *userName) {
         std::cout << "채널 추가: " << channelName << std::endl;
         return true;
     } catch (int errorCode) {
-       throw errorCode;
+        std::cout << "채널 이름 에러: " << channelName << errorCode << std::endl;
+        return false;
     }
-    return false; 
 }
 
 bool ChannelManager::deleteChannel(const std::string& channelName) {
