@@ -192,7 +192,7 @@ bool Channel::isValideName(std::string channelName) const {
     }
 
     // 채널 이름의 길이가 200자를 초과하는지 확인
-    if (channelName.size() > 200) {
+    if (channelName.size() > 200 || channelName.size() < 2) {
         return false;
     }
 
