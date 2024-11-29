@@ -434,9 +434,9 @@ void Numerics::ERR_NOTREGISTERED_451(int fd)
 void Numerics::RPL_PONG(int fd)
 {
 	if (params.tokens.size() == 2)
-		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
 	else if (params.tokens.size() > 2)
-		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
 }
 
 // QUIT
