@@ -152,12 +152,11 @@ bool ClientManager::delete_channel(int fd, std::string ch_name)
 
 Client* ClientManager::find_client(int fd)
 {
-    Client tmp_client(fd, "");
+    std::list<Client>::iterator it;
 
-    std::list<Client>::iterator it = std::find(this->client_list.begin(), this->client_list.end(), tmp_client);
-    if (it != client_list.end())
-        return &(*it);
-    // std::cout << "Object not found." << std::endl;
+    for (it = this->client_list.begin(); it != this->client_list.end(); it++)
+        if (it->get_clientFd() == fd)
+            return &(*it);
     return (NULL);
 }
 

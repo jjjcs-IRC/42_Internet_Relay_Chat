@@ -1,5 +1,5 @@
-#ifndef JoinPARSER_HPP
-# define JoinPARSER_HPP
+#ifndef JOINPARSER_HPP
+# define JOINPARSER_HPP
 
 #include "SuperParser.hpp"
 
