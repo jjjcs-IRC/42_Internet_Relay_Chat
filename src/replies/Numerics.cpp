@@ -414,7 +414,10 @@ void Numerics::ERR_NOTREGISTERED_451(int fd)
 // PING
 void Numerics::RPL_PONG(int fd)
 {
-	// cl.set_writeBuf(fd, makeUserId(fd) + " PONG " + token + "\r\n");
+	if (params.tokens.size() == 2)
+		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
+	else if (params.tokens.size() > 2)
+		cl.set_writeBuf(fd, serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
 }
 
 // QUIT
