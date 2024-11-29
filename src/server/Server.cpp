@@ -255,6 +255,7 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 void Server::disconnectClient(int clientSock)
 {
 	std::cout << "Client disconnected: " << clientSock << std::endl;
+	client_manager.delete_client(clientSock);
 	close(clientSock);
 
 	/* 클라이언트 소켓 목록에서 제거 */
