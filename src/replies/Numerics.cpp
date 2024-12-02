@@ -260,8 +260,8 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 }
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
-	std::cout << "reply 482" << std::endl;
-	// cl.set_writeBuf(fd, serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
+	// std::cout << "reply 482" << std::endl;
+	cl.set_writeBuf(fd, serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
 }
 
 void Numerics::RPL_KICK(int fd)
