@@ -76,7 +76,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 				// client->set_writeBuf();
 	std::vector<Client*> list =  channel->getParticipants();
     std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
-                            "@" + "<host 정보가 들어가야함>" + " JOIN " + channel->getChannelName();
+                            "@" + client->get_clientIp() + " JOIN " + channel->getChannelName();
 	for (int i = 0; i < list.size(); i++)
 		list[i]->set_writeBuf(mode_msg);
 	
