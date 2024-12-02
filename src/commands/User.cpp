@@ -29,7 +29,7 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	else if (client->get_realName().size() > 0 || client->get_realName().size() > 0) {
 		//   "You may not reregister" 재등록 하려고 할 때
-		std::cout <<"재등록 하려고 할 때 "<< client->get_realName().size() << "|" << client->get_realName().size() << std::endl;
+		// std::cout <<"재등록 하려고 할 때 "<< client->get_realName().size() << "|" << client->get_realName().size() << std::endl;
 		throw 462;
 	}
 	else {
@@ -38,6 +38,7 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		
 		//클라이언트 등록 완료 문구 전송
 		if (client->check_pass_client()) {
+			std::cout <<"나오면 안됨"<<std::endl;
 			client->set_passed();
 			throw 1;
 		}

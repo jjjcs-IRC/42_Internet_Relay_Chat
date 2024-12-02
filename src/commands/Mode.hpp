@@ -20,14 +20,12 @@ class Mode : public Command {
 		Mode(const Mode &other);
 		Mode& operator=(const Mode &other);
 		std::vector<std::string> modeSplit(std::string str, char Delimiter);
-		bool removeMode(std::string mode, std::string token);
-		bool addMode(std::string mode, std::string token);
 		std::string modeI ();
 		std::string modeO ();
 		std::string modeL ();
 		std::string modeK ();
 		std::string modeT ();
-		bool findOperator(const Client *client);
+		// bool findOperator(const Client *client);
 		bool isNumber(const std::string& str);
 
 		int flag;
