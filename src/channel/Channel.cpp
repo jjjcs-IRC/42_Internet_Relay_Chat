@@ -45,8 +45,10 @@ const std::string& Channel::getPassword() const {
 bool Channel::setPassword(const std::string& password) {
     if(isValidePassword(password)){
         this->password = password;
+        std::cout <<"비밀번호 설정 완료: "<< password << std::endl;
         return true;
     }
+    std::cout <<"유효하지 않은 비밀 번호: "<< password << std::endl;
     return false;
 }
 
@@ -169,7 +171,7 @@ Client* Channel::findClient(const std::string& name) {
     std::cout << "찾으려는 사용자 이름: " << name << std::endl;
 
     for (std::vector<Client*>::iterator it = participants.begin(); it != participants.end(); ++it) {
-        std::cout << "현재 검사 중: " << (*it)->get_nickName() << std::endl;
+        // std::cout << "현재 검사 중: " << (*it)->get_nickName() << std::endl;
         if ((*it)->get_nickName() == name) {
             std::cout << "사용자 발견: " << (*it)->get_nickName() << std::endl;
             return *it; // 클라이언트를 찾으면 반환

@@ -219,7 +219,7 @@ void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
 	// cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
-	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :No such channel\r\n");
+	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[0] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
