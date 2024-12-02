@@ -42,9 +42,11 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
 			throw (405);
 		}
-		else if (channel->getPassword() != inputPassword && channel->getPassword() != "") { // 채널 비밀번호 확인
+		// else if (channel->getPassword() != inputPassword && channel->getPassword() != "") { // 채널 비밀번호 확인
+		else if (channel->hasMode('k')) { // 채널 비밀번호 확인
 			//   k 모드 아니면 확인 안해도 됨
-			throw (475);
+			if (channel->getPassword() != inputPassword)
+				throw (475);
 		}
 		else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
 			throw (471);
