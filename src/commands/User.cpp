@@ -15,10 +15,10 @@ User::User(const User &other) {
 
 int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 
-	std::cout << "User executeCommand" << std::endl;
+	// std::cout << "User executeCommand" << std::endl;
 	
 	Client *client = cl.find_client(params.client_fd);
-		std::cout <<"처음 "<< client->get_nickName() << "|" << client->get_userName() << "|"<< client->get_realName()<<std::endl;
+		// std::cout <<"처음 "<< client->get_nickName() << "|" << client->get_userName() << "|"<< client->get_realName()<<std::endl;
 	if (client->get_passed() == false) {
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
 		std::cout <<"PASS 를 먼저 입력해야함"<<std::endl;
@@ -38,7 +38,6 @@ int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		
 		//클라이언트 등록 완료 문구 전송
 		if (client->check_pass_client()) {
-			std::cout <<"나오면 안됨"<<std::endl;
 			client->set_passed();
 			throw 1;
 		}

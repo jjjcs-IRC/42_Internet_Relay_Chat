@@ -18,7 +18,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	
 	// std::cout << "Nick executeCommand" << std::endl;
 	Client *client = cl.find_client(params.client_fd);
-	// std::string isFirst = client->get_nickName();
+	std::string isFirst = client->get_nickName();
 	if (client->get_passed() == false) {
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
 		std::cout <<"PASS 를 먼저 입력해야함"<<std::endl;
@@ -43,15 +43,19 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw 432;
 	}
 	//클라이언트 등록 완료 문구 전송
-	// if (client->check_pass_client() && isFirst.size() == 0) {
-	if (client->check_pass_client() ) {
+	// if (client->check_pass_client() ) {
+	if (client->check_pass_client() && isFirst.size() == 0) {
 		client->set_passed();
 		cl.set_nick_client(params.client_fd, params.tokens[1]);
 		throw 1;
 	}
 	cl.set_nick_client(params.client_fd, params.tokens[1]);
-	client->set_writeBuf(":" + client->get_nickName() + " NICK " + params.tokens[1] + "\r\n");
-	// std::cout << "Nick executeCommand end" << std::endl;
+	if (client->check_pass_client()) //  닉네임 변경 성공 메세지 전송
+		client->set_writeBuf(":" + client->get_nickName() 
+								+"!~" +client->get_userName() 
+								+ "@" + client->get_clientIp()
+								+ " NICK " + params.tokens[1] 
+								+ "\r\n");
 	return 0;
 }
 

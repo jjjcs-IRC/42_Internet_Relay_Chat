@@ -25,8 +25,11 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel == NULL) { //  채널이 없을 때
 		throw 403;
 	}
+	if (params.tokens.size() < 2) { // 매개변수가 충분하지 않을 때
+		throw 461;
+	}
 	if (channel->isOperator(client) == false) { // 클라이언트가 오퍼레이터가 아닐 때
-		std::cout << "오퍼레이터가 아님" << std::endl;
+		std::cout << "오퍼레이터가 아님" <<params.tokens[1] << std::endl;
 		throw 482;
 	}
 	this->flag = -1;
