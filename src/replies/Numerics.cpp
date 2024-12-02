@@ -99,6 +99,9 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 696:
 		ERR_INVALIDMODEPARAM_696(fd);
 		break;
+	case 473:
+		ERR_INVITEONLYCHAN_473(fd);
+		break;
 	case 422:
 		ERR_NOMOTD_422(fd);
 		break;
@@ -324,6 +327,10 @@ void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 void Numerics::RPL_ADDVOICE(int fd)
 {
 	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@localhost MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
+}
+void Numerics::ERR_INVITEONLYCHAN_473(int fd)
+{
+	cl.set_writeBuf(fd, serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+i)");
 }
 
 // MOTD
