@@ -44,18 +44,22 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	//클라이언트 등록 완료 문구 전송
 	// if (client->check_pass_client() ) {
-	if (client->check_pass_client() && isFirst.size() == 0) {
+		std::cout << "isFirst.size() : " << isFirst.size() << std::endl;
+		std::cout << "isFirst : " << isFirst<< std::endl;
+	if (!client->check_pass_client() && isFirst.size() == 0) { // 처음 접속한 클라이언트
 		client->set_passed();
 		cl.set_nick_client(params.client_fd, params.tokens[1]);
 		throw 1;
 	}
-	cl.set_nick_client(params.client_fd, params.tokens[1]);
-	if (client->check_pass_client()) //  닉네임 변경 성공 메세지 전송
-		client->set_writeBuf(":" + client->get_nickName() 
-								+"!~" +client->get_userName() 
-								+ "@" + client->get_clientIp()
-								+ " NICK " + params.tokens[1] 
-								+ "\r\n");
+	else { // 닉네임 변경
+		cl.set_nick_client(params.client_fd, params.tokens[1]);
+		if (client->check_pass_client()) //  닉네임 변경 성공 메세지 전송
+			client->set_writeBuf(":" + client->get_nickName() 
+									+"!~" +client->get_userName() 
+									+ "@" + client->get_clientIp()
+									+ " NICK " + params.tokens[1] 
+									+ "\r\n");
+	}
 	return 0;
 }
 
