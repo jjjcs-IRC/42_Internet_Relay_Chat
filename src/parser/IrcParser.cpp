@@ -46,7 +46,6 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 		{
 			std::cerr << "invalid argument: Multiple colons" << std::endl;
 			data.cmd_type = ERROR;
-			return (data);
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
@@ -55,19 +54,10 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 		{
 			std::cerr << "Error: there is no argument" << std::endl;
 			data.cmd_type = ERROR;
-			return (data);
 		}
-		if (temp.size() == 2)
-		{
-			line = *it++;
+		*it++;
+		if (it != temp.end())
 			data.tokens.push_back(':' + *it);
-		}
-		if (data.tokens.size() > 15)
-		{
-			std::cerr << "invalid argument: Too many arguments" << std::endl;
-			data.cmd_type = ERROR;
-			return (data);
-		}
 	}
 	/* get CMD Type */
 	data.cmd_type = GetCmdType(*data.tokens.begin());
