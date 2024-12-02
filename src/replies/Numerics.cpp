@@ -99,6 +99,9 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 696:
 		ERR_INVALIDMODEPARAM_696(fd);
 		break;
+	case 473:
+		ERR_INVITEONLYCHAN_473(fd);
+		break;
 	case 422:
 		ERR_NOMOTD_422(fd);
 		break;
@@ -207,8 +210,11 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 // INVITE
 void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 토큰이 안 들어온 것 같은데.
 {
-	std::cout << "reply 461" << std::endl;
-	// cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	// std::cout << "reply 461" << std::endl;
+	if (cl.find_client(fd)->get_nickName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 461 * " + params.tokens[0] + " :Not enough parameters.\r\n");
+	else
+		cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
@@ -254,8 +260,8 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 }
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
-	std::cout << "reply 482" << std::endl;
-	// cl.set_writeBuf(fd, "482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :You're not channel operator\r\n");
+	// std::cout << "reply 482" << std::endl;
+	cl.set_writeBuf(fd, serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
 }
 
 void Numerics::RPL_KICK(int fd)
@@ -325,6 +331,10 @@ void Numerics::RPL_ADDVOICE(int fd)
 {
 	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@localhost MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
 }
+void Numerics::ERR_INVITEONLYCHAN_473(int fd)
+{
+	cl.set_writeBuf(fd, serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+i)");
+}
 
 // MOTD
 void Numerics::ERR_NOSUCHSERVER_402(int fd)
@@ -390,7 +400,10 @@ void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
-	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
+	if (cl.find_client(fd)->get_nickName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 433 * " + params.tokens[1] + " :Nickname is already in use.\r\n");
+	else
+		cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
 }
 void Numerics::RPL_NICK(int fd)
 {
@@ -427,7 +440,10 @@ void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 
 void Numerics::ERR_NOTREGISTERED_451(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
+	if (cl.find_client(fd)->get_userName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 451 * :You have not registered");
+	else
+		cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
 }
 
 // PING
