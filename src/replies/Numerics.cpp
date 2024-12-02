@@ -256,7 +256,7 @@ void Numerics::ERR_BADCHANNELKEY_475(int fd)
 // KICK
 void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 {
-	cl.set_writeBuf(fd, "441 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :They aren't on that channel\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 441 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " " + params.tokens[1] + " :They aren't on that channel\r\n");
 }
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
@@ -468,7 +468,7 @@ void Numerics::RPL_ERROR(int fd)
 // PRIVMSG
 void Numerics::ERR_NOSUCHNICK_401(int fd)
 {
-	cl.set_writeBuf(fd, "401 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No such nick/channel\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 401 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No such nick/channel\r\n");
 }
 void Numerics::ERR_NORECIPIENT_411(int fd)
 {
