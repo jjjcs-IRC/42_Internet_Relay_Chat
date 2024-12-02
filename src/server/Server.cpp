@@ -255,6 +255,22 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 void Server::disconnectClient(int clientSock)
 {
 	std::cout << "Client disconnected: " << clientSock << std::endl;
+	Client* client=  client_manager.find_client(clientSock); //fd값으로 client 찾기
+	const std::vector<std::string>& channels = client->get_channels(); // 크라이언트가 속한 채널 가져오기 
+	const std::string clientName = client->get_nickName();
+	
+	for (size_t i = 0; i < channels.size(); ++i) { // 클라이언트가 속한 채널 돌면서 나오기
+        const std::string channelName = channels[i];
+		Channel* channel = channelManager.findChannel(channelName); // 채널이름으로 채널 찾기
+		channel->removeParticipantByName(clientName); // 채널에서 유저 삭제
+
+		if (channel->isOperator(client)) // 오퍼레이터이면 오퍼레이터 목록에서 삭제
+        	channel->removeOperatorByName(clientName);
+		
+		if (channel->getParticipants().size() == 0) // 채널에 속한 사람수가 0명이면
+			channelManager.deleteChannel(channelName); // 채널 삭제
+    }
+
 	client_manager.delete_client(clientSock);
 	close(clientSock);
 
