@@ -211,7 +211,10 @@ void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 토큰이 안 들어온 것 같은데.
 {
 	// std::cout << "reply 461" << std::endl;
-	cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+	if (cl.find_client(fd)->get_nickName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 461 * " + params.tokens[0] + " :Not enough parameters.\r\n");
+	else
+		cl.set_writeBuf(fd, ":localhost 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
@@ -397,7 +400,10 @@ void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
-	cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
+	if (cl.find_client(fd)->get_nickName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 433 * " + params.tokens[1] + " :Nickname is already in use.\r\n");
+	else
+		cl.set_writeBuf(fd, ":localhost 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
 }
 void Numerics::RPL_NICK(int fd)
 {
@@ -434,7 +440,10 @@ void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 
 void Numerics::ERR_NOTREGISTERED_451(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
+	if (cl.find_client(fd)->get_userName().size() < 1)
+		cl.set_writeBuf(fd, ":localhost 451 * :You have not registered");
+	else
+		cl.set_writeBuf(fd, ":localhost 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
 }
 
 // PING
