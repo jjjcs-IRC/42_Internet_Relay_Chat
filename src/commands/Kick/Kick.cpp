@@ -35,6 +35,9 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         throw 482;
 
     Client *kickee = cl.find_client_byNick(params.tokens[2]);
+    if(!kickee){ // 해당 닉네임의 클라이언트가 존재하지 않는 경우 (401)
+        throw 401; 
+    }
     //사용자가 채널에 존재하지 않는 경우 (441)
     if (channel->findClient(kickee->get_nickName()) == NULL)
         throw 441;
