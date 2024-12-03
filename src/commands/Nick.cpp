@@ -43,6 +43,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw 432;
 	}
 	//클라이언트 등록 완료 문구 전송
+	std::string pre_nickName = client->get_nickName();
 	cl.set_nick_client(params.client_fd, params.tokens[1]);
 	if (client->get_userName().size() != 0 && isFirst.size() == 0) { 
 		client->set_passed();
@@ -50,10 +51,10 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	 // 닉네임 변경
 	if (isFirst.size() != 0) //  닉네임 변경 성공 메세지 전송
-		client->set_writeBuf(":" + client->get_nickName() 
-								+"!~" +client->get_userName() 
+		client->set_writeBuf(":" + pre_nickName 
+								+"!" +client->get_userName() 
 								+ "@" + client->get_clientIp()
-								+ " NICK " + params.tokens[1] 
+								+ " NICK :" + params.tokens[1] 
 								+ "\r\n");
 	return 0;
 }

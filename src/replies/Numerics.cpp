@@ -309,7 +309,15 @@ void Numerics::MODE_CHANNELMSGWITHPARAM(int fd)
 }
 void Numerics::RPL_CHANNELMODEIS_324(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 324 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	Channel *channel = cn.findChannel(params.tokens[0]);
+	if (channel == NULL){
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[0] + " :No such channel\r\n");
+	} else if (channel->getMode().size() == 0){
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + "\r\n");
+	} else {
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + " +" + channel->getMode() + "\r\n");
+	}
+
 }
 void Numerics::ERR_CANNOTSENDTOCHAN_404(int fd)
 {
