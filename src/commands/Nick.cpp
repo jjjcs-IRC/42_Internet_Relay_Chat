@@ -63,7 +63,25 @@ bool Nick::check_nick(std::string nick) {
 	if (nick.size() > 9) {
 		return false;
 	}
-    if (nick[0] == '#' || nick[0] == '&')
+    if (nick[0] == '#' || nick[0] == '&') // multi-prifix letter what abt chanels
         return (false);
+	if (nick[0] == '$' || nick[0] == ':')
+	for (int i = 0; i < nick.size(); i++)
+	{
+		if (nick[i] == ' ')
+			return (false);
+		if (nick[i] == ',')
+			return (false);
+		if (nick[i] == '*')
+			return (false);
+		if (nick[i] == '?')
+			return (false);
+		if (i != 0 && nick[i] == '!')
+			return (false);
+		if (nick[i] == '@')
+			return (false);
+		if (nick[i] == '.')
+			return (false);
+	}
 	return true;
 }

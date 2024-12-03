@@ -70,18 +70,24 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// "<client> <channel> :You have joined too many channels"
 		throw (405);
 	}
-
-		//채널의 모두에게
-		// :dan-!d@localhost JOIN #test    ; //dan- is joining the channel #test
-		// :<닉네임>!~<유저네임>@<호스트정보> JOIN #channel 
-		// :user123123123!~choijimin@crs.42seoul.kr JOIN #jimchoiiii
-				// client->set_writeBuf();
-	std::vector<Client*> list =  channel->getParticipants();
-    std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
-                            "@" + client->get_clientIp() + " JOIN " + channel->getChannelName();
-	for (int i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf(mode_msg);
+	//채널에 메시지 전송
+	sendMsgToCh(params, channel, client);
 	
 	throw (332);
 	return 0;
+}
+
+void Join::sendMsgToCh(tParams &params, Channel *channel, Client *sender)
+{
+	std::vector<Client*> list =  channel->getParticipants();
+
+// :chris!~chris@example.com JOIN #test
+	std::string join_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
+						+ sender->get_clientIp() + " JOIN " + channel->getChannelName() + "\n";
+	for (int i = 0; i < list.size(); i++)
+	{
+		if (list[i] != sender){
+			list[i]->set_writeBuf(join_msg);
+		}					
+	}
 }
