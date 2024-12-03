@@ -13,6 +13,7 @@ class Join : public Command {
     private:
         Join(const Join &other);
         Join& operator=(const Join &other);
+        void sendMsgToCh(tParams &params, Channel *channel, Client *client);
 };
 
 #endif
