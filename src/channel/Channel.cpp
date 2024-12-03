@@ -70,6 +70,7 @@ bool Channel::setTopic(const std::string& topic, Client* client) {
 
         }
         std::cout << client->get_userName() << " t모드인데 오퍼레이터 아님" << std::endl;
+        return false;
     }
     std::cout << client->get_userName() << "토픽 수정 성공" << std::endl;
     this->topic = topic;
