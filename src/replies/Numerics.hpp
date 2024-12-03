@@ -86,6 +86,7 @@ class Numerics {
 		void ERR_INVALIDMODEPARAM_696(int fd);
 		void RPL_ADDVOICE(int fd);
 		void ERR_UNKNOWNMODE_472(int fd, int errNum);
+		void ERR_INVITEONLYCHAN_473(int fd);
 
 		// MOTD
 		void ERR_NOSUCHSERVER_402(int fd);

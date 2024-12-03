@@ -13,6 +13,7 @@ class Nick : public Command {
     private:
         Nick(const Nick &other);
         Nick& operator=(const Nick &other);
+        bool check_nick(std::string nick);
 };
 
 #endif

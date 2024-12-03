@@ -23,6 +23,7 @@ void Privmsg::parsing_receiver(tParams &params) //receiver 파싱
     std::string tmp;
     while (getline(ss, tmp, ',')) //','로 구분
     {
+		std::cout << "tmp : " << tmp << std::endl;
         if (tmp[0] == '#')
             this->v_channel.push_back(tmp);
         else
@@ -61,7 +62,6 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 {
 	Client *sender = cl.find_client(params.client_fd);
 	Client *receiver = cl.find_client_byNick(client);
-
 	std::string priv_msg =  ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
                             + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " :"\
                             + params.tokens[2] + "\n";
@@ -73,12 +73,15 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
 	Client *sender = cl.find_client(params.client_fd);
 
+
 	for (int i = 0; i < list.size(); i++)
 	{
-		std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
-                            	 + sender->get_clientIp() + " PRIVMSG " + list[i]->get_nickName() + " :"\
-                            	 + params.tokens[2] + "\n";
-		list[i]->set_writeBuf(priv_msg);
+		if (list[i] != sender){
+			std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
+								+ sender->get_clientIp() + " PRIVMSG " + channel + " :"\
+								+ params.tokens[2] + "\n";
+			list[i]->set_writeBuf(priv_msg);
+		}					
 	}
 }
 
@@ -86,6 +89,10 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 {
 	Client *executor = cl.find_client(params.client_fd);
 	//사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
+	//초기화
+	this->v_client.assign(0, "");
+	this->v_channel.assign(0, "");
+
     if (!executor->check_pass_client())
         throw 451;
 
@@ -99,6 +106,8 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 
 	parsing_receiver(params);
 
+	std::cout << "v_client size : " << this->v_client.size() << std::endl;
+	std::cout << "v_channel size : " << this->v_channel.size() << std::endl;
 	//단일 상대에게 전송
 	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
 	{

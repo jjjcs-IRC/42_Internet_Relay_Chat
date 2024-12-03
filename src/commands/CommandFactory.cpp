@@ -21,7 +21,7 @@ CommandFactory::CommandFactory() {
     _commandMap[KICK] = new Kick();
     _commandMap[TOPIC] = new Topic();
     _commandMap[MODE] = new Mode();
-    _commandMap[PONG] = new Mode();
+    _commandMap[PONG] = new Pong();
 
     std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가

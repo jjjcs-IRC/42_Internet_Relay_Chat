@@ -245,6 +245,7 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 			for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
 			{
 				int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
+				std::cout << "fd " << clientSock << " output |" << client_manager.get_writeBuf(fd) << std::endl;
 				write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
 				client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
 			}
@@ -255,6 +256,23 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 void Server::disconnectClient(int clientSock)
 {
 	std::cout << "Client disconnected: " << clientSock << std::endl;
+	Client* client=  client_manager.find_client(clientSock); //fd값으로 client 찾기
+	const std::vector<std::string>& channels = client->get_channels(); // 크라이언트가 속한 채널 가져오기 
+	const std::string clientName = client->get_nickName();
+	
+	for (size_t i = 0; i < channels.size(); ++i) { // 클라이언트가 속한 채널 돌면서 나오기
+        const std::string channelName = channels[i];
+		Channel* channel = channelManager.findChannel(channelName); // 채널이름으로 채널 찾기
+		channel->removeParticipantByName(clientName); // 채널에서 유저 삭제
+
+		if (channel->isOperator(client)) // 오퍼레이터이면 오퍼레이터 목록에서 삭제
+        	channel->removeOperatorByName(clientName);
+		
+		if (channel->getParticipants().size() == 0) // 채널에 속한 사람수가 0명이면
+			channelManager.deleteChannel(channelName); // 채널 삭제
+    }
+
+	client_manager.delete_client(clientSock);
 	close(clientSock);
 
 	/* 클라이언트 소켓 목록에서 제거 */

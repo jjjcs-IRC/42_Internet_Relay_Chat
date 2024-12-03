@@ -45,8 +45,10 @@ const std::string& Channel::getPassword() const {
 bool Channel::setPassword(const std::string& password) {
     if(isValidePassword(password)){
         this->password = password;
+        std::cout <<"비밀번호 설정 완료: "<< password << std::endl;
         return true;
     }
+    std::cout <<"유효하지 않은 비밀 번호: "<< password << std::endl;
     return false;
 }
 
@@ -110,6 +112,7 @@ bool Channel::addParticipant(Client* participant) {
     }
     participants.push_back(participant);
     std::cout << participant->get_userName() << " 입장 완료" << std::endl;
+     
      // 채널 참가자 출력
         std::cout << "채널 참가자: ";
         for (size_t i = 0; i < participants.size(); ++i) {
@@ -119,6 +122,18 @@ bool Channel::addParticipant(Client* participant) {
             }
         }
         std::cout << std::endl;
+
+        // 채널 오퍼레이터 출력
+        const std::vector<Client*> operators = getOperators();
+        std::cout << "채널 오퍼레이터: ";
+        for (size_t i = 0; i < operators.size(); ++i) {
+            std::cout << operators[i]->get_nickName();
+            if (i < operators.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << std::endl;
+
     return true;
 }
 
@@ -156,7 +171,7 @@ Client* Channel::findClient(const std::string& name) {
     std::cout << "찾으려는 사용자 이름: " << name << std::endl;
 
     for (std::vector<Client*>::iterator it = participants.begin(); it != participants.end(); ++it) {
-        std::cout << "현재 검사 중: " << (*it)->get_nickName() << std::endl;
+        // std::cout << "현재 검사 중: " << (*it)->get_nickName() << std::endl;
         if ((*it)->get_nickName() == name) {
             std::cout << "사용자 발견: " << (*it)->get_nickName() << std::endl;
             return *it; // 클라이언트를 찾으면 반환
@@ -224,7 +239,7 @@ bool Channel::isValidePassword(std::string password) const {
 // 채널의 오퍼레이터 삭제
 bool Channel::removeOperatorByName(const std::string& name) {
     for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it) {
-        if ((*it)->get_userName() == name) {
+        if ((*it)->get_nickName() == name) {
             operators.erase(it); // 오퍼레이터 삭제
             std::cout << name << " 오퍼레이터 목록에서 삭제" << std::endl;
             return true; 

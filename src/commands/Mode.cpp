@@ -25,7 +25,11 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel == NULL) { //  채널이 없을 때
 		throw 403;
 	}
-	if (findOperator(client)) { // 클라이언트가 오퍼레이터가 아닐 때
+	if (params.tokens.size() < 2) { // 매개변수가 충분하지 않을 때
+		throw 461;
+	}
+	if (channel->isOperator(client) == false) { // 클라이언트가 오퍼레이터가 아닐 때
+		std::cout << "오퍼레이터가 아님" <<params.tokens[1] << std::endl;
 		throw 482;
 	}
 	this->flag = -1;
@@ -33,7 +37,6 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	memset(&this->resultOp, 0, sizeof(this->resultOp));
 	memset(&this->resultToken, 0, sizeof(this->resultToken));
 	for (size_t i = 1; i < params.tokens.size(); i++) {
-		// std::cout << "params.tokens[" << i << "] : " << params.tokens[i] << std::endl;
 		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
 		modeCmd = modeSplit(params.tokens[i], ':');
 
@@ -59,20 +62,18 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		}
 	}
 
-// std::cout << "resultOp : "<< resultOp << std::endl;
-// std::cout <<"resultToken : " << resultToken << std::endl;
 
-// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
-// :jimchoi1!~1@crs.42seoul.kr MODE #jimchoii +i
-// :<nickname>!<username>@<host> MODE <channel> <mode> <mode params>
-if (resultOp.size() > 0) {
-    std::vector<Client*> list =  channel->getParticipants();
-    std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
-                            "@" + "<host 정보가 들어가야함>" + " MODE " + channel->getChannelName()
-							+ " " + resultOp + " " + resultToken;
-	for (int i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf(mode_msg);
-}
+	// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
+	// :jimchoi1!~1@crs.42seoul.kr MODE #jimchoii +i
+	// :<nickname>!<username>@<host> MODE <channel> <mode> <mode params>
+	if (resultOp.size() > 0) {
+		std::vector<Client*> list =  channel->getParticipants();
+		std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
+								"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
+								+ " " + resultOp + " " + resultToken;
+		for (int i = 0; i < list.size(); i++)
+			list[i]->set_writeBuf(mode_msg);
+	}
 	return 0;
 }
 
@@ -110,7 +111,7 @@ std::string Mode::modeO () {
 			return "";
 		}
 	if (modeCmd[0] == "+") {
-		if (findOperator(client) == true)
+		if (channel->isOperator(client) == true)
 			return "";
 		channel->addOperator(client);
 		if (this->flag == PLUS)
@@ -121,7 +122,7 @@ std::string Mode::modeO () {
 		}
 	}
 	else {
-		if (findOperator(client) == false)
+		if (channel->isOperator(client) == false)
 			return "";
 		channel->removeOperatorByName(client->get_userName());
 		if (this->flag == MINUS)
@@ -214,12 +215,16 @@ std::string Mode::modeT () {
 	}
 }
 
-bool Mode::findOperator(const Client *client) {
-	std::vector<Client*> operators = channel->getOperators();
-	if (find(operators.begin(), operators.end(), client) == operators.end())
-		return false;
-	return true;
-}
+// bool Mode::findOperator(const Client *client) {
+// 	std::vector<Client*> operators = channel->getOperators();
+// 	// if (find(operators.begin(), operators.end(), client) == operators.end())
+// 	// 	return false;
+// 	for (size_t i = 0; i < operators.size(); i++) {
+		
+// 		std::cout << "operators[" << i << "] : " << operators[i]->get_userName() << std::endl;
+// 	}
+// 	return true;
+// }
 
 bool Mode::isNumber(const std::string& str) {
 	for (size_t i = 0; i < str.size(); i++) {
