@@ -494,8 +494,13 @@ void Numerics::RPL_PRIVMSG(int fd)
 // TOPIC
 void Numerics::RPL_TOPIC_332(int fd)
 {
-	std::string topic = cn.findChannel(params.tokens[1])->getTopic();
-	sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
+	Channel *channel = cn.findChannel(params.tokens[1]);
+	std::string topic = channel->getTopic();
+	if (topic.size() < 1)
+		cl.set_writeBuf(fd,serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
+	else
+		cl.set_writeBuf(fd, serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
+	// sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
