@@ -264,3 +264,11 @@ void Channel::removeMode(char mode) {
 bool Channel::hasMode(char mode) const {
     return modes.find(mode) != modes.end();
 }
+
+std::string Channel::getMode() const {
+    std::string result;
+        for (std::set<char>::const_iterator it = modes.begin(); it != modes.end(); ++it) {
+            result += *it;
+        }
+    return result;
+}

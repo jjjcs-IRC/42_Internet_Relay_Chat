@@ -59,8 +59,10 @@ public:
     void removeMode(char mode);  // 모드 제거
     bool hasMode(char mode) const; // 모드 존재 여부 확인
 
+
     bool isValidePassword(std::string password) const;
     size_t getParticipantCount() const;  // 채널 내 클라이언트 수 확인
+    std::string getMode() const;
 };
 
 #endif
