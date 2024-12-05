@@ -116,10 +116,10 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		break;
 	case 332:
 		RPL_TOPIC_332(fd);
-		// break;
+		break;
 	case 353:
 		RPL_NAMREPLY_353(fd);
-		// break;
+		break;
 	case 366:
 		RPL_ENDOFNAMES_366(fd);
 		break;
@@ -161,6 +161,11 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		break;
 	case 1000:
 		RPL_PONG(fd);
+		break;
+	case 1001:
+		RPL_TOPIC_332(fd);
+		RPL_NAMREPLY_353(fd);
+		RPL_ENDOFNAMES_366(fd);
 		break;
 	default:
 		// std::cout << fd << " No defined Numeric Reply" << std::endl;
