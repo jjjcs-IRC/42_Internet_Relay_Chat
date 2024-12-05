@@ -77,7 +77,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	client->set_writeBuf(":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + channelName + "\r\n");
 	sendMsgToCh(params, channel, client);
 	
-	// throw (332);
+	throw (1001);
 	return 0;
 }
 
