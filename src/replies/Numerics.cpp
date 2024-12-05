@@ -219,19 +219,19 @@ void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
 	// cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
-	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[0] + " :No such channel\r\n");
+	cl.set_writeBuf(fd, ":localhost 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :The user is not on this channel.\r\n");
+	cl.set_writeBuf(fd, ":localhost 442 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :The user is not on this channel.\r\n");
 }
 void Numerics::ERR_USERONCHANNEL_443(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 443 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :Is already on channel\r\n");
+	cl.set_writeBuf(fd, ":localhost 443 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " :Is already on channel\r\n");
 }
 void Numerics::RPL_INVITING_341(int fd)
 {
-	cl.set_writeBuf(fd, makeUserId(fd) + " 341 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + "\r\n");
+	cl.set_writeBuf(fd, makeUserId(fd) + " 341 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + "\r\n");
 }
 void Numerics::RPL_INVITE(int fd)
 {
@@ -242,15 +242,15 @@ void Numerics::RPL_INVITE(int fd)
 // JOIN
 void Numerics::RPL_JOIN(int fd)
 {
-	cl.set_writeBuf(fd, makeUserId(fd) + " JOIN :#" + params.tokens[1] + "\r\n");
+	cl.set_writeBuf(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
 }
 void Numerics::ERR_BANNEDFROMCHAN_474(int fd)
 {
-	cl.set_writeBuf(fd, "474 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :Cannot join channel (+b)\r\n");
+	cl.set_writeBuf(fd, "474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
 }
 void Numerics::ERR_BADCHANNELKEY_475(int fd)
 {
-	cl.set_writeBuf(fd, "475 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+	cl.set_writeBuf(fd, "475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 }
 
 // KICK
@@ -301,7 +301,7 @@ void Numerics::RPL_UMODEIS_221(int fd)
 /* channel mode */
 void Numerics::MODE_CHANNELMSG(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost MODE #" + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	cl.set_writeBuf(fd, ":localhost MODE " + params.tokens[1] + " " + params.tokens[2] + "\r\n");
 }
 void Numerics::MODE_CHANNELMSGWITHPARAM(int fd)
 {
@@ -311,7 +311,7 @@ void Numerics::RPL_CHANNELMODEIS_324(int fd)
 {
 	Channel *channel = cn.findChannel(params.tokens[0]);
 	if (channel == NULL){
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[0] + " :No such channel\r\n");
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 	} else if (channel->getMode().size() == 0){
 		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + "\r\n");
 	} else {
@@ -321,11 +321,11 @@ void Numerics::RPL_CHANNELMODEIS_324(int fd)
 }
 void Numerics::ERR_CANNOTSENDTOCHAN_404(int fd)
 {
-	cl.set_writeBuf(fd, "404 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :Cannot send to channel\r\n");
+	cl.set_writeBuf(fd, "404 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot send to channel\r\n");
 }
 void Numerics::ERR_CHANNELISFULL_471(int fd)
 {
-	cl.set_writeBuf(fd, "471 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :Cannot join channel (+l)\r\n");
+	cl.set_writeBuf(fd, "471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
 }
 // void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 // {
@@ -504,7 +504,7 @@ void Numerics::RPL_TOPIC_332(int fd)
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 331 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :No topic is set\r\n");
+	cl.set_writeBuf(fd, ":localhost 331 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No topic is set\r\n");
 }
 
 // USER
