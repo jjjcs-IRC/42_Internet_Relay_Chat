@@ -246,11 +246,11 @@ void Numerics::RPL_JOIN(int fd)
 }
 void Numerics::ERR_BANNEDFROMCHAN_474(int fd)
 {
-	cl.set_writeBuf(fd, "474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + "474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
 }
 void Numerics::ERR_BADCHANNELKEY_475(int fd)
 {
-	cl.set_writeBuf(fd, "475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + "475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 }
 
 // KICK
@@ -389,11 +389,11 @@ void Numerics::RPL_NAMREPLY_353(int fd) //클라로 보내줘야할 명단이 5�
 				nickList.append((*it)->get_nickName() + " ");
 			op_flag = 0;
 	}
-	sendMsg(fd, ":localhost 353 " + cl.find_client(fd)->get_nickName() + " = " + params.tokens[1] + " :" + nickList + "\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 353 " + cl.find_client(fd)->get_nickName() + " = " + params.tokens[1] + " :" + nickList + "\r\n");
 }
 void Numerics::RPL_ENDOFNAMES_366(int fd)
 {
-	sendMsg(fd, ":localhost 366 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :End of /NAMES list.\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 366 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :End of /NAMES list.\r\n");
 }
 
 
@@ -497,14 +497,14 @@ void Numerics::RPL_TOPIC_332(int fd)
 	Channel *channel = cn.findChannel(params.tokens[1]);
 	std::string topic = channel->getTopic();
 	if (topic.size() < 1)
-		cl.set_writeBuf(fd,serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
+		sendMsg(fd,":"+ serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
 	else
-		cl.set_writeBuf(fd, serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
+		sendMsg(fd, ":"+ serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
 	// sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
-	cl.set_writeBuf(fd, ":localhost 331 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No topic is set\r\n");
+	cl.set_writeBuf(fd, ":"+ serverInfo.serverName + " 331 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No topic is set\r\n");
 }
 
 // USER
