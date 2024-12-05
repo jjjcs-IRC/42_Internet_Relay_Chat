@@ -341,7 +341,7 @@ void Numerics::RPL_ADDVOICE(int fd)
 }
 void Numerics::ERR_INVITEONLYCHAN_473(int fd)
 {
-	cl.set_writeBuf(fd, serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+i)");
+	cl.set_writeBuf(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (invite only)\r\n");
 }
 
 // MOTD
