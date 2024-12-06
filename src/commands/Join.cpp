@@ -18,7 +18,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	Channel *channel = cn.findChannel(params.tokens[1]);;
 	Client *client = cl.find_client(params.client_fd);
 	std::string channelName = params.tokens[1]; // # 떼고 채널 이름만 가져옴
-	std::string inputPassword = params.tokens.size() > 1 ? params.tokens[2] : ""; // 채널 비밀번호
+	std::string inputPassword = params.tokens.size() > 2 ? params.tokens[2] : ""; // 채널 비밀번호
 
 	std::cout << "Join command::executeCommand" << std::endl;
 

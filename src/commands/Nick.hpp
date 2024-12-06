@@ -14,6 +14,7 @@ class Nick : public Command {
         Nick(const Nick &other);
         Nick& operator=(const Nick &other);
         bool check_nick(std::string nick);
+        void send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &cn, std::string msg);
 };
 
 #endif
