@@ -74,7 +74,7 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 
 	//채널에 메시지 전송
-	client->set_writeBuf(":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + channelName + "\r\n");
+	// client->set_writeBuf(":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + channelName + "\r\n");
 	sendMsgToCh(params, channel, client);
 	
 	throw (1001);
@@ -87,7 +87,7 @@ void Join::sendMsgToCh(tParams &params, Channel *channel, Client *sender)
 
 // :chris!~chris@example.com JOIN #test
 	std::string join_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
-						+ sender->get_clientIp() + " JOIN " + channel->getChannelName() + "\n";
+						+ sender->get_clientIp() + " JOIN " + channel->getChannelName() + "\r\n";
 	for (int i = 0; i < list.size(); i++)
 	{
 		if (list[i] != sender){

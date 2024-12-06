@@ -270,6 +270,10 @@ void Server::disconnectClient(int clientSock)
 		
 		if (channel->getParticipants().size() == 0) // 채널에 속한 사람수가 0명이면
 			channelManager.deleteChannel(channelName); // 채널 삭제
+		else{
+			Client* frontParticipant =  channel->getParticipants().front(); // 채널에 속한 사람이 있으면
+			channel->addOperator(frontParticipant); // 먼저 들어왔던 사람을 오퍼레이터로 임명
+		}
     }
 
 	client_manager.delete_client(clientSock);
