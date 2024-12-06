@@ -22,6 +22,7 @@
 # include "ModeParser.hpp"
 # include "PrivParser.hpp"
 # include "PongParser.hpp"
+# include "PartParser.hpp"
 
 class IrcParser
 {

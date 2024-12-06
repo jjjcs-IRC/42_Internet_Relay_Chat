@@ -16,6 +16,7 @@
 # define PRIVMSG 8
 # define PONG 9
 # define PING 10
+# define PART 11
 
 /* abt fd value */
 # define STDIN 0 // do not use
