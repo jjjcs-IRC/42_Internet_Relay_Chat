@@ -45,8 +45,10 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// else if (channel->getPassword() != inputPassword && channel->getPassword() != "") { // 채널 비밀번호 확인
 		else if (channel->hasMode('k')) { // 채널 비밀번호 확인
 			//   k 모드 아니면 확인 안해도 됨
-			if (channel->getPassword() != inputPassword)
+			if (channel->getPassword() != inputPassword) {
+				std::cout << "비밀번호 틀림 :" <<channel->getPassword() << " | "<< inputPassword<<std::endl;
 				throw (475);
+			}
 		}
 		else if (channel->isUnderCapacity() == false) { // 채널 내 사용자 수 확인
 			throw (471);
@@ -70,10 +72,12 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// "<client> <channel> :You have joined too many channels"
 		throw (405);
 	}
+
 	//채널에 메시지 전송
+	client->set_writeBuf(":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + channelName + "\r\n");
 	sendMsgToCh(params, channel, client);
 	
-	throw (332);
+	throw (1001);
 	return 0;
 }
 

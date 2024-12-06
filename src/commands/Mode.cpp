@@ -75,9 +75,9 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	// :<nickname>!<username>@<host> MODE <channel> <mode> <mode params>
 	if (resultOp.size() > 0) {
 		std::vector<Client*> list =  channel->getParticipants();
-		std::string mode_msg = ":" + client->get_nickName() + "!" + client->get_userName() +\
+		std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
 								"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
-								+ " " + resultOp + " " + resultToken;
+								+ " :" + resultOp + " " + resultToken + "\r\n";
 		for (int i = 0; i < list.size(); i++)
 			list[i]->set_writeBuf(mode_msg);
 	}

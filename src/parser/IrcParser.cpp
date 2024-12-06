@@ -121,6 +121,8 @@ int	IrcParser::GetCmdType( std::string &str )
 		return (PONG);
 	else if (str == "PONG")
 		return (PING);
+	else if (str == "PART")
+		return (PART);
 	return (ERROR);
 }
 
@@ -146,6 +148,8 @@ SuperParser	*IrcParser::NewClassPtr( int type )
 		return ( new PrivParser() );
 	if (type == PONG)
 		return ( new PongParser() );
+	if (type == PART)
+		return ( new PartParser() );
 	if (type == PING)
 		return ( NULL );
 	return (NULL);
