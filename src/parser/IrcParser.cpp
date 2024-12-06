@@ -8,19 +8,6 @@ IrcParser::~IrcParser(void)
 {
 };
 
-void	IrcParser::ShowParams( void )
-{
-	std::cout << std::endl << "==================================" << std::endl;
-	std::cout << "Client_fd: " << data.client_fd << std::endl;
-	std::cout << "CMD_Type : " << data.cmd_type << std::endl;
-	std::cout << "== tokens ==" << std::endl;
-	for (std::vector<std::string>::iterator it = data.tokens.begin(); it != data.tokens.end(); ++it)
-	{
-		std::cout << *it << std::endl;
-	}
-	std::cout << std::endl << "==================================" << std::endl;
-}
-
 bool	IrcParser::IsValidString( std::string &CmdLine )
 {
 	/* options */
@@ -29,7 +16,7 @@ bool	IrcParser::IsValidString( std::string &CmdLine )
 	return (true);
 }
 
-tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
+tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 {
 	data.client_fd = fd;
 	/* check ValidString */
