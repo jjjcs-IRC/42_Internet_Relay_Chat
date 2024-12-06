@@ -510,7 +510,7 @@ void Numerics::RPL_TOPIC_332(int fd)
 	if (topic.size() > 0)
 		sendMsg(fd, ":"+ serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
 	else
-		sendMsg(fd, ":"+ serverInfo.serverName + " 331 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
+		sendMsg(fd, ":"+ serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
