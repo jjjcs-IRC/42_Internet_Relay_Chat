@@ -273,3 +273,15 @@ std::string Channel::getMode() const {
         }
     return result;
 }
+
+bool Channel::removeinvitedClientsByName(const std::string& name) {
+    Client* client = findClient(name);
+    if (client != NULL) {
+        participants.erase(std::remove(invitedClients.begin(), invitedClients.end(), client), invitedClients.end());
+        std::cout << name << " 초대자에서 삭제" << std::endl;
+        return true;
+    }
+
+    std::cout << name << " 채널에 존재하지 않는 클라이언트" << std::endl;
+    return false;
+}
