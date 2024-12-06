@@ -229,7 +229,9 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 			client_manager.set_readBuf(clientSock, tem_string);
 			try
 			{
-				tParams res = parse.IrcParsing(clientSock, result);
+				tParams res;
+				
+				parse.IrcParsing(clientSock, result, res);
 				numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
 				Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
 				std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
