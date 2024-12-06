@@ -50,17 +50,22 @@ int Part::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     if (channel->isOperator(client))
         channel->removeOperatorByName(client->get_nickName());
 
+    //invite 목록에서 사용자 삭제
+    if (channel->isInvited(client))
+        channel->removeinvitedClientsByName(client->get_nickName());
+
     //사용자의 채널 목록에서 채널 삭제
     client->kick_client_from_channel(channel->getChannelName());
 
     //채널에 사용자가 나갔다고 알림
-    std::string part_msg = ":" + client->get_userName() + "!" + client->get_userName() + "@" + client->get_clientIp() \
+    std::string part_msg = ":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() \
                             + " PART " + channel->getChannelName() + " ";
     if (params.tokens.size() == 3)
         part_msg += params.tokens[2];
     else
         part_msg += ":good bye!";
     part_msg += "\r\n";
+
     for (int i = 0; i < client_list.size(); i++)
         client_list[i]->set_writeBuf(part_msg);
 
