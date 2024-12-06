@@ -451,7 +451,10 @@ void Numerics::RPL_PART(int fd)
 // PASS
 void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
+	if (cl.find_client(fd)->get_nickName().size() < 1)
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 464 * :Password incorrect.\r\n");
+	else
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
 }
 
 void Numerics::ERR_NOTREGISTERED_451(int fd)
