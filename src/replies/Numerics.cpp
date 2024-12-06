@@ -460,9 +460,9 @@ void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 void Numerics::ERR_NOTREGISTERED_451(int fd)
 {
 	if (cl.find_client(fd)->get_userName().size() < 1)
-		sendMsg(fd, ":" + serverInfo.serverName + " 451 * :You have not registered");
+		sendMsg(fd, ":" + serverInfo.serverName + " 451 * :You have not registered\r\n");
 	else
-		sendMsg(fd, ":" + serverInfo.serverName + " 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
+		sendMsg(fd, ":" + serverInfo.serverName + " 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered\r\n");
 }
 
 // PING
@@ -526,5 +526,5 @@ void Numerics::ERR_ALREADYREGISTERED_462(int fd)
 void Numerics::ERR_UNKNOWNMODE_472(int fd, int errNum)
 {
 	char modechar = errNum % 1000;
-	sendMsg(fd, ":" + serverInfo.serverName + " 472 " + cl.find_client(fd)->get_nickName() +" "+ modechar + " :is unknown mode char to me");
+	sendMsg(fd, ":" + serverInfo.serverName + " 472 " + cl.find_client(fd)->get_nickName() +" "+ modechar + " :is unknown mode char to me\r\n");
 }
