@@ -62,6 +62,10 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     //권한에서 사용자 삭제
     if (channel->isOperator(kickee))
         channel->removeOperatorByName(kickee->get_nickName());
+    
+     // 초대목록에서 사용자 삭제
+    if(channel->isInvited(kickee))
+        channel->removeinvitedClientsByName(kickee->get_nickName());
 
     //사용자의 채널 목록에서 채널 삭제
     kickee->kick_client_from_channel(params.tokens[1]);

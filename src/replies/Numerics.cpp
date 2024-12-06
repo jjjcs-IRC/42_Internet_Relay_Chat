@@ -163,6 +163,7 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		RPL_PONG(fd);
 		break;
 	case 1001:
+		RPL_JOIN(fd);
 		RPL_TOPIC_332(fd);
 		RPL_NAMREPLY_353(fd);
 		RPL_ENDOFNAMES_366(fd);
@@ -247,10 +248,12 @@ void Numerics::RPL_INVITE(int fd)
 // JOIN
 void Numerics::RPL_JOIN(int fd)
 {
-	cl.set_writeBuf(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
+	Client *client = cl.find_client(fd);
+	sendMsg(fd,":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + params.tokens[1] + "\r\n");
 }
 void Numerics::ERR_BANNEDFROMCHAN_474(int fd)
 {
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
 	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
 }
 void Numerics::ERR_BADCHANNELKEY_475(int fd)
@@ -266,7 +269,7 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
 	// std::cout << "reply 482" << std::endl;
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :You're not channel operator\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
 }
 
 void Numerics::RPL_KICK(int fd)
@@ -318,9 +321,9 @@ void Numerics::RPL_CHANNELMODEIS_324(int fd)
 	if (channel == NULL){
 		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 	} else if (channel->getMode().size() == 0){
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + "\r\n");
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + ": \r\n");
 	} else {
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + " +" + channel->getMode() + "\r\n");
+		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + ": +" + channel->getMode() + "\r\n");
 	}
 
 }
@@ -501,11 +504,10 @@ void Numerics::RPL_TOPIC_332(int fd)
 {
 	Channel *channel = cn.findChannel(params.tokens[1]);
 	std::string topic = channel->getTopic();
-	if (topic.size() < 1)
-		sendMsg(fd,":" + serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
+	if (topic.size() > 0)
+		sendMsg(fd, ":"+ serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
 	else
-		sendMsg(fd, ":" + serverInfo.serverName + " 332 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :" + topic + "\r\n");
-	// sendMsg(fd, makeUserId(fd) + " JOIN :" + params.tokens[1] + "\r\n");
+		sendMsg(fd, ":"+ serverInfo.serverName + " 331 " + cl.find_client(fd)->get_nickName() + " " + channel->getChannelName() + " :No topic is set\r\n");
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {

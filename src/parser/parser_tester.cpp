@@ -62,6 +62,8 @@
 // 	test_cases.push_back("PRIVMSG user456 :How are you?");
 // 	test_cases.push_back("PRIVMSG #channel_with_special_chars :@here!");
 // 	test_cases.push_back("PRIVMSG #general");
+// 	test_cases.push_back("PRIVMSG user123123123 :123:");
+// 	test_cases.push_back("PRIVMSG user123123123 :::::123:::::");
 
 // 	// PING
 // 	test_cases.push_back("PING");

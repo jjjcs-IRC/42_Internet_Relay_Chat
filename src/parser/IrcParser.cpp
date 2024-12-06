@@ -41,11 +41,17 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 	/* make t_params */
 	{
 		std::string								line(CmdLine);
-		std::vector<std::string>				temp = split(line, ':');
-		if (temp.size() > 2)
+		std::vector<std::string>				temp;
+		int	pos = line.find(':');
+		if (pos != std::string::npos)
 		{
-			std::cerr << "invalid argument: Multiple colons" << std::endl;
-			data.cmd_type = ERROR;
+			
+			temp.push_back(line.substr(0, pos));
+			temp.push_back(line.substr(pos + 1, line.size()));
+		}
+		else
+		{
+			temp.push_back(line);
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
