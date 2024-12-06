@@ -275,13 +275,14 @@ std::string Channel::getMode() const {
 }
 
 bool Channel::removeinvitedClientsByName(const std::string& name) {
-    Client* client = findClient(name);
-    if (client != NULL) {
-        participants.erase(std::remove(invitedClients.begin(), invitedClients.end(), client), invitedClients.end());
-        std::cout << name << " 초대자에서 삭제" << std::endl;
-        return true;
+   for (std::vector<Client*>::iterator it = invitedClients.begin(); it != invitedClients.end(); ++it) {
+        if ((*it)->get_nickName() == name) {
+            invitedClients.erase(it); // 초대목록에서 삭제
+            std::cout << name << " 초대 목록에서 삭제" << std::endl;
+            return true; 
+        }
     }
 
-    std::cout << name << " 채널에 존재하지 않는 클라이언트" << std::endl;
-    return false;
+    std::cout << name << " 초대 목록에 없음" << std::endl;
+    return false; 
 }
