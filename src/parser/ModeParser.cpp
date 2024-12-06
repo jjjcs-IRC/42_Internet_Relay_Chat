@@ -142,10 +142,12 @@ int	ModeParser::CmdParser( void )
 	/* Make executing strings */
 	std::vector<std::string>	reVal;
 	{
-		if (tokens.size() > 1 && (tokens[1].at(0) == '#' || tokens[1].at(0) == '&'))
-			reVal.push_back(tokens[1]);
-		else
-			reVal.push_back("MODE");
+		// if (tokens.size() > 1 && (tokens[1].at(0) == '#' || tokens[1].at(0) == '&'))
+		// 	reVal.push_back(tokens[1]);
+		// else
+		// 	reVal.push_back("MODE");
+		reVal.push_back("MODE");
+		reVal.push_back(tokens[1]);
 		std::vector<std::string>::iterator	flag_start = flag.begin();
 		std::vector<std::string>::iterator	flag_end = flag.end();
 		std::vector<std::string>::iterator	params_start = params.begin();

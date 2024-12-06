@@ -17,33 +17,30 @@ Mode::Mode(const Mode &other) {
 
 int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	this->client = cl.find_client(params.client_fd);
-	this->channel = cn.findChannel(params.tokens[0]);
+	this->channel = cn.findChannel(params.tokens[1]);
 	std::cout << "Mode::executeCommand" << std::endl;
 	if (client->get_passed() == false) {
 		throw 451;
 	}
 	if (channel == NULL) { //  채널이 없을 때
+		if (params.tokens[1][0] != '#') {
+			throw 501;	
+	}
 		throw 403;
 	}
-	if (params.tokens.size() == 1) { // 매개변수가 충분하지 않을 때
-		// params.tokens.push_back(channel->getMode());
-		// std::cout << "모드 확인" << channel->getMode() << params.tokens.size()<< std::endl;
-
+	if (params.tokens.size() < 3) { // 매개변수가 충분하지 않을 때
+		std::cout << "매개변수가 충분하지 않을 때" << std::endl;
 		throw 324;
 	}
-	// if (params.tokens.size() < 2) { // 매개변수가 충분하지 않을 때
-	// 	// throw 461;
-	// 	return 0;
-	// }
-	if (channel->isOperator(client) == false) { // 클라이언트가 오퍼레이터가 아닐 때
-		std::cout << "오퍼레이터가 아님" <<params.tokens[1] << std::endl;
+	if (channel->isOperator(client) == false) {
 		throw 482;
 	}
 	this->flag = -1;
 
 	memset(&this->resultOp, 0, sizeof(this->resultOp));
 	memset(&this->resultToken, 0, sizeof(this->resultToken));
-	for (size_t i = 1; i < params.tokens.size(); i++) {
+
+	for (size_t i = 2; i < params.tokens.size(); i++) {
 		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
 		modeCmd = modeSplit(params.tokens[i], ':');
 
@@ -69,20 +66,15 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		}
 	}
 
-
 	// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
-	// :jimchoi1!~1@crs.42seoul.kr MODE #jimchoii +i
-	// :<nickname>!<username>@<host> MODE <channel> <mode> <mode params>
 	if (resultOp.size() > 0) {
-		std::vector<Client*> list =  channel->getParticipants();
-		std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
-								"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
-								+ " :" + resultOp + " " + resultToken + "\r\n";
-		for (int i = 0; i < list.size(); i++)
-			list[i]->set_writeBuf(mode_msg);
+		sendMsgToCh(channel, client);
 	}
+	std::cout << "Mode::executeCommand end" << std::endl;
 	return 0;
 }
+
+
 
 std::string Mode::modeI () {
 
@@ -145,10 +137,10 @@ std::string Mode::modeL () {
 	if (!channel->hasMode('l') && modeCmd[0] == "-") {
 		return "";
 	}
-	if (isNumber(modeCmd[2]) == false) {
-		return "";
-	}
 	if (modeCmd[0] == "+") {
+		if (isNumber(modeCmd[2]) == false) {
+			return "";
+		}
 		channel->addMode('l');
 		channel->setMaxParticipants(atoi(modeCmd[2].c_str()));
 		if (this->flag == PLUS)
@@ -234,6 +226,7 @@ std::string Mode::modeT () {
 // }
 
 bool Mode::isNumber(const std::string& str) {
+	if (str.size() == 0) return false;
 	for (size_t i = 0; i < str.size(); i++) {
 		if (std::isdigit(str[i]) == 0) return false;
 	}
@@ -249,4 +242,16 @@ std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
 	}
 
 	return result;
+}
+
+void Mode::sendMsgToCh(Channel *channel, Client *sender)
+{
+	std::vector<Client*> list =  channel->getParticipants();
+	std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
+							"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
+							+ " :" + resultOp + " " + resultToken + "\r\n";
+	for (int i = 0; i < list.size(); i++)
+	{
+			list[i]->set_writeBuf(mode_msg);				
+	}
 }
