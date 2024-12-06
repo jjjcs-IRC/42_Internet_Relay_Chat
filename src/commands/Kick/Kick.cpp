@@ -70,7 +70,7 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_clientIp()\
                              + " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
     if (params.tokens.size() == 4) //강퇴 사유가 있는 경우
-        kick_msg += " :" + params.tokens[3];
+        kick_msg += " " + params.tokens[3];
     for (int i = 0; i < client_list.size(); i++)
         client_list[i]->set_writeBuf(kick_msg);
     kickee->set_writeBuf(kick_msg);
