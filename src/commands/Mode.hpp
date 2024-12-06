@@ -27,6 +27,7 @@ class Mode : public Command {
 		std::string modeT ();
 		// bool findOperator(const Client *client);
 		bool isNumber(const std::string& str);
+		 void sendMsgToCh(Channel *channel, Client *client);
 
 		int flag;
 		std::string resultOp;
