@@ -43,6 +43,7 @@ public:
    
     bool inviteClient(Client* client); // 클라이언트 초대
     bool isInvited(Client* client) const; // 초대 여부 확인
+    bool removeinvitedClientsByName(const std::string& name); // 초대 목록에서 삭제
 
     bool isUnderCapacity() const; // 현재 참여 가능 여부 확인 (최대 인원을 넘지 않았는지)
     void setMaxParticipants(size_t max); // L 모드 최대 참여자 설정

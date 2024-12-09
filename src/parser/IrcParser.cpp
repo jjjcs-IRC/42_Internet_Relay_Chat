@@ -8,19 +8,6 @@ IrcParser::~IrcParser(void)
 {
 };
 
-void	IrcParser::ShowParams( void )
-{
-	std::cout << std::endl << "==================================" << std::endl;
-	std::cout << "Client_fd: " << data.client_fd << std::endl;
-	std::cout << "CMD_Type : " << data.cmd_type << std::endl;
-	std::cout << "== tokens ==" << std::endl;
-	for (std::vector<std::string>::iterator it = data.tokens.begin(); it != data.tokens.end(); ++it)
-	{
-		std::cout << *it << std::endl;
-	}
-	std::cout << std::endl << "==================================" << std::endl;
-}
-
 bool	IrcParser::IsValidString( std::string &CmdLine )
 {
 	/* options */
@@ -29,7 +16,7 @@ bool	IrcParser::IsValidString( std::string &CmdLine )
 	return (true);
 }
 
-tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
+tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 {
 	data.client_fd = fd;
 	/* check ValidString */
@@ -41,11 +28,17 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine )
 	/* make t_params */
 	{
 		std::string								line(CmdLine);
-		std::vector<std::string>				temp = split(line, ':');
-		if (temp.size() > 2)
+		std::vector<std::string>				temp;
+		int	pos = line.find(':');
+		if (pos != std::string::npos)
 		{
-			std::cerr << "invalid argument: Multiple colons" << std::endl;
-			data.cmd_type = ERROR;
+			
+			temp.push_back(line.substr(0, pos));
+			temp.push_back(line.substr(pos + 1, line.size()));
+		}
+		else
+		{
+			temp.push_back(line);
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');

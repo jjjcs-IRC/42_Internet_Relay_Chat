@@ -56,24 +56,28 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         }
     }
 
-    //채널에서 사용자 삭제
-    channel->removeParticipantByName(kickee->get_nickName());
-
     //권한에서 사용자 삭제
     if (channel->isOperator(kickee))
         channel->removeOperatorByName(kickee->get_nickName());
+    
+     // 초대목록에서 사용자 삭제
+    if(channel->isInvited(kickee))
+        channel->removeinvitedClientsByName(kickee->get_nickName());
 
     //사용자의 채널 목록에서 채널 삭제
     kickee->kick_client_from_channel(params.tokens[1]);
     
     //강퇴당한 사용자에게 강퇴 메세지 전달
     std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_clientIp()\
-                             + " KICK " + channel->getChannelName() + " " + kickee->get_nickName() + "\n";
+                             + " KICK " + channel->getChannelName() + " " + kickee->get_nickName();
     if (params.tokens.size() == 4) //강퇴 사유가 있는 경우
-        kick_msg += " :" + params.tokens[3];
+        kick_msg += " " + params.tokens[3];
+    kick_msg += "\r\n";
     for (int i = 0; i < client_list.size(); i++)
         client_list[i]->set_writeBuf(kick_msg);
-    kickee->set_writeBuf(kick_msg);
+
+    //채널에서 사용자 삭제
+    channel->removeParticipantByName(kickee->get_nickName());
 
     //채널에 참여자가 아무도 없는 경우, 채널 삭제
     if (channel->getParticipants().size() == 0)

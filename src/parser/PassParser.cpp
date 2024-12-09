@@ -12,7 +12,7 @@ PassParser::~PassParser( void )
 
 int	PassParser::CmdParser( void )
 {
-	if (tokens.size() != 2)
+	if (tokens.size() < 2)
 		throw (461);
 	return (0);
 }

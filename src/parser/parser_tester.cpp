@@ -9,6 +9,7 @@
     
 //     std::vector<std::string> test_cases;
 // 	// PASS
+// 	test_cases.push_back("PASS 8080NICK !TIME\n\r");
 // 	test_cases.push_back("PASS secretpassword");
 // 	test_cases.push_back("PASS anotherpassword123");
 // 	test_cases.push_back("PASS");
@@ -62,6 +63,8 @@
 // 	test_cases.push_back("PRIVMSG user456 :How are you?");
 // 	test_cases.push_back("PRIVMSG #channel_with_special_chars :@here!");
 // 	test_cases.push_back("PRIVMSG #general");
+// 	test_cases.push_back("PRIVMSG user123123123 :123:");
+// 	test_cases.push_back("PRIVMSG user123123123 :::::123:::::");
 
 // 	// PING
 // 	test_cases.push_back("PING");
@@ -116,7 +119,6 @@
 //         try {
 //             // 파싱 호출
 //             res = test.IrcParsing(3, *it);
-//             test.ShowParams(); // 파싱 결과 출력
 //         } catch (int error_code) {
 //             // 오류 처리
 //             std::cerr << "Parsing error (" << error_code << ") for input: " << *it << std::endl;

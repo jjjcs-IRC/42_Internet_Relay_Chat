@@ -29,7 +29,6 @@ class IrcParser
 	protected:
 		/* parameter manager */
 		SuperParser	*ptr;
-		tParams	data;
 	private :
 		/* Do not use this constructer and operator: Only for OCCF */
 		IrcParser( IrcParser const &copy );
@@ -45,10 +44,8 @@ class IrcParser
 		IrcParser( void );
 		~IrcParser( void );
 
-		/* for DEBUG */
-		void			ShowParams( void );
 		/* public function */
-		tParams		IrcParsing( int fd, std::string &CmdLine );
+		tParams		IrcParsing( int fd, std::string &CmdLine, tParams &data );
 };
 
 #endif

@@ -229,7 +229,9 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 			client_manager.set_readBuf(clientSock, tem_string);
 			try
 			{
-				tParams res = parse.IrcParsing(clientSock, result);
+				tParams res;
+				
+				parse.IrcParsing(clientSock, result, res);
 				numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
 				Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
 				std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
@@ -270,6 +272,10 @@ void Server::disconnectClient(int clientSock)
 		
 		if (channel->getParticipants().size() == 0) // 채널에 속한 사람수가 0명이면
 			channelManager.deleteChannel(channelName); // 채널 삭제
+		else{
+			Client* frontParticipant =  channel->getParticipants().front(); // 채널에 속한 사람이 있으면
+			channel->addOperator(frontParticipant); // 먼저 들어왔던 사람을 오퍼레이터로 임명
+		}
     }
 
 	client_manager.delete_client(clientSock);

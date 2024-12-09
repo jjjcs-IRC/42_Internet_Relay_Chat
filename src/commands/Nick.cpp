@@ -51,11 +51,11 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	 // 닉네임 변경
 	if (isFirst.size() != 0) //  닉네임 변경 성공 메세지 전송
-		client->set_writeBuf(":" + pre_nickName 
-								+"!" +client->get_userName() 
-								+ "@" + client->get_clientIp()
-								+ " NICK :" + params.tokens[1] 
-								+ "\r\n");
+	{
+		std::string msg = ":" + pre_nickName +"!" +client->get_userName() + "@" + client->get_clientIp() \
+								+ " NICK :" + params.tokens[1] + "\r\n";
+		send_nick_ch_msg(params, cl, cn, msg);
+	}
 	return 0;
 }
 
@@ -85,4 +85,19 @@ bool Nick::check_nick(std::string nick) {
 			return (false);
 	}
 	return true;
+}
+
+void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &cn, std::string msg)
+{
+	Client *client = cl.find_client(params.client_fd);
+
+	std::vector<std::string> channel_list = client->get_channels();
+	for (int i = 0; i < channel_list.size(); i++)
+	{
+		Channel *channel = cn.findChannel(channel_list[i]);
+		std::vector<Client*> client_list = channel->getParticipants();
+
+		for (int j = 0; j < client_list.size(); j++)
+			client_list[j]->set_writeBuf(msg);
+	}
 }

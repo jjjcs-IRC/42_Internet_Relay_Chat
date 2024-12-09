@@ -9,6 +9,7 @@
 #include "./Invite/Invite.hpp"
 #include "./Kick/Kick.hpp"
 #include "./Topic/Topic.hpp"
+#include "./Part/Part.hpp"
 
 CommandFactory::CommandFactory() {
     // 각 커맨드 인스턴스를 미리 생성하여 맵에 저장
@@ -22,6 +23,7 @@ CommandFactory::CommandFactory() {
     _commandMap[TOPIC] = new Topic();
     _commandMap[MODE] = new Mode();
     _commandMap[PONG] = new Pong();
+    _commandMap[PART] = new Part();
 
     std::cout << "CommandFactory 생성자" << std::endl;
     // 다른 커맨드들도 여기에 추가
