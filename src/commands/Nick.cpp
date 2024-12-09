@@ -25,7 +25,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		throw 451;
 	}
 	
-	if (params.tokens[1] == "") {
+	if (params.tokens.size() < 2) {
 		// `NICK` 명령어로 전송된 닉네임이 없을 때 발생합니다.
 		throw 431;
 	}

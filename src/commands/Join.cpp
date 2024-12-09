@@ -22,6 +22,11 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	std::cout << "Join command::executeCommand" << std::endl;
 
+	if (params.tokens.size() < 2) {
+		// `ERR_NEEDMOREPARAMS (461)`
+		// `JOIN` 명령어는 적어도 하나의 채널 이름을 인자로 받아야 합니다.
+		throw 461;
+	}
 	if (client->get_passed() == false) {
 		// `ERR_NOTREGISTERED (451)`
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
@@ -29,7 +34,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	if (channel == NULL) {//채널 존재 여부 확인
 		if (!cn.addChannel(channelName, client)){
-
 			throw (476);
 		} 
 		channel = cn.findChannel(params.tokens[1]);
