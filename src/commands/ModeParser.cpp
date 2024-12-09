@@ -115,8 +115,6 @@ std::vector<std::string>	Mode::Parser( std::vector<std::string>	&tokens )
 		reVal.push_back("MODE");
 		if (tokens.size() > 1)
 			reVal.push_back(tokens[1]);
-		else
-			return ;
 		std::vector<std::string>::iterator	flag_start = flag.begin();
 		std::vector<std::string>::iterator	flag_end = flag.end();
 		std::vector<std::string>::iterator	params_start = params.begin();
