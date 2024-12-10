@@ -2,6 +2,8 @@
 #include "../server/Server.hpp"
 
 
+
+
 Mode::Mode() {}
 
 Mode::~Mode() {}
@@ -16,12 +18,14 @@ Mode::Mode(const Mode &other) {
 }
 
 int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	this->client = cl.find_client(params.client_fd);
-	this->channel = cn.findChannel(params.tokens[1]);
 	std::cout << "Mode::executeCommand" << std::endl;
+	this->client = cl.find_client(params.client_fd);
+
 	if (client->get_passed() == false) {
 		throw 451;
 	}
+
+	this->channel = cn.findChannel(params.tokens[1]);
 	if (channel == NULL) { //  채널이 없을 때
 		if (params.tokens[1][0] != '#') {
 			throw 501;	
@@ -35,15 +39,15 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel->isOperator(client) == false) {
 		throw 482;
 	}
+	std::vector<std::string> modeTokens = Parser(params.tokens);
 	this->flag = -1;
 
 	memset(&this->resultOp, 0, sizeof(this->resultOp));
 	memset(&this->resultToken, 0, sizeof(this->resultToken));
 
-	for (size_t i = 2; i < params.tokens.size(); i++) {
+	for (size_t i = 2; i < modeTokens.size(); i++) {
 		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
-		modeCmd = modeSplit(params.tokens[i], ':');
-
+		modeCmd = modeSplit(modeTokens[i], ':');
 		std::string result = "";
 		if (modeCmd[1] == "i") {
 			result += modeI();
@@ -63,6 +67,7 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		if (result.size() > 0) {
 			resultOp += result;
 			resultToken += modeCmd.size() > 2 ? modeCmd[2] : "";
+			resultToken += " ";
 		}
 	}
 
@@ -105,14 +110,14 @@ std::string Mode::modeI () {
 }
 
 std::string Mode::modeO () {
-	client = channel->findClient(modeCmd[2]);
-	if (client == NULL) { // 클라이언트가 없을 때
+	Client *operatorClient = channel->findClient(modeCmd[2]);
+	if (operatorClient == NULL) { // 클라이언트가 없을 때
 			return "";
 		}
 	if (modeCmd[0] == "+") {
-		if (channel->isOperator(client) == true)
+		if (channel->isOperator(operatorClient) == true)
 			return "";
-		channel->addOperator(client);
+		channel->addOperator(operatorClient);
 		if (this->flag == PLUS)
 			return "o";
 		else {
@@ -121,9 +126,9 @@ std::string Mode::modeO () {
 		}
 	}
 	else {
-		if (channel->isOperator(client) == false)
+		if (channel->isOperator(operatorClient) == false)
 			return "";
-		channel->removeOperatorByName(client->get_nickName());
+		channel->removeOperatorByName(operatorClient->get_nickName());
 		if (this->flag == MINUS)
 			return "o";
 		else {
@@ -247,6 +252,9 @@ std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
 void Mode::sendMsgToCh(Channel *channel, Client *sender)
 {
 	std::vector<Client*> list =  channel->getParticipants();
+	if (client == NULL) {
+		std::cout << "client is NULL" << std::endl;
+	}
 	std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
 							"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
 							+ " :" + resultOp + " " + resultToken + "\r\n";

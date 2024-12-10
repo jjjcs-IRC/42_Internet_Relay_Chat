@@ -42,6 +42,7 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 		}
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
+		std::cout << "tokens_len: " << data.tokens.size() << std::endl;
 		// std::cout << data.tokens.size() << std::endl;
 		if (data.tokens.size() == 0)
 		{
@@ -54,22 +55,6 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 	}
 	/* get CMD Type */
 	data.cmd_type = GetCmdType(*data.tokens.begin());
-	/* execute CmdParser */
-	{
-		SuperParser	*ptr;
-		
-		ptr = NewClassPtr( data.cmd_type );
-		if (ptr == NULL)
-		{
-			data.cmd_type = ERROR;
-			return (data);
-		}
-		ptr->SetTokens( data.tokens );
-		if (ptr->CmdParser())
-			data.cmd_type = ERROR;
-		data.tokens = ptr->GetTokens();
-		delete ptr;
-	}
 	return (data);
 }
 
@@ -119,31 +104,14 @@ int	IrcParser::GetCmdType( std::string &str )
 	return (ERROR);
 }
 
-SuperParser	*IrcParser::NewClassPtr( int type )
+void		IrcParser::ShowStatus( tParams &res )
 {
-	if (type == PASS)
-		return ( new PassParser() );
-	if (type == NICK)
-		return ( new NickParser() );
-	if (type == USER)
-		return ( new UserParser() );
-	if (type == JOIN)
-		return ( new JoinParser() );
-	if (type == KICK)
-		return ( new KickParser() );
-	if (type == INVITE)
-		return ( new InviteParser() );
-	if (type == TOPIC)
-		return ( new TopicParser() );
-	if (type == MODE)
-		return ( new ModeParser() );
-	if (type == PRIVMSG)
-		return ( new PrivParser() );
-	if (type == PONG)
-		return ( new PongParser() );
-	if (type == PART)
-		return ( new PartParser() );
-	if (type == PING)
-		return ( NULL );
-	return (NULL);
+	std::cout << "client_fd: " << res.client_fd << std::endl;
+	std::cout << "cmd_type : " << res.cmd_type << std::endl;
+	std::cout << "tokens_list: " << std::endl;
+	for (int i = 0; i < res.tokens.size(); i++)
+	{
+		std::cout << "tokens[" << i << "]: " << res.tokens[i] << std::endl;
+	}
+	std::cout << "=============================" << std::endl;
 }

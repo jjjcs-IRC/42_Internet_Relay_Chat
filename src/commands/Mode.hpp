@@ -36,6 +36,7 @@ class Mode : public Command {
 		Channel *channel;
 		Client *client;
 
+		std::vector<std::string>	Parser( std::vector<std::string>	&tokens );
 };
 
 

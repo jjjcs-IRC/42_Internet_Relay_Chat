@@ -214,6 +214,7 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 		std::cout << "fd : " << clientSock << " input : " << read_buf << std::endl;
 		while ((tem_string.find("\r\n") != std::string::npos) || (tem_string.find("\n") != std::string::npos))
 		{
+			std::cout << "tem string |" << tem_string << std::endl;
 			pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
 			pos_nl = tem_string.find("\n");
 			if (pos_crlf < pos_nl)
@@ -233,6 +234,8 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 				
 				parse.IrcParsing(clientSock, result, res);
 				numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
+				if (res.tokens[0] == "PASS" && res.tokens[1] != this->password)
+					tem_string.clear(); // PASS의 비밀번호가 서버와 설정된것과 다르면, 같이 들어온 입력값을 초기화 시킴 
 				Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
 				std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
 				if (command != nullptr)
