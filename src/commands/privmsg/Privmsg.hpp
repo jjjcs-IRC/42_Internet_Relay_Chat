@@ -16,7 +16,9 @@ private:
 	int check_client(tParams &params, ClientManager &cl, std::string channel);
 	int check_channel(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel);
 	void sendMsgToCl(tParams &params, ClientManager &cl, std::string client);
+	void sendMsgToCls(tParams &params, ClientManager &cl, std::string client);
 	void sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel);
+	void sendMsgToChs(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel);
 public:
 	Privmsg();
 	virtual ~Privmsg();

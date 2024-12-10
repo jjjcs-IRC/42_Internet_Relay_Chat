@@ -68,6 +68,17 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 	receiver->set_writeBuf(priv_msg);
 }
 
+void Privmsg::sendMsgToCls(tParams &params, ClientManager &cl, std::string client)
+{
+	Client *sender = cl.find_client(params.client_fd);
+	Client *receiver = cl.find_client_byNick(client);
+	std::string priv_msg =  ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
+                            + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " "\
+                            + params.tokens[2] + "\n";
+	receiver->set_writeBuf(priv_msg);
+	sender->set_writeBuf(priv_msg);
+}
+
 void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
 {
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
@@ -82,6 +93,21 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 								+ params.tokens[2] + "\n";
 			list[i]->set_writeBuf(priv_msg);
 		}					
+	}
+}
+
+void Privmsg::sendMsgToChs(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
+{
+	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
+	Client *sender = cl.find_client(params.client_fd);
+
+
+	for (int i = 0; i < list.size(); i++)
+	{
+		std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
+							+ sender->get_clientIp() + " PRIVMSG " + channel + " "\
+							+ params.tokens[2] + "\n";
+		list[i]->set_writeBuf(priv_msg);		
 	}
 }
 
@@ -133,7 +159,7 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 		if (check_client(params, cl, this->v_client[i]) != 0)
 			res = 407;
 		else
-			sendMsgToCl(params, cl, this->v_client[i]);
+			sendMsgToCls(params, cl, this->v_client[i]);
 	}
 	//채널에 전송
 	for (int i = 0; i < this->v_channel.size(); i++)
@@ -141,7 +167,7 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 		if (check_channel(params, cl, cn, this->v_channel[i]) != 0)
 			res = 407;
 		else
-			sendMsgToCh(params, cl, cn, this->v_channel[i]);
+			sendMsgToChs(params, cl, cn, this->v_channel[i]);
 	}
 	throw res;
 }
