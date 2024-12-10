@@ -59,30 +59,40 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	return 0;
 }
 
-
 bool Nick::check_nick(std::string nick) {
+	//최대 길이 제한 (9자 초과 불가)
 	if (nick.size() > 9) {
 		return false;
 	}
-    if (nick[0] == '#' || nick[0] == '&') // multi-prifix letter what abt chanels
-        return (false);
-	if (nick[0] == '$' || nick[0] == ':')
+
+	//첫 글자는 알파벳(a-z, A-Z), 숫자(0-9), 또는 특정 특수문자(~, -, _, ^)
+    if (nick[0] != '~' && nick[0] != '-' && nick[0] != '_' && nick[0] != '^' && !isalnum(nick[0]))
+		return false;
+
+	//닉네임에 공백, @, !, #, :, , 등 특정 특수 문자 포함 불가
 	for (int i = 0; i < nick.size(); i++)
 	{
 		if (nick[i] == ' ')
 			return (false);
-		if (nick[i] == ',')
-			return (false);
-		if (nick[i] == '*')
-			return (false);
-		if (nick[i] == '?')
+		if (nick[i] == '@')
 			return (false);
 		if (i != 0 && nick[i] == '!')
 			return (false);
-		if (nick[i] == '@')
+		if (nick[i] == '#')
 			return (false);
-		if (nick[i] == '.')
+		if (nick[i] == ':')
 			return (false);
+		if (nick[i] == ',')
+			return (false);
+
+		// if (nick[i] == '*')
+		// 	return (false);
+		// if (nick[i] == '?')
+		// 	return (false);
+		// if (i != 0 && nick[i] == '!')
+		// 	return (false);
+		// if (nick[i] == '.')
+		// 	return (false);
 	}
 	return true;
 }
