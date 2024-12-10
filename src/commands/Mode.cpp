@@ -123,7 +123,7 @@ std::string Mode::modeO () {
 	else {
 		if (channel->isOperator(client) == false)
 			return "";
-		channel->removeOperatorByName(client->get_userName());
+		channel->removeOperatorByName(client->get_nickName());
 		if (this->flag == MINUS)
 			return "o";
 		else {

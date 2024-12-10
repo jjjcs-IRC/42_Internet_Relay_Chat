@@ -102,6 +102,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 473:
 		ERR_INVITEONLYCHAN_473(fd);
 		break;
+	case 476:
+		ERR_BADCHANMASK_476(fd);
+		break;
+	case 407:
+		ERR_TOOMANYTARGETS_407(fd);
+		break;
 	case 422:
 		ERR_NOMOTD_422(fd);
 		break;
@@ -169,7 +175,7 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		RPL_ENDOFNAMES_366(fd);
 		break;
 	default:
-		// std::cout << fd << " No defined Numeric Reply" << std::endl;
+		std::cout << fd << " No defined Numeric Reply " << errNum << std::endl;
 		break;
 	}
 }
@@ -262,6 +268,16 @@ void Numerics::ERR_BADCHANNELKEY_475(int fd)
 	sendMsg(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 }
 
+void Numerics::ERR_BADCHANMASK_476(int fd)
+{
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 476 " + params.tokens[1] + " :Bad Channel Mask\r\n");
+}
+
+void Numerics::ERR_TOOMANYTARGETS_407(int fd)
+{
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 407 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Too many targets. Only one channel allowed per JOIN command\r\n");
+}
+
 // KICK
 void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 {
@@ -340,7 +356,7 @@ void Numerics::ERR_CHANNELISFULL_471(int fd)
 // }
 void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 {
-	// cl.set_writeBuf(fd, "696 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + " " + password + " : password must only contained alphabetic character\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 696 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You must specify a parameter for the key mode. Syntax: <key>.\r\n");
 }
 void Numerics::RPL_ADDVOICE(int fd)
 {
@@ -412,7 +428,7 @@ void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Erroneus nickname\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Erroneus nickname\r\n");
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {

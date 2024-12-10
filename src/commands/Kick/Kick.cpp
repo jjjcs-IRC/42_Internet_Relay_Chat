@@ -17,6 +17,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     Channel* channel = cn.findChannel(params.tokens[1]);
     Client* kicker = cl.find_client(params.client_fd);
 
+    if (params.tokens.size() < 3)
+        throw 461;
     //사용자의 모든 정보가 저장되어 명령어를 사용할 수 있는지 확인
     if (!kicker->check_pass_client())
         throw 451;
@@ -69,7 +71,7 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     
     //강퇴당한 사용자에게 강퇴 메세지 전달
     std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_clientIp()\
-                             + " KICK " + channel->getChannelName() + " " + kickee->get_nickName();
+                            + " KICK " + channel->getChannelName() + " " + kickee->get_nickName();
     if (params.tokens.size() == 4) //강퇴 사유가 있는 경우
         kick_msg += " " + params.tokens[3];
     kick_msg += "\r\n";
