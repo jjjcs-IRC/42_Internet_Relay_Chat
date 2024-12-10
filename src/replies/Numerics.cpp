@@ -102,6 +102,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 473:
 		ERR_INVITEONLYCHAN_473(fd);
 		break;
+	case 476:
+		ERR_BADCHANMASK_476(fd);
+		break;
+	case 407:
+		ERR_TOOMANYTARGETS_407(fd);
+		break;
 	case 422:
 		ERR_NOMOTD_422(fd);
 		break;
@@ -169,7 +175,7 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		RPL_ENDOFNAMES_366(fd);
 		break;
 	default:
-		// std::cout << fd << " No defined Numeric Reply" << std::endl;
+		std::cout << fd << " No defined Numeric Reply " << errNum << std::endl;
 		break;
 	}
 }
@@ -225,7 +231,7 @@ void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
 	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
@@ -258,7 +264,18 @@ void Numerics::ERR_BANNEDFROMCHAN_474(int fd)
 }
 void Numerics::ERR_BADCHANNELKEY_475(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+}
+
+void Numerics::ERR_BADCHANMASK_476(int fd)
+{
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 476 " + params.tokens[1] + " :Bad Channel Mask\r\n");
+}
+
+void Numerics::ERR_TOOMANYTARGETS_407(int fd)
+{
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 407 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Too many targets. Only one channel allowed per JOIN command\r\n");
 }
 
 // KICK
@@ -269,7 +286,7 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
 	// std::cout << "reply 482" << std::endl;
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
 }
 
 void Numerics::RPL_KICK(int fd)
@@ -295,7 +312,8 @@ void Numerics::MODE_USERMSG(int fd)
 }
 void Numerics::ERR_UMODEUNKNOWNFLAG_501(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 501 " + cl.find_client(fd)->get_nickName() + " :Unknown MODE flag\r\n");
+	//:irc.server.com 501 jimchoi :Unknown MODE flag
+	sendMsg(fd, ":" + serverInfo.serverName + " 501 " + cl.find_client(fd)->get_nickName() + " :Unknown MODE flag\r\n");
 }
 void Numerics::ERR_USERSDONTMATCH_502(int fd)
 {
@@ -317,14 +335,9 @@ void Numerics::MODE_CHANNELMSGWITHPARAM(int fd)
 }
 void Numerics::RPL_CHANNELMODEIS_324(int fd)
 {
-	Channel *channel = cn.findChannel(params.tokens[0]);
-	if (channel == NULL){
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
-	} else if (channel->getMode().size() == 0){
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + ": \r\n");
-	} else {
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 324 " + channel->getChannelName() + ": +" + channel->getMode() + "\r\n");
-	}
+	std::cout << "324" << std::endl;
+	Channel *channel = cn.findChannel(params.tokens[1]);
+		sendMsg(fd, ":" + serverInfo.serverName + " 324 " + cl.find_client(fd)->get_nickName() + " "+ channel->getChannelName() + " +" + channel->getMode() + "\r\n");
 
 }
 void Numerics::ERR_CANNOTSENDTOCHAN_404(int fd)
@@ -333,7 +346,9 @@ void Numerics::ERR_CANNOTSENDTOCHAN_404(int fd)
 }
 void Numerics::ERR_CHANNELISFULL_471(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
+							// :server 471 nickname channel :Cannot join channel (+l)
+	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
+	sendMsg(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
 }
 // void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 // {
@@ -341,7 +356,7 @@ void Numerics::ERR_CHANNELISFULL_471(int fd)
 // }
 void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 {
-	// cl.set_writeBuf(fd, "696 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + " " + password + " : password must only contained alphabetic character\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 696 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You must specify a parameter for the key mode. Syntax: <key>.\r\n");
 }
 void Numerics::RPL_ADDVOICE(int fd)
 {
@@ -349,7 +364,8 @@ void Numerics::RPL_ADDVOICE(int fd)
 }
 void Numerics::ERR_INVITEONLYCHAN_473(int fd)
 {
-	cl.set_writeBuf(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (invite only)\r\n");
+	// cl.set_writeBuf(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (invite only)\r\n");
+	sendMsg(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+i)\r\n");
 }
 
 // MOTD
@@ -412,7 +428,7 @@ void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Erroneus nickname\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Erroneus nickname\r\n");
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
@@ -460,18 +476,18 @@ void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 void Numerics::ERR_NOTREGISTERED_451(int fd)
 {
 	if (cl.find_client(fd)->get_userName().size() < 1)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 451 * :You have not registered");
+		sendMsg(fd, ":" + serverInfo.serverName + " 451 * :You have not registered\r\n");
 	else
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered");
+		sendMsg(fd, ":" + serverInfo.serverName + " 451 " + cl.find_client(fd)->get_nickName() + " :You have not registered\r\n");
 }
 
 // PING
 void Numerics::RPL_PONG(int fd)
 {
 	if (params.tokens.size() == 2)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
+		sendMsg(fd, ":" + serverInfo.serverName + " PONG " + serverInfo.serverName + " :" + params.tokens[1] + "\r\n");
 	else if (params.tokens.size() > 2)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
+		sendMsg(fd, ":" + serverInfo.serverName + " PONG " + params.tokens[2] + " :" + params.tokens[1] + "\r\n");
 }
 
 // QUIT
@@ -526,5 +542,5 @@ void Numerics::ERR_ALREADYREGISTERED_462(int fd)
 void Numerics::ERR_UNKNOWNMODE_472(int fd, int errNum)
 {
 	char modechar = errNum % 1000;
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 472 " + cl.find_client(fd)->get_nickName() + modechar + " :is unknown mode char to me");
+	sendMsg(fd, ":" + serverInfo.serverName + " 472 " + cl.find_client(fd)->get_nickName() +" "+ modechar + " :is unknown mode char to me\r\n");
 }
