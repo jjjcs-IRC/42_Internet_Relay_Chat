@@ -214,7 +214,6 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 		std::cout << "fd : " << clientSock << " input : " << read_buf << std::endl;
 		while ((tem_string.find("\r\n") != std::string::npos) || (tem_string.find("\n") != std::string::npos))
 		{
-			std::cout << "tem string |" << tem_string << std::endl;
 			pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
 			pos_nl = tem_string.find("\n");
 			if (pos_crlf < pos_nl)
