@@ -1,5 +1,7 @@
 #include "Mode.hpp"
 
+// 토큰을 만드는 헬퍼 함수: flag(모드), 부호(+/-), 파라미터를 조합해 문자열 생성
+// 예: 'o', '+', "nickname" -> "o:+:nickname"
 static std::string	MakeToken( char flag, char sign, std::string param )
 {
 	return (std::string(1, flag) + ":" + std::string(1, sign) + ":" + param);
@@ -20,6 +22,8 @@ static int	IsFlag(char	c)
 	return (false);
 }
 
+// 문자열이 '+' 또는 '-'로 시작하는지 확인하는 함수
+// MODE 명령어의 부호를 체크
 static inline bool	IsSignString( std::string &str )
 {
 	char	c;
@@ -30,6 +34,10 @@ static inline bool	IsSignString( std::string &str )
 	return (false);
 }
 
+// 플래그 문자열의 유효성을 검사하고 필요한 파라미터 개수를 반환
+// o: operator 변경은 항상 파라미터 필요
+// l: limit 설정(+)시에만 파라미터 필요
+// k: key 설정(+)시에만 파라미터 필요
 static int	IsValidFlag( std::string &flag )
 {
 	int	num = 0;
@@ -69,86 +77,62 @@ bool	IsDigit( std::string str )
 
 std::vector<std::string>	Mode::Parser( std::vector<std::string>	&tokens )
 {
+
+		std::vector<std::string>	result;
+
+		result.push_back("MODE");
+		if (tokens.size() > 1)
+			result.push_back(tokens[1]); // #channel
+
 	/* sorting strings(flag and parameters ) */
 	std::vector<std::string>	flag;
 	std::vector<std::string>	params;
 	{
-		std::vector<std::string>::iterator	start = tokens.begin();
-		std::vector<std::string>::iterator	end = tokens.end();
+		std::vector<std::string>::iterator	it = tokens.begin() + 2;
 		bool cycle = true;
-		for (int i = 0; start != end &&  i < 2 ; i++)
-		{
-			++start;
-		}
-		int	ParaNum = 0;
-		for ( ; start != end; ++start)
-		{
-			/* flag */
-			if ( cycle )
-			{
-				if (IsSignString(*start))
-				{
-					ParaNum = IsValidFlag(*start);
-					flag.push_back(*start);
-					cycle = false;
-				}
-				else
-				{
-					// std::cout << *start << ": ERROR: is not sign string" << std::endl;
-					// return (ERROR);
-					break ;
-				}
+
+		while(it != tokens.end()) {
+			if (IsSignString(*it)) {
+				flag.push_back(*it);
+			} else {
+				params.push_back(*it);
 			}
-			/* parameters */
-			else
-			{
-				for (int i = 0; start != end && i < ParaNum; i++)
-					params.push_back(*start);
-				ParaNum = 0;
-				cycle = true;
-			}
+			it++;
 		}
+
+	//파라미터 순서대로
+	std::vector<std::string>::iterator paramIt = params.begin();
+	// 각 플래그 그룹 처리
+	for(std::vector<std::string>::iterator flagIt = flag.begin(); flagIt != flag.end(); ++flagIt) {
+		char sign = (*flagIt)[0];
+        
+        // 각 플래그 처리
+        for (size_t i = 1; i < flagIt->length(); ++i) {
+            char flag = (*flagIt)[i];
+            
+            // 파라미터가 필요없는 플래그
+            if (flag == 'i' || flag == 't' || (sign == '-' && flag != 'o')) {
+                result.push_back(MakeToken(sign, flag, ""));
+                continue;
+            }
+            
+            // 파라미터가 필요한 플래그
+            if (paramIt != params.end()) {
+                // limit 모드는 숫자 검증 필요
+                if (sign == '+' && flag == 'l') {
+                    if (IsDigit(*paramIt)) {
+                        result.push_back(MakeToken(sign, flag, *paramIt));
+                        ++paramIt;
+                    }
+                    continue;
+                }
+                
+                result.push_back(MakeToken(sign, flag, *paramIt));
+                ++paramIt;
+            }
+        }
 	}
-	/* Make executing strings */
-	std::vector<std::string>	reVal;
-	{
-		reVal.push_back("MODE");
-		if (tokens.size() > 1)
-			reVal.push_back(tokens[1]);
-		std::vector<std::string>::iterator	flag_start = flag.begin();
-		std::vector<std::string>::iterator	flag_end = flag.end();
-		std::vector<std::string>::iterator	params_start = params.begin();
-		std::vector<std::string>::iterator	params_end = params.end();
-		for ( ; flag_start != flag_end; ++flag_start )
-		{
-			std::string::iterator	str_start = flag_start->begin();
-			char	sign = *str_start;
-			++str_start;
-			std::string::iterator	str_end = flag_start->end();
-			for ( ; str_start != str_end; ++str_start )
-			{
-				char flag = *str_start;
-				if (flag == 'i' || flag == 't')
-					reVal.push_back(MakeToken(sign, flag, ""));
-				else if (sign == '-' && flag != 'o')
-					reVal.push_back(MakeToken(sign, flag, ""));
-				else if (sign == '+' && flag == 'l')
-				{
-					if (params_start != params_end && !IsDigit(*params_start))
-						continue;
-					if (params_start != params_end)
-						reVal.push_back(MakeToken(sign, flag, *(params_start++)));
-				}
-				else
-				{
-					if (params_start != params_end)
-						reVal.push_back(MakeToken(sign, flag, *(params_start++)));
-				}
-			}
-		}
-	}
-	/* Make return string -> 
-	execute functions must do it what stack data type */
-	tokens = reVal;
-	return (tokens);
+}
+
+	return (result);
 }
