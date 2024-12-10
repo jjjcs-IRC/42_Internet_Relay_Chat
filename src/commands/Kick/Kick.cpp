@@ -71,8 +71,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     
     //강퇴당한 사용자에게 강퇴 메세지 전달
     std::string kick_msg = ":" + kicker->get_nickName() + "!" + kicker->get_userName() + "@" + kicker->get_clientIp()\
-                            + " KICK " + channel->getChannelName() + " " + kickee->get_nickName();
-    if (params.tokens.size() == 4) //강퇴 사유가 있는 경우
+                             + " KICK " + channel->getChannelName() + " " + kickee->get_nickName();
+    if (params.tokens.size() == 4 && params.tokens[3].length() > 1) //강퇴 사유가 있는 경우
         kick_msg += " " + params.tokens[3];
     kick_msg += "\r\n";
     for (int i = 0; i < client_list.size(); i++)
