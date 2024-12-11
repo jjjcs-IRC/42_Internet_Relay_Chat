@@ -227,6 +227,8 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 				tem_string.erase(0, pos_nl + 1);
 			}
 			client_manager.set_readBuf(clientSock, tem_string);
+			if (result.length() == 0)
+				continue;
 			try
 			{
 				tParams res;
@@ -234,7 +236,7 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 				parse.IrcParsing(clientSock, result, res);
 				numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
 				if (res.tokens[0] == "PASS" && res.tokens.size() == 2 && res.tokens[1] != this->password)
-					tem_string.clear(); // PASS의 비밀번호가 서버와 설정된것과 다르면, 같이 들어온 입력값을 초기화 시킴 
+					tem_string.clear(); // PASS의 비밀번호가 서버와 설정된것과 다르면, 같이 들어온 입력값을 초기화 시킴
 				Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
 				std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
 				if (command != nullptr)
