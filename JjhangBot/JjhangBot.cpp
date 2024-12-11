@@ -145,7 +145,7 @@ void	JjhangBot::Time( t_Arg *data )
 		else
 		{
 			LockMutex(data->mutex_Time);
-			if (data->ReadBuf[PRIVMSG].size() > 2)
+			if (data->ReadBuf[PRIVMSG].size() > 4 && data->ReadBuf[PRIVMSG][5] == "!TIME")
 			{
 				SendToServer( data->socketFD, Mksend(data->ReadBuf[PRIVMSG]));
 				data->ReadBuf[PRIVMSG].clear();
