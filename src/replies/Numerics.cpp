@@ -272,10 +272,21 @@ void Numerics::ERR_BADCHANMASK_476(int fd)
 {
 	cl.set_writeBuf(fd, ":"+ serverInfo.serverName + " 476 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+ " :Bad Channel Mask\r\n");
 }
-
 void Numerics::ERR_TOOMANYTARGETS_407(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 407 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Too many targets. Only one channel allowed per JOIN command\r\n");
+	std::stringstream ss(params.tokens[1]);
+    std::string singleChannelName;
+
+    while (std::getline(ss, singleChannelName, ',')) {
+		std::cout << singleChannelName << std::endl;
+        std::string message = ":" + serverInfo.serverName + " 407 " + 
+                              cl.find_client(fd)->get_nickName() + " " + 
+                              singleChannelName + 
+                              " :Too many targets. Only one channel allowed per JOIN command\r\n";
+
+		cl.appendToWriteBuf(fd, message);
+    }
+	cl.set_writeBuf(fd, cl.get_writeBuf(fd)); 
 }
 
 // KICK

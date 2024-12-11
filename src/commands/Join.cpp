@@ -32,6 +32,10 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
 		throw 451;
 	}
+	if (channelName.find(',') != std::string::npos) { // 여러 채널에 입장하고자 할 때
+        throw 407; // ERR_BADCHANMASK
+    }
+
 	if (channel == NULL) {//채널 존재 여부 확인
 		if (!cn.addChannel(channelName, client)){
 			throw (476);
