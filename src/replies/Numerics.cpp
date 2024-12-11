@@ -270,7 +270,7 @@ void Numerics::ERR_BADCHANNELKEY_475(int fd)
 
 void Numerics::ERR_BADCHANMASK_476(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 476 " + params.tokens[1] + " :Bad Channel Mask\r\n");
+	cl.set_writeBuf(fd, ":"+ serverInfo.serverName + " 407 " + cl.find_client(fd)->get_nickName() + " " + " :Bad Channel Mask\r\n");
 }
 
 void Numerics::ERR_TOOMANYTARGETS_407(int fd)
