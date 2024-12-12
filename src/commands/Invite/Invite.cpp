@@ -22,7 +22,6 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     if (!inviter->check_pass_client())
         throw 451;
 
-    std::cout << "Invite command::executeCommand" << std::endl;
     //개인 존재 유무 확인 (401)
     if (cl.find_client_byNick(params.tokens[1]) == NULL)
         throw 401;
