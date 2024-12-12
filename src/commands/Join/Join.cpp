@@ -12,14 +12,11 @@ Join::Join(const Join &other) {
 	(void)other;
 }
 
-
 int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	Channel *channel = cn.findChannel(params.tokens[1]);;
 	Client *client = cl.find_client(params.client_fd);
 	std::string channelName = params.tokens[1]; // # 떼고 채널 이름만 가져옴
 	std::string inputPassword = params.tokens.size() > 2 ? params.tokens[2] : ""; // 채널 비밀번호
-
-	std::cout << "Join command::executeCommand" << std::endl;
 
 	if (params.tokens.size() < 2) {
 		// `ERR_NEEDMOREPARAMS (461)`
@@ -43,7 +40,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		if (channel == NULL) {
 			throw (403);
 		}
-
 	}
 	else {
 		if(client->check_join_channel() == false) {// 클라이언트의 채널 가입횟수 확인
@@ -53,7 +49,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		else if (channel->hasMode('k')) { // 채널 비밀번호 확인
 			//   k 모드 아니면 확인 안해도 됨
 			if (channel->getPassword() != inputPassword) {
-				std::cout << "비밀번호 틀림 :" <<channel->getPassword() << " | "<< inputPassword<<std::endl;
 				throw (475);
 			}
 		}
@@ -64,7 +59,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 	if(channel->findClient(client->get_nickName())){
 		// 이미 채널에 클라이언트가 존재하면 끝내기
-		std::cout << "이미 참여중인 채널임" << std::endl;
 		return 0;
 	}
 
@@ -75,13 +69,11 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	//유저에게 채널 추가
 	if (client->set_channels(channelName) == false) {
-		//위에서 검사하긴 함
 		// "<client> <channel> :You have joined too many channels"
 		throw (405);
 	}
 
 	//채널에 메시지 전송
-	// client->set_writeBuf(":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp() + " JOIN " + channelName + "\r\n");
 	sendMsgToCh(params, channel, client);
 	
 	throw (1001);
@@ -91,8 +83,6 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 void Join::sendMsgToCh(tParams &params, Channel *channel, Client *sender)
 {
 	std::vector<Client*> list =  channel->getParticipants();
-
-// :chris!~chris@example.com JOIN #test
 	std::string join_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
 						+ sender->get_clientIp() + " JOIN " + channel->getChannelName() + "\r\n";
 	for (int i = 0; i < list.size(); i++)

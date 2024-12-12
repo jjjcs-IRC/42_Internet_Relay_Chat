@@ -106,8 +106,6 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 
 	parsing_receiver(params);
 
-	std::cout << "v_client size : " << this->v_client.size() << std::endl;
-	std::cout << "v_channel size : " << this->v_channel.size() << std::endl;
 	//단일 상대에게 전송
 	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
 	{

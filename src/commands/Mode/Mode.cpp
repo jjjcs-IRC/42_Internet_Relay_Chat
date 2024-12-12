@@ -14,7 +14,6 @@ Mode::Mode(const Mode &other) {
 }
 
 int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	std::cout << "Mode::executeCommand" << std::endl;
 	this->client = cl.find_client(params.client_fd);
 
 	if (client->get_passed() == false) {
@@ -25,11 +24,10 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel == NULL) { //  채널이 없을 때
 		if (params.tokens[1][0] != '#') {
 			throw 501;	
-	}
+		}
 		throw 403;
 	}
 	if (params.tokens.size() < 3) { // 매개변수가 충분하지 않을 때
-		std::cout << "매개변수가 충분하지 않을 때" << std::endl;
 		throw 324;
 	}
 	if (channel->isOperator(client) == false) {
@@ -107,7 +105,7 @@ std::string Mode::modeI () {
 
 std::string Mode::modeO () {
 	Client *operatorClient = channel->findClient(modeCmd[2]);
-	if (operatorClient == NULL) { // 클라이언트가 없을 때
+	if (operatorClient == NULL) { // 유효하지 않은 사용자일 때
 			return "";
 		}
 	if (modeCmd[0] == "+") {
@@ -215,16 +213,6 @@ std::string Mode::modeT () {
 	}
 }
 
-// bool Mode::findOperator(const Client *client) {
-// 	std::vector<Client*> operators = channel->getOperators();
-// 	// if (find(operators.begin(), operators.end(), client) == operators.end())
-// 	// 	return false;
-// 	for (size_t i = 0; i < operators.size(); i++) {
-		
-// 		std::cout << "operators[" << i << "] : " << operators[i]->get_userName() << std::endl;
-// 	}
-// 	return true;
-// }
 
 bool Mode::isNumber(const std::string& str) {
 	if (str.size() == 0) return false;
