@@ -1,6 +1,4 @@
 #include "Nick.hpp"
-#include "../server/Server.hpp"
-
 
 Nick::Nick() {}
 

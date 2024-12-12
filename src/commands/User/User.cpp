@@ -1,5 +1,4 @@
 #include "User.hpp"
-#include "../server/Server.hpp"
 
 User::User() {}
 

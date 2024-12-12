@@ -1,5 +1,4 @@
 #include "Join.hpp"
-#include "../server/Server.hpp"
 
 Join::Join() {}
 Join::~Join() {}

@@ -1,5 +1,4 @@
 #include "Pass.hpp"
-#include "../server/Server.hpp"
 
 Pass::Pass() {}
 

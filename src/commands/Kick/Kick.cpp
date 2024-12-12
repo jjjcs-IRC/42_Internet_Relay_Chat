@@ -10,7 +10,6 @@ Kick& Kick::operator=(const Kick &obj) {return *this;}
 
 Kick::~Kick() {}
 
-//
 
 int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {

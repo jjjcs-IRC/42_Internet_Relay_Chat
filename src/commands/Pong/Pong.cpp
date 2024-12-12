@@ -1,5 +1,4 @@
 #include "Pong.hpp"
-#include "../server/Server.hpp"
 
 Pong::Pong() {}
 

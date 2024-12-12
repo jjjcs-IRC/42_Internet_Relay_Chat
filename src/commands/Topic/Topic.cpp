@@ -8,7 +8,6 @@ Topic& Topic::operator=(const Topic &obj) {return *this;}
 
 Topic::~Topic() {}
 
-//
 
 int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
