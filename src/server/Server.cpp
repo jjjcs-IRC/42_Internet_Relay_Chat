@@ -234,8 +234,10 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 					std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
 					if (command != nullptr)
 						command->executeCommand(res, client_manager, channelManager);
-					else
-						std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
+					else{
+						std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::end;
+						throw 421;
+					}
 				}
 				catch (int num)
 				{
