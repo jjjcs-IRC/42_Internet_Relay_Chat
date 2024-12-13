@@ -44,6 +44,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	 // 닉네임 변경
 	if (isFirst.size() != 0) //  닉네임 변경 성공 메세지 전송
 	{
+		// sugom!root@127.0.0.1 NICK :aaa
 		std::string msg = ":" + pre_nickName +"!" +client->get_userName() + "@" + client->get_clientIp() \
 								+ " NICK :" + params.tokens[1] + "\r\n";
 		send_nick_ch_msg(params, cl, cn, msg);
@@ -94,6 +95,11 @@ void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &
 {
 	Client *client = cl.find_client(params.client_fd);
 
+	if (client->get_channels().size() == 0)
+	{
+		client->set_writeBuf(msg);
+		return ;
+	}
 	std::vector<std::string> channel_list = client->get_channels();
 	for (int i = 0; i < channel_list.size(); i++)
 	{
