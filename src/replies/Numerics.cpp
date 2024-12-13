@@ -386,7 +386,9 @@ void Numerics::ERR_NOSUCHSERVER_402(int fd)
 }
 void Numerics::ERR_NOMOTD_422(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
+	// :mercury.libera.chat 442 jimchoi__ #jimchoi :You're not on that channel
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+" :You're not on that channel\r\n");
+	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
 }
 void Numerics::RPL_MOTDSTART_375(int fd)
 {

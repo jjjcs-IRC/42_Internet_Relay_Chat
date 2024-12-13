@@ -126,9 +126,10 @@ std::vector<std::string>	Mode::Parser( std::vector<std::string>	&tokens )
                     }
                     continue;
                 }
-                
-                result.push_back(MakeToken(sign, flag, *paramIt));
-                ++paramIt;
+				if (flag == 'o' || flag == 'k') {
+					result.push_back(MakeToken(sign, flag, *paramIt));
+					++paramIt;
+				}
             }
         }
 	}

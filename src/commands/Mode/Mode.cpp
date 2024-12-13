@@ -42,6 +42,7 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	for (size_t i = 2; i < modeTokens.size(); i++) {
 		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
 		modeCmd = modeSplit(modeTokens[i], ':');
+		std::cout << "modeTokens : " << modeTokens[i] << std::endl;
 		std::string result = "";
 		if (modeCmd[1] == "i") {
 			result += modeI();
