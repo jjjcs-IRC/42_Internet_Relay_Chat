@@ -76,7 +76,8 @@ bool Nick::check_nick(std::string nick) {
 			return (false);
 		if (nick[i] == ',')
 			return (false);
-
+		if (nick[i] == '\n')
+			return (false);
 		// if (nick[i] == '*')
 		// 	return (false);
 		// if (nick[i] == '?')
