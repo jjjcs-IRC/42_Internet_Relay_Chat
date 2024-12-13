@@ -32,7 +32,6 @@ std::vector<std::string>	IrcBotParser::IrcParsing( std::string &CmdLine, std::ve
 		int	pos = line.find(':');
 		if (pos != std::string::npos)
 		{
-			
 			temp.push_back(line.substr(0, pos));
 			temp.push_back(line.substr(pos + 1, line.size()));
 		}
@@ -62,7 +61,8 @@ std::vector<std::string>	IrcBotParser::IrcParsing( std::string &CmdLine, std::ve
 		ptr->CmdParser();
 		data = ptr->GetTokens();
 		delete ptr;
-	}
+	} 
+	std::cout << "MAIN PROCESS" << std::endl;
 	ShowStatus(data);
 	return (data);
 }

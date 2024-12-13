@@ -33,11 +33,12 @@ int	main( int argc, char *argv[])
 		std::cerr << "Must follow the format: <Server> <Port> <Server Password>" << std::endl;
 		return (-1);
 	}
-	t_Arg		arg;
-	JjhangBot	Bot(arg);
+	JjhangBot	Bot;
 	std::string	server(argv[1]);
 	int			port;
 
+	t_Arg		*arg = Bot.InitThread();
+	Bot.SetArg(arg);
 	if (!IsServerFormat(server))
 	{
 		std::cerr << "Must follow the format: Server: xxx.xxx.xxx.xxx." << std::endl;
@@ -53,7 +54,6 @@ int	main( int argc, char *argv[])
 	int	fd;
 	fd = Bot.ConnectToServer( argv[1], port );
 	std::string password( argv[3] );
-	// Bot.SendToServer(fd, "PASS " );
 	Bot.SendToServer(fd, "PASS " + password + "\r\n" );
 	Bot.Authenticate( fd );
 	Bot.CtlThread( fd );
@@ -67,20 +67,25 @@ int	main( int argc, char *argv[])
 			parser.IrcParsing( ReadBuf, data );
 			if (!data.empty() && data[0] == "PING")
 			{
-				Bot.LockMutex(arg.mutex_Ping);
+				std::cout << "Ping Parser Done" << std::endl;
+				Bot.LockMutex(*arg[PING].mutex_Ping);
 				Bot.InputString(PING, data);
-				Bot.UnlockMutex(arg.mutex_Ping);
+				Bot.UnlockMutex(*arg[PING].mutex_Ping);
+				std::cout << "Ping execute Done" << std::endl;
 			}
-			else if (!data.empty() && data[0] == "PRIVMSG")
+			else if (!data.empty() && data.size() > 3 && data[2] == "PRIVMSG")
 			{
-				Bot.LockMutex(arg.mutex_Time);
+				std::cout << "Privmsg Parser Done" << std::endl;
+				Bot.LockMutex(*arg[PRIVMSG].mutex_Time);
 				Bot.InputString(PRIVMSG, data);
-				Bot.UnlockMutex(arg.mutex_Time);
+				Bot.UnlockMutex(*arg[PRIVMSG].mutex_Time);
+				std::cout << "Privmsg execute Done" << std::endl;
 			}
 		}
 
 	}
 	Bot.JoinThread();
+	Bot.DeleteThrad( arg );
 	return (0);
 }
 

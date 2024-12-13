@@ -1,31 +1,47 @@
 #include "JjhangBot.hpp"
 
-JjhangBot::JjhangBot( t_Arg	&arg ) : arg(arg)
+JjhangBot::JjhangBot( void )
 {
-	if (pthread_mutex_init(&arg.mutex_Ping, NULL) != 0)
-	{
-		std::exit(ERROR);
-	}
-	if (pthread_mutex_init(&arg.mutex_Time, NULL) != 0)
-	{
-		std::exit(ERROR);
-	}
-	if (pthread_mutex_init(&arg.mutex_bell, NULL) != 0)
-	{
-		std::exit(ERROR);
-	}
-	arg.bell = false;
-	arg.ReadBuf[PING].push_back("PONG");
-	std::cerr << "Done: Mutex initialized." << std::endl;
+	thread = new pthread_t[TH_NUM];
 };
 
 JjhangBot::~JjhangBot( void )
 {
-	pthread_mutex_destroy(&arg.mutex_bell);
-	pthread_mutex_destroy(&arg.mutex_Ping);
-	pthread_mutex_destroy(&arg.mutex_Time);
-	std::cerr << "Call: Mutex destroy." << std::endl;
+	delete [] thread;
 };
+
+t_Arg	*JjhangBot::InitThread( void )
+{
+	t_Arg	*res;
+	
+	res = new t_Arg[TH_NUM];
+	res->ReadBuf = new std::vector<std::string>[TH_NUM];
+	res->mutex_bell = new pthread_mutex_t;
+	res->mutex_Ping = new pthread_mutex_t;
+	res->mutex_Time = new pthread_mutex_t;
+
+	for (int i = 0; i < TH_NUM; i++)
+	{
+		res[i].ThreadNum = i;
+		res[i].bell = false;
+		res[i].mutex_bell = res->mutex_bell;
+		res[i].mutex_Ping = res->mutex_Ping;
+		res[i].mutex_Time = res->mutex_Time;
+	}
+	res[PRIVMSG].ReadBuf = res->ReadBuf;
+
+	return (res);
+}
+
+void	JjhangBot::DeleteThrad( t_Arg *arg )
+{
+	delete arg->mutex_bell;
+	delete arg->mutex_Ping;
+	delete arg->mutex_Time;
+
+	delete [] arg->ReadBuf;
+	delete [] arg;
+}
 
 int	JjhangBot::ConnectToServer( const char *server, int port )
 {
@@ -64,29 +80,30 @@ void	JjhangBot::Ping( t_Arg *data )
 	{
 		sign = false;
 
-		LockMutex(data->mutex_Ping);
+		LockMutex(*data->mutex_Ping);
 		data->ReadBuf[PING].clear();
-		UnlockMutex(data->mutex_Ping);
+		UnlockMutex(*data->mutex_Ping);
 		std::cerr << "sendMsg: " << Ping << std::endl;
-		std::time_t	startTime = std::time(nullptr);
+		std::time_t	startTime = std::time(NULL);
 		SendToServer( data->socketFD, Ping );
 		/* 5분동안 답신 대기*/
 		std::time_t	curTime = startTime;
 		std::cerr << "Wait: " << PING_TIME << " sec." << std::endl;
 		while ( curTime - startTime < PING_TIME)
 		{
-			curTime = std::time(nullptr);
+			curTime = std::time(NULL);
 			usleep(1000);
-			LockMutex(data->mutex_Ping);
+			LockMutex(*data->mutex_Ping);
 			if (!data->ReadBuf[PING].empty() && data->ReadBuf[PING][0] == "PONG")
 				sign = true;
-			UnlockMutex(data->mutex_Ping);	
+			data->ReadBuf[PING].clear();
+			UnlockMutex(*data->mutex_Ping);	
 			/* 5분 대기 */
 			if (sign == true)
 			{
-				LockMutex(data->mutex_bell);
+				LockMutex(*data->mutex_bell);
 				data->bell = true;
-				UnlockMutex(data->mutex_bell);
+				UnlockMutex(*data->mutex_bell);
 				usleep(PING_TIME - (curTime - startTime));
 			}
 		}
@@ -110,7 +127,7 @@ std::string	Mksend( std::vector<std::string> &tokens )
 	else
 		res += tokens[0];
 	res += " :Today is ";
-	std::time_t now = std::time(nullptr);
+	std::time_t now = std::time(NULL);
 	std::tm *localTime = std::localtime(&now);
 	std::ostringstream	ss;
 	ss << (localTime->tm_year + 1900) << "-";
@@ -125,6 +142,7 @@ std::string	Mksend( std::vector<std::string> &tokens )
 	ss << localTime->tm_sec;
 	res += ss.str();
 	res += "\r\n";
+	std::cerr << "return string: " << res;
 	return (res);
 }
 
@@ -133,10 +151,10 @@ void	JjhangBot::Time( t_Arg *data )
 	bool	sign = false;
 	while ( true )
 	{
-		LockMutex(data->mutex_bell);
+		LockMutex(*data->mutex_bell);
 		if ( data->bell == true )
 			sign = true;
-		UnlockMutex(data->mutex_bell);
+		UnlockMutex(*data->mutex_bell);
 		if (sign == true)
 		{
 			std::cerr << "Time: ERROR: Server Disconnected." << std::endl;
@@ -144,41 +162,58 @@ void	JjhangBot::Time( t_Arg *data )
 		}
 		else
 		{
-			LockMutex(data->mutex_Time);
-			if (data->ReadBuf[PRIVMSG].size() > 4 && data->ReadBuf[PRIVMSG][5] == "!TIME")
+			LockMutex(*data->mutex_Time);
+			if (!data->ReadBuf[PRIVMSG].empty())
+			{
+				std::cout << data->ReadBuf[PRIVMSG][4].c_str() << std::endl;
+			}
+			if (data->ReadBuf[PRIVMSG].size() > 3 && !std::strncmp(data->ReadBuf[PRIVMSG][4].c_str(), ":!TIME", 6))
 			{
 				SendToServer( data->socketFD, Mksend(data->ReadBuf[PRIVMSG]));
-				data->ReadBuf[PRIVMSG].clear();
 			}
-			UnlockMutex(data->mutex_Time);
+			data->ReadBuf[PRIVMSG].clear();
+			UnlockMutex(*data->mutex_Time);
+			usleep(100);
 		}
 	}
 }
+
 void	*JjhangBot::execute( void *arg )
 {
-	t_Arg	*data = static_cast<t_Arg *>(arg);
-	std::cout << "thread start: " << data->ThreadNum << std::endl;
-	if (data->ThreadNum[PING] == PING)
+	t_Arg	*data = (t_Arg *)(arg);
+	std::cout << "Thread start" << std::endl;
+	std::cout << "Thread num is " << data->ThreadNum << std::endl;
+	if (data->ThreadNum == PING)
+	{
+		std::cout << "PING start" << std::endl;
 			Ping( data );
-	if (data->ThreadNum[PRIVMSG] == PRIVMSG)
+	}
+	if (data->ThreadNum == PRIVMSG)
+	{
+		std::cout << "TIME start" << std::endl;
 		Time( data );
+	}
 	return (data);
 }
 
 void	JjhangBot::CtlThread( int socketFD )
 {
-	this->thread = new(pthread_t[TH_NUM]);
-
+	std::cout << "thread start" << std::endl;
 	for (int i = 0; i < TH_NUM; i++)
 	{
-		arg.socketFD = socketFD;
+		arg[i].socketFD = socketFD;
 		std::cout << "threads on [" << i << "]" << std::endl;
-		arg.ThreadNum[i] = i;
-		if (pthread_create(&thread[i], NULL, execute, static_cast<void *>(&arg)))
-		{
-			std::cerr << "Error: Failed to create thread" << std::endl;
-			exit (1);
-		}
+		arg[i].ThreadNum = i;
+	}
+	if (pthread_create(&thread[PING], NULL, execute, static_cast<void *>(&arg[PING])))
+	{
+		std::cerr << "Error: Failed to create thread" << std::endl;
+		exit (1);
+	}
+	if (pthread_create(&thread[PRIVMSG], NULL, execute, static_cast<void *>(&arg[PRIVMSG])))
+	{
+		std::cerr << "Error: Failed to create thread" << std::endl;
+		exit (1);
 	}
 }
 
@@ -190,6 +225,7 @@ void	JjhangBot::JoinThread( void )
 		std::cout << "thread off" << std::endl;
 	}
 	delete [] this->thread;
+	delete [] arg->ReadBuf;
 
 }
 
@@ -236,10 +272,9 @@ void	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
 
 void	JjhangBot::Authenticate( int socketFD )
 {
-	// SendToserver(socketFD, "PASS " + password + "\r\n");
-	SendToServer(socketFD, "NICK !TIME\r\n");
-	SendToServer(socketFD, "USER TIME 0 * :JJHANG BOT IRC BOT\r\n");
-	SendToServer(socketFD, "JOIN #newchat\r\n");
+	SendToServer(socketFD, "NICK bot\r\n");
+	SendToServer(socketFD, "USER bot 0 * :JJHANG IRC BOT\r\n");
+	// SendToServer(socketFD, "JOIN #newchat\r\n");
 	/* JOIN */
 }
 
@@ -254,10 +289,18 @@ void	JjhangBot::UnlockMutex( pthread_mutex_t &mutex )
 }
 void	JjhangBot::InputString( int Type, std::vector<std::string>	&Input )
 {
-	arg.ReadBuf[Type].insert(arg.ReadBuf[Type].begin(), Input.begin(), Input.end());
+	arg->ReadBuf[Type].insert(arg->ReadBuf[Type].begin(), Input.begin(), Input.end());
+	// arg->ReadBuf[Type] = Input;
+	// std::cout << arg->ReadBuf[Type][3] << std::endl;
+	// std::cout << arg->ReadBuf[Type].size() << std::endl;
 }
 
 t_Arg	JjhangBot::getArg( void ) const
 {
-	return (arg);
+	return (*arg);
+}
+
+void	JjhangBot::SetArg( t_Arg *data )
+{
+	this->arg = data;
 }
