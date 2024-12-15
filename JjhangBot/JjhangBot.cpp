@@ -16,15 +16,12 @@ t_Arg	*JjhangBot::InitThread( void )
 	
 	res = new t_Arg[TH_NUM];
 	res->ReadBuf = new std::vector<std::string>[TH_NUM];
-	res->mutex_bell = new pthread_mutex_t;
 	res->mutex_Ping = new pthread_mutex_t;
 	res->mutex_Time = new pthread_mutex_t;
 
 	for (int i = 0; i < TH_NUM; i++)
 	{
 		res[i].ThreadNum = i;
-		res[i].bell = false;
-		res[i].mutex_bell = res->mutex_bell;
 		res[i].mutex_Ping = res->mutex_Ping;
 		res[i].mutex_Time = res->mutex_Time;
 	}
@@ -35,7 +32,6 @@ t_Arg	*JjhangBot::InitThread( void )
 
 void	JjhangBot::DeleteThrad( t_Arg *arg )
 {
-	delete arg->mutex_bell;
 	delete arg->mutex_Ping;
 	delete arg->mutex_Time;
 
@@ -74,7 +70,7 @@ int	JjhangBot::ConnectToServer( const char *server, int port )
 void	JjhangBot::Ping( t_Arg *data )
 {
 	bool		sign = false;
-	std::string	Ping("PING I'm your BOT!\r\n");
+	std::string	Ping("PING I'm_your_BOT!\r\n");
 
 	while ( true )
 	{
@@ -94,21 +90,19 @@ void	JjhangBot::Ping( t_Arg *data )
 			curTime = std::time(NULL);
 			usleep(1000);
 			LockMutex(*data->mutex_Ping);
-			if (!data->ReadBuf[PING].empty() && data->ReadBuf[PING][0] == "PONG")
+			if (!data->ReadBuf[PING].empty() && data->ReadBuf[PING].size() > 1 && data->ReadBuf[PING][1] == "PONG")
+			{
+				std::cout << "received PONG" <<std::endl;
 				sign = true;
+			}
 			data->ReadBuf[PING].clear();
 			UnlockMutex(*data->mutex_Ping);	
 			/* 5분 대기 */
 			if (sign == true)
 			{
-				LockMutex(*data->mutex_bell);
-				data->bell = true;
-				UnlockMutex(*data->mutex_bell);
 				usleep(PING_TIME - (curTime - startTime));
 			}
 		}
-		std::cerr << "PingTime: " << curTime - startTime << std::endl;
-		std::cerr << "Recv: " << sign << std::endl;
 		if (sign == false)
 		{
 			std::cerr << "Notification: Unable to receive Pong." << std::endl;
@@ -151,10 +145,6 @@ void	JjhangBot::Time( t_Arg *data )
 	bool	sign = false;
 	while ( true )
 	{
-		LockMutex(*data->mutex_bell);
-		if ( data->bell == true )
-			sign = true;
-		UnlockMutex(*data->mutex_bell);
 		if (sign == true)
 		{
 			std::cerr << "Time: ERROR: Server Disconnected." << std::endl;
@@ -186,7 +176,7 @@ void	*JjhangBot::execute( void *arg )
 	if (data->ThreadNum == PING)
 	{
 		std::cout << "PING start" << std::endl;
-			Ping( data );
+		Ping( data );
 	}
 	if (data->ThreadNum == PRIVMSG)
 	{
@@ -289,9 +279,6 @@ void	JjhangBot::UnlockMutex( pthread_mutex_t &mutex )
 void	JjhangBot::InputString( int Type, std::vector<std::string>	&Input )
 {
 	arg->ReadBuf[Type].insert(arg->ReadBuf[Type].begin(), Input.begin(), Input.end());
-	// arg->ReadBuf[Type] = Input;
-	// std::cout << arg->ReadBuf[Type][3] << std::endl;
-	// std::cout << arg->ReadBuf[Type].size() << std::endl;
 }
 
 t_Arg	JjhangBot::getArg( void ) const

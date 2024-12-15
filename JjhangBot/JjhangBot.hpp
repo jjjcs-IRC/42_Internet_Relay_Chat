@@ -13,14 +13,12 @@
 
 # include "IrcBotParser.hpp"
 
-# define PING_TIME 300
+# define PING_TIME 30
 typedef struct s_Arg
 {
 	int	socketFD;
 	int	ThreadNum;
 	std::vector<std::string>	*ReadBuf;
-	pthread_mutex_t	*mutex_bell;
-	bool			bell;
 	pthread_mutex_t	*mutex_Ping;
 	pthread_mutex_t	*mutex_Time;
 } t_Arg;

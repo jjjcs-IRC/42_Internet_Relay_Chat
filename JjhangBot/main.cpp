@@ -63,8 +63,9 @@ int	main( int argc, char *argv[])
 		while ( true )
 		{
 			Bot.ReadToServer( fd, ReadBuf );
+			std::cout << "READBUF: " << ReadBuf << std::endl;
 			parser.IrcParsing( ReadBuf, data );
-			if (!data.empty() && data[0] == "PING")
+			if (!data.empty() && data.size() > 1 && data[1] == "PONG")
 			{
 				std::cout << "Ping Parser Done" << std::endl;
 				Bot.LockMutex( *arg[PING].mutex_Ping );

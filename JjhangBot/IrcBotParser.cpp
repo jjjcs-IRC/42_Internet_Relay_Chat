@@ -86,7 +86,7 @@ std::vector<std::string> IrcBotParser::split(const std::string& str, char delimi
 
 int	IrcBotParser::GetCmdType( std::vector<std::string> &vec )
 {
-	if (vec[0] == "PONG")
+	if (vec.size() > 1 && vec[1] == "PONG")
 		return (PING);
 	else if (vec.size() > 1 && vec[1] == "PRIVMSG")
 		return (PRIVMSG);
