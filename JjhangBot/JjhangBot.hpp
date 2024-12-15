@@ -52,7 +52,7 @@ class JjhangBot
 
 		/* About Server */
 		int	ConnectToServer( const char *server, int port );
-		void	Authenticate( int socketFD );
+		void	Authenticate( int socketFD, std::string const &PassWord );
 		static void	SendToServer(int sock, std::string const &msg );
 		static void	ReadToServer( int socketFD, std::string &Readbuf );
 

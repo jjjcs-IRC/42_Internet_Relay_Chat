@@ -6,7 +6,7 @@ bool	IsServerFormat( std::string &str )
 
 	if (str.size() > 15)
 		return (false);
-	for (int i = 0; i < str.size(); i++)
+	for (size_t i = 0; i < str.size(); i++)
 	{
 		if (str[i] == '.')
 			num++;
@@ -18,7 +18,7 @@ bool	IsServerFormat( std::string &str )
 
 bool	IsPortFormat( std::string &str )
 {
-	for(int i = 0; i < str.size(); i ++)
+	for( size_t i = 0; i < str.size(); i ++ )
 	{
 		if (!std::isdigit(str[i]))
 			return (false);
@@ -54,8 +54,7 @@ int	main( int argc, char *argv[])
 	int	fd;
 	fd = Bot.ConnectToServer( argv[1], port );
 	std::string password( argv[3] );
-	Bot.SendToServer(fd, "PASS " + password + "\r\n" );
-	Bot.Authenticate( fd );
+	Bot.Authenticate( fd, "PASS " + password + "\r\n" );
 	Bot.CtlThread( fd );
 	{
 		std::string		ReadBuf;
@@ -68,17 +67,17 @@ int	main( int argc, char *argv[])
 			if (!data.empty() && data[0] == "PING")
 			{
 				std::cout << "Ping Parser Done" << std::endl;
-				Bot.LockMutex(*arg[PING].mutex_Ping);
-				Bot.InputString(PING, data);
-				Bot.UnlockMutex(*arg[PING].mutex_Ping);
+				Bot.LockMutex( *arg[PING].mutex_Ping );
+				Bot.InputString( PING, data );
+				Bot.UnlockMutex( *arg[PING].mutex_Ping );
 				std::cout << "Ping execute Done" << std::endl;
 			}
 			else if (!data.empty() && data.size() > 3 && data[2] == "PRIVMSG")
 			{
 				std::cout << "Privmsg Parser Done" << std::endl;
-				Bot.LockMutex(*arg[PRIVMSG].mutex_Time);
-				Bot.InputString(PRIVMSG, data);
-				Bot.UnlockMutex(*arg[PRIVMSG].mutex_Time);
+				Bot.LockMutex( *arg[PRIVMSG].mutex_Time );
+				Bot.InputString( PRIVMSG, data );
+				Bot.UnlockMutex( *arg[PRIVMSG].mutex_Time );
 				std::cout << "Privmsg execute Done" << std::endl;
 			}
 		}

@@ -25,7 +25,7 @@ int	PrivParser::CmdParser( void )
 	std::vector<std::string>	res;
 	res.push_back(Nick);
 	res.push_back(Addr);
-	for (int i = 1; i < tokens.size(); i++)
+	for (size_t i = 1; i < tokens.size(); i++)
 		res.push_back(tokens[i]);
 	tokens = res;
 	return (0);

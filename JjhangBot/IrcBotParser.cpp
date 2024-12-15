@@ -29,11 +29,11 @@ std::vector<std::string>	IrcBotParser::IrcParsing( std::string &CmdLine, std::ve
 		else
 			line = CmdLine;
 		std::vector<std::string>				temp;
-		int	pos = line.find(':');
-		if (pos != std::string::npos)
+		size_t	pos = line.find(':');
+		if ( pos != std::string::npos )
 		{
-			temp.push_back(line.substr(0, pos));
-			temp.push_back(line.substr(pos + 1, line.size()));
+			temp.push_back( line.substr(0, pos) );
+			temp.push_back( line.substr( pos + 1, line.size() ) );
 		}
 		else
 		{
@@ -106,7 +106,7 @@ ParentParser	*IrcBotParser::NewClassPtr( int type )
 void	IrcBotParser::ShowStatus( std::vector<std::string> &vec )
 {
 	std::cout << "Vector's Status" << std::endl;
-	for (int i = 0; i < vec.size(); i++ )
+	for ( unsigned int i = 0; i < vec.size(); i++ )
 	{
 		std::cout << "[" << i << "]: " << vec[i] << std::endl;
 	}

@@ -270,10 +270,9 @@ void	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
 	std::cout << "Server: " << Readbuf << std::endl;
 }
 
-void	JjhangBot::Authenticate( int socketFD )
+void	JjhangBot::Authenticate( int socketFD, std::string const &PassWord )
 {
-	SendToServer(socketFD, "NICK bot\r\n");
-	SendToServer(socketFD, "USER bot 0 * :JJHANG IRC BOT\r\n");
+	SendToServer(socketFD, PassWord + "NICK bot\r\nUSER bot 0 * :JJHANG IRC BOT\r\n");
 	// SendToServer(socketFD, "JOIN #newchat\r\n");
 	/* JOIN */
 }
