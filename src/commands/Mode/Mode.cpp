@@ -236,6 +236,7 @@ std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
 
 void Mode::sendMsgToCh(Channel *channel, Client *sender)
 {
+	(void)sender;
 	std::vector<Client*> list =  channel->getParticipants();
 	if (client == NULL) {
 		std::cout << "client is NULL" << std::endl;
@@ -243,7 +244,7 @@ void Mode::sendMsgToCh(Channel *channel, Client *sender)
 	std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
 							"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
 							+ " :" + resultOp + " " + resultToken + "\r\n";
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned long i = 0; i < list.size(); i++)
 	{
 			list[i]->set_writeBuf(mode_msg);				
 	}

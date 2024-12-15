@@ -82,10 +82,11 @@ int Join::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 
 void Join::sendMsgToCh(tParams &params, Channel *channel, Client *sender)
 {
+	(void)params;
 	std::vector<Client*> list =  channel->getParticipants();
 	std::string join_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
 						+ sender->get_clientIp() + " JOIN " + channel->getChannelName() + "\r\n";
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned long i = 0; i < list.size(); i++)
 	{
 		if (list[i] != sender){
 			list[i]->set_writeBuf(join_msg);

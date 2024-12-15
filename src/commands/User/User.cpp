@@ -13,7 +13,7 @@ User::User(const User &other) {
 }
 
 int User::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-
+	(void)cn;
 	
 	Client *client = cl.find_client(params.client_fd);
 	if (client->get_passed() == false) {

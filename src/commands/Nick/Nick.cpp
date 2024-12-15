@@ -63,7 +63,7 @@ bool Nick::check_nick(std::string nick) {
 		return false;
 
 	//닉네임에 공백, @, !, #, :, , 등 특정 특수 문자 포함 불가
-	for (int i = 0; i < nick.size(); i++)
+	for (unsigned long i = 0; i < nick.size(); i++)
 	{
 		if (nick[i] == ' ')
 			return (false);
@@ -101,12 +101,12 @@ void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &
 		return ;
 	}
 	std::vector<std::string> channel_list = client->get_channels();
-	for (int i = 0; i < channel_list.size(); i++)
+	for (unsigned long i = 0; i < channel_list.size(); i++)
 	{
 		Channel *channel = cn.findChannel(channel_list[i]);
 		std::vector<Client*> client_list = channel->getParticipants();
 
-		for (int j = 0; j < client_list.size(); j++)
+		for (unsigned long j = 0; j < client_list.size(); j++)
 			client_list[j]->set_writeBuf(msg);
 	}
 }

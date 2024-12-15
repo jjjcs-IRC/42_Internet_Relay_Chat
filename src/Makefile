@@ -1,9 +1,8 @@
 SRCS := $(shell find . -name "*.cpp")
 NAME := ircserv
-CXXFLAGS := 
-# -Wall -Wextra -Werror -std=c++98
+CXXFLAGS := -Wall -Wextra -Werror -std=c++98
 CXX = c++
-SANITIZE = -fsanitize=address -g
+SANITIZE = #-fsanitize=address -g
 
 OBJS  = $(SRCS:.cpp=.o)
 

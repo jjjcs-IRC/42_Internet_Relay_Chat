@@ -5,10 +5,14 @@
 
 Privmsg::Privmsg() {}
 
-Privmsg::Privmsg(const Privmsg &obj) {}
+Privmsg::Privmsg(const Privmsg &obj) 
+{
+	(void)obj;
+}
 
 Privmsg& Privmsg::operator=(const Privmsg &obj)
 {
+	(void)obj;
 	// this->_type = obj.getType();
 	return (*this);
 }
@@ -34,6 +38,7 @@ void Privmsg::parsing_receiver(tParams &params) //receiver 파싱
 //client 전송 유효성 검사
 int Privmsg::check_client(tParams &params, ClientManager &cl, std::string client)
 {
+	(void)params;
 	if (cl.find_client_byNick(client) == NULL)
 		return 401;
 	return 0;
@@ -74,7 +79,7 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	Client *sender = cl.find_client(params.client_fd);
 
 
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned long i = 0; i < list.size(); i++)
 	{
 		if (list[i] != sender){
 			std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
@@ -126,7 +131,7 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 	//다중 대상에게 전송
 	//사용자에 전송
 	int res = 0;
-	for (int i = 0; i < this->v_client.size(); i++)
+	for (unsigned long i = 0; i < this->v_client.size(); i++)
 	{
 		if (check_client(params, cl, this->v_client[i]) != 0)
 			res = 407;
@@ -134,7 +139,7 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 			sendMsgToCl(params, cl, this->v_client[i]);
 	}
 	//채널에 전송
-	for (int i = 0; i < this->v_channel.size(); i++)
+	for (unsigned long i = 0; i < this->v_channel.size(); i++)
 	{
 		if (check_channel(params, cl, cn, this->v_channel[i]) != 0)
 			res = 407;

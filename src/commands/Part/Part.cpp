@@ -2,9 +2,16 @@
 
 Part::Part() {}
 
-Part::Part(const Part &obj) {}
+Part::Part(const Part &obj) 
+{
+    (void)obj;
+}
 
-Part& Part::operator=(const Part &obj) {return *this;}
+Part& Part::operator=(const Part &obj) 
+{
+    (void)obj;
+    return *this;
+}
 
 Part::~Part() {}
 
@@ -36,7 +43,7 @@ int Part::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     //권한을 가진 사람이 본인 한 명 -> 가장 오래된 사용자에게 권한 위임
     if (channel->getOperators().size() == 1 && channel->getOperators()[0] == client)
     {
-        for (int i = 0; i < client_list.size(); i++)
+        for (unsigned long i = 0; i < client_list.size(); i++)
         {
             if (client_list[i] != client)
             {
@@ -66,7 +73,7 @@ int Part::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
         part_msg += ":good bye!";
     part_msg += "\r\n";
 
-    for (int i = 0; i < client_list.size(); i++)
+    for (unsigned long i = 0; i < client_list.size(); i++)
         client_list[i]->set_writeBuf(part_msg);
 
     //채널에서 사용자 삭제

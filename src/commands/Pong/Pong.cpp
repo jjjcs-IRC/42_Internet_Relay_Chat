@@ -15,6 +15,8 @@ Pong::Pong(const Pong &other) {
 
 int Pong::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	Client *client = cl.find_client(params.client_fd);
+	(void)client;
+	(void)cn;
 
 	if (params.tokens.size() < 2) {
 		throw 461;

@@ -247,6 +247,7 @@ void Numerics::RPL_INVITING_341(int fd)
 }
 void Numerics::RPL_INVITE(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " INVITE " + invited + " #" + params.tokens[2] + "\r\n");
 }
 
@@ -302,6 +303,7 @@ void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 
 void Numerics::RPL_KICK(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " KICK #" + params.tokens[1] + " " + kicked + " " + reason + "\r\n");
 }
 
@@ -312,6 +314,7 @@ void Numerics::ERR_NOPRIVILEGES_481(int fd)
 }
 void Numerics::RPL_KILL(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " KILL " + killed + " " + comment + "\r\n");
 }
 
@@ -342,6 +345,7 @@ void Numerics::MODE_CHANNELMSG(int fd)
 }
 void Numerics::MODE_CHANNELMSGWITHPARAM(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
 }
 void Numerics::RPL_CHANNELMODEIS_324(int fd)
@@ -371,6 +375,7 @@ void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 }
 void Numerics::RPL_ADDVOICE(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
 }
 void Numerics::ERR_INVITEONLYCHAN_473(int fd)
@@ -396,6 +401,7 @@ void Numerics::RPL_MOTDSTART_375(int fd)
 }
 void Numerics::RPL_MOTD_372(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 372 " + cl.find_client(fd)->get_nickName() + " :" + motd_line + "\r\n");
 }
 void Numerics::RPL_ENDOFMOTD_376(int fd)
@@ -452,12 +458,14 @@ void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름�
 }
 void Numerics::RPL_NICK(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + oclient + "!" + uclient + "@" + serverInfo.serverName + " NICK " +  client + "\r\n");
 }
 
 // NOTICE
 void Numerics::RPL_NOTICE(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " NOTICE " + target + " " + message + "\r\n");
 }
 
@@ -474,6 +482,7 @@ void Numerics::RPL_YOUREOPER_381(int fd)
 // PART
 void Numerics::RPL_PART(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " PART #" + channel + " " + (reason.empty() ? "." : reason ) + "\r\n");
 }
 
@@ -506,10 +515,12 @@ void Numerics::RPL_PONG(int fd)
 // QUIT
 void Numerics::RPL_QUIT(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " QUIT :Quit: " + reason + "\r\n");
 }
 void Numerics::RPL_ERROR(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, makeUserId(fd) + " ERROR :" + reason + "\r\n");
 }
 
@@ -528,6 +539,7 @@ void Numerics::ERR_NOTEXTTOSEND_412(int fd)
 }
 void Numerics::RPL_PRIVMSG(int fd)
 {
+	(void)fd;
 	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " PRIVMSG " + target + " " + message + "\r\n");
 }
 

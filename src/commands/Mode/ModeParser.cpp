@@ -7,20 +7,20 @@ static std::string	MakeToken( char flag, char sign, std::string param )
 	return (std::string(1, flag) + ":" + std::string(1, sign) + ":" + param);
 }
 
-static int	IsFlag(char	c)
-{
-	if ('i' == c)
-		return (true);
-	if ('t' == c)
-		return (true);
-	if ('k' == c)
-		return (true);
-	if ('o' == c)
-		return (true);
-	if ('l' == c)
-		return (true);
-	return (false);
-}
+// static int	IsFlag(char	c)
+// {
+// 	if ('i' == c)
+// 		return (true);
+// 	if ('t' == c)
+// 		return (true);
+// 	if ('k' == c)
+// 		return (true);
+// 	if ('o' == c)
+// 		return (true);
+// 	if ('l' == c)
+// 		return (true);
+// 	return (false);
+// }
 
 // 문자열이 '+' 또는 '-'로 시작하는지 확인하는 함수
 // MODE 명령어의 부호를 체크
@@ -38,29 +38,29 @@ static inline bool	IsSignString( std::string &str )
 // o: operator 변경은 항상 파라미터 필요
 // l: limit 설정(+)시에만 파라미터 필요
 // k: key 설정(+)시에만 파라미터 필요
-static int	IsValidFlag( std::string &flag )
-{
-	int	num = 0;
+// static int	IsValidFlag( std::string &flag )
+// {
+// 	int	num = 0;
 
-	{
-		std::string::iterator	start = flag.begin();
-		std::string::iterator	end = flag.end();
-		char sign = *start;
-		start++;
-		for ( ; start != end ; ++start )
-		{
-			if (*start == 'o')
-				num++;
-			if (*start == 'l' && sign == '+')
-				num++;
-			if (*start == 'k' && sign == '+')
-				num++;
-			if (IsFlag(*start) == false)
-				throw (472 * 1000 + static_cast<int>(*start));
-		}
-	}
-	return ( num );
-}
+// 	{
+// 		std::string::iterator	start = flag.begin();
+// 		std::string::iterator	end = flag.end();
+// 		char sign = *start;
+// 		start++;
+// 		for ( ; start != end ; ++start )
+// 		{
+// 			if (*start == 'o')
+// 				num++;
+// 			if (*start == 'l' && sign == '+')
+// 				num++;
+// 			if (*start == 'k' && sign == '+')
+// 				num++;
+// 			if (IsFlag(*start) == false)
+// 				throw (472 * 1000 + static_cast<int>(*start));
+// 		}
+// 	}
+// 	return ( num );
+// }
 
 bool	IsDigit( std::string str )
 {
@@ -90,6 +90,7 @@ std::vector<std::string>	Mode::Parser( std::vector<std::string>	&tokens )
 	{
 		std::vector<std::string>::iterator	it = tokens.begin() + 2;
 		bool cycle = true;
+		(void)cycle;
 
 		while(it != tokens.end()) {
 			if (IsSignString(*it)) {

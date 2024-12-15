@@ -197,7 +197,7 @@ bool ClientManager::check_name_client(std::string name) const //userName, nickNa
 		return false;
 	if (name.length() >= 10) //name 길이 확인
 		return false;
-    for (int i = 0; i < name.length(); i++) //숫자, 알파벳, 정해진 특수 문자로 이루어졌는지 확인
+    for (unsigned long i = 0; i < name.length(); i++) //숫자, 알파벳, 정해진 특수 문자로 이루어졌는지 확인
         if (isalnum(name[i]) != 0 && !check_special_char(name[i]))
             return false;
 	if (name.find(" ") != std::string::npos) //name에 공백이 있는지 확인

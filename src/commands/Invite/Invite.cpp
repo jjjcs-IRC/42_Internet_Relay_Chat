@@ -2,9 +2,16 @@
 
 Invite::Invite() {}
 
-Invite::Invite(const Invite &obj) {}
+Invite::Invite(const Invite &obj) 
+{
+    (void)obj;
+}
 
-Invite& Invite::operator=(const Invite &obj) {return *this;}
+Invite& Invite::operator=(const Invite &obj) 
+{
+    (void)obj;
+    return *this;
+}
 
 Invite::~Invite() {}
 

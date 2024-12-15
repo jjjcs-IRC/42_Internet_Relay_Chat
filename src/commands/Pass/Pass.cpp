@@ -14,6 +14,7 @@ Pass::Pass(const Pass &other) {
 }
 
 int Pass::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
+	(void)cn;
 	Client *client = cl.find_client(params.client_fd);
 
 	if (params.tokens.size() < 2) {

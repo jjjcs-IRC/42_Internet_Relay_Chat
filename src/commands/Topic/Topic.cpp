@@ -2,9 +2,16 @@
 
 Topic::Topic() {}
 
-Topic::Topic(const Topic &obj) {}
+Topic::Topic(const Topic &obj) 
+{
+    (void)obj;
+}
 
-Topic& Topic::operator=(const Topic &obj) {return *this;}
+Topic& Topic::operator=(const Topic &obj) 
+{
+    (void)obj;
+    return *this;
+}
 
 Topic::~Topic() {}
 
@@ -61,7 +68,7 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
     std::vector<Client*> list =  channel->getParticipants();
     std::string topic_msg = ":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp()\
                              + " TOPIC " + channel->getChannelName() + " " + params.tokens[2] + "\n";
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned long i = 0; i < list.size(); i++)
 		list[i]->set_writeBuf(topic_msg);
     // throw 332;
     return 0;
