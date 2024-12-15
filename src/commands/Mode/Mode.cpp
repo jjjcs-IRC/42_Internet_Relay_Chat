@@ -1,8 +1,20 @@
 #include "Mode.hpp"
 
-Mode::Mode() {}
+// Mode::Mode() {}
+Mode::Mode() : flag(0), channel(NULL), client(NULL) {
+    resultOp.clear();
+    resultToken.clear();
+    modeCmd.clear();
+}
 
-Mode::~Mode() {}
+// Mode::~Mode() {}
+Mode::~Mode() {
+    resultOp.clear();
+    resultToken.clear();
+    modeCmd.clear();
+    channel = NULL;  // 소유권이 없으므로 delete하지 않음
+    client = NULL;   // 소유권이 없으므로 delete하지 않음
+}
 
 Mode &Mode::operator=(const Mode &other) {
 	(void)other;
@@ -36,11 +48,15 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	std::vector<std::string> modeTokens = Parser(params.tokens);
 	this->flag = -1;
 
-	memset(&this->resultOp, 0, sizeof(this->resultOp));
-	memset(&this->resultToken, 0, sizeof(this->resultToken));
+	// memset(&this->resultOp, 0, sizeof(this->resultOp));
+	// memset(&this->resultToken, 0, sizeof(this->resultToken));
+	resultOp.clear();
+	resultToken.clear();
+	modeCmd.clear();
 
 	for (size_t i = 2; i < modeTokens.size(); i++) {
-		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
+		// memset(&this->modeCmd, 0, sizeof(this->modeCmd));
+		modeCmd.clear();
 		modeCmd = modeSplit(modeTokens[i], ':');
 		std::cout << "modeTokens : " << modeTokens[i] << std::endl;
 		std::string result = "";
@@ -64,6 +80,7 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 			resultToken += modeCmd.size() > 2 ? modeCmd[2] : "";
 			resultToken += " ";
 		}
+		modeCmd.clear();
 	}
 
 	// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
@@ -71,6 +88,9 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		sendMsgToCh(channel, client);
 	}
 	std::cout << "Mode::executeCommand end" << std::endl;
+		resultOp.clear();
+	resultToken.clear();
+	modeCmd.clear();
 	return 0;
 }
 
@@ -223,17 +243,17 @@ bool Mode::isNumber(const std::string& str) {
 	return true;
 }
 
+
 std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
-	std::istringstream iss(str);             // istringstream에 str을 담는다.
-	std::string buffer;                      // 구분자를 기준으로 절삭된 문자열이 담겨지는 버퍼
-	std::vector<std::string> result;
-	while (getline(iss, buffer, Delimiter)) {
-		result.push_back(buffer);               // 절삭된 문자열을 vector에 저장
-	}
-
-	return result;
+    std::istringstream iss(str);
+    std::string buffer;
+    std::vector<std::string> result;
+    
+    while (getline(iss, buffer, Delimiter)) {
+        result.push_back(buffer);
+    }
+    return result; 
 }
-
 void Mode::sendMsgToCh(Channel *channel, Client *sender)
 {
 	(void)sender;
