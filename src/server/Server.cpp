@@ -232,7 +232,7 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 						tem_string.clear(); // PASS의 비밀번호가 서버와 설정된것과 다르면, 같이 들어온 입력값을 초기화 시킴
 					Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
 					std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
-					if (command != nullptr)
+					if (command != NULL)
 						command->executeCommand(res, client_manager, channelManager);
 					else{
 						std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
