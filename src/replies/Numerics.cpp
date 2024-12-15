@@ -102,6 +102,12 @@ void Numerics::dispatchByInt(int fd, int errNum)
 	case 473:
 		ERR_INVITEONLYCHAN_473(fd);
 		break;
+	case 476:
+		ERR_BADCHANMASK_476(fd);
+		break;
+	case 407:
+		ERR_TOOMANYTARGETS_407(fd);
+		break;
 	case 422:
 		ERR_NOMOTD_422(fd);
 		break;
@@ -169,7 +175,7 @@ void Numerics::dispatchByInt(int fd, int errNum)
 		RPL_ENDOFNAMES_366(fd);
 		break;
 	default:
-		// std::cout << fd << " No defined Numeric Reply" << std::endl;
+		std::cout << fd << " No defined Numeric Reply " << errNum << std::endl;
 		break;
 	}
 }
@@ -224,8 +230,8 @@ void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[2] + " :No such channel\r\n");
-	sendMsg(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + params.tokens[1] + " :No such channel\r\n");
+	// sendMsg(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
@@ -260,6 +266,27 @@ void Numerics::ERR_BADCHANNELKEY_475(int fd)
 {
 	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 	sendMsg(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+}
+
+void Numerics::ERR_BADCHANMASK_476(int fd)
+{
+	cl.set_writeBuf(fd, ":"+ serverInfo.serverName + " 476 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+ " :Bad Channel Mask\r\n");
+}
+void Numerics::ERR_TOOMANYTARGETS_407(int fd)
+{
+	std::stringstream ss(params.tokens[1]);
+    std::string singleChannelName;
+
+    while (std::getline(ss, singleChannelName, ',')) {
+		std::cout << singleChannelName << std::endl;
+        std::string message = ":" + serverInfo.serverName + " 407 " + 
+                              cl.find_client(fd)->get_nickName() + " " + 
+                              singleChannelName + 
+                              " :Too many targets. Only one channel allowed per JOIN command\r\n";
+
+		cl.appendToWriteBuf(fd, message);
+    }
+	cl.set_writeBuf(fd, cl.get_writeBuf(fd)); 
 }
 
 // KICK
@@ -340,7 +367,7 @@ void Numerics::ERR_CHANNELISFULL_471(int fd)
 // }
 void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 {
-	// cl.set_writeBuf(fd, "696 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " " + params.tokens[2] + " " + password + " : password must only contained alphabetic character\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 696 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You must specify a parameter for the key mode. Syntax: <key>.\r\n");
 }
 void Numerics::RPL_ADDVOICE(int fd)
 {
@@ -359,7 +386,9 @@ void Numerics::ERR_NOSUCHSERVER_402(int fd)
 }
 void Numerics::ERR_NOMOTD_422(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
+	// :mercury.libera.chat 442 jimchoi__ #jimchoi :You're not on that channel
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+" :You're not on that channel\r\n");
+	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
 }
 void Numerics::RPL_MOTDSTART_375(int fd)
 {
@@ -412,7 +441,7 @@ void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " :Erroneus nickname\r\n");
+	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Erroneus nickname\r\n");
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {

@@ -50,6 +50,7 @@ public:
 	{
 		return client_fd == obj.client_fd;
 	}
+	void appendToWriteBuf(const std::string& message);
 };
 
 #endif

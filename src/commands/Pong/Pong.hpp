@@ -1,7 +1,6 @@
 #ifndef PONG_HPP
 # define PONG_HPP
-#include "../parser/IrcType.hpp"  // tParams 정의를 가져오기 위해
-#include "Command.hpp"
+#include "../Command.hpp"
 
 
 class Pong : public Command {

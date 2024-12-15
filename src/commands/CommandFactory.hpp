@@ -7,11 +7,6 @@
 #include "../parser/IrcType.hpp"
 #include "Command.hpp"
 
-// 이후에 include
-// #include "Join.hpp"
-// #include "Pass.hpp"
-// #include "User.hpp"
-// #include "Nick.hpp"
 
 class CommandFactory {
     private: 

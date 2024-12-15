@@ -41,6 +41,8 @@ public:
 	//
 	std::string get_readBuf(int fd); //fd값으로 client의 readBuf 가져오기
 	std::string get_writeBuf(int fd); //fd값으로 client의 writeBuf 가져오기
+
+	void appendToWriteBuf(int fd, const std::string& message);
 };
 
 #endif

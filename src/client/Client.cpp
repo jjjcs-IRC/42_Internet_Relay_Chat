@@ -177,3 +177,7 @@ bool Client::kick_client_from_channel(std::string channel)
 		this->channels.erase(it);
 	return true;
 }
+
+void Client::appendToWriteBuf(const std::string& message) {
+    write_buf += message; // 메시지를 기존 버퍼에 추가
+}

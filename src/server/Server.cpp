@@ -198,7 +198,6 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 	{
 		const std::list<Client> &clientList = client_manager.get_clientList();
 		unsigned long pos_crlf;
-		unsigned long pos_nl;
 		std::string result;
 		std::string tem_string;
 
@@ -212,46 +211,46 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 		}
 		tem_string.append(read_buf);
 		std::cout << "fd : " << clientSock << " input : " << read_buf << std::endl;
-		while ((tem_string.find("\r\n") != std::string::npos) || (tem_string.find("\n") != std::string::npos))
-		{
-			pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
-			pos_nl = tem_string.find("\n");
-			if (pos_crlf < pos_nl)
+		if (tem_string.find("\r\n") == std::string::npos)
+			client_manager.set_readBuf(clientSock, tem_string);
+		else
+			while ((tem_string.find("\r\n") != std::string::npos))
 			{
+				pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
 				result = tem_string.substr(0, pos_crlf); // result는 첫 위치부터 캐리지 리턴까지 저장
 				tem_string.erase(0, pos_crlf + 2);		 // tem_string은 캐리지 리턴부터 끝까지 잘라서 저장
+				client_manager.set_readBuf(clientSock, tem_string);
+				if (result.length() == 0)
+					continue;
+				try
+				{
+					tParams res;
+
+					parse.IrcParsing(clientSock, result, res);
+					numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
+					if (res.tokens[0] == "PASS" && res.tokens.size() == 2 && res.tokens[1] != this->password)
+						tem_string.clear(); // PASS의 비밀번호가 서버와 설정된것과 다르면, 같이 들어온 입력값을 초기화 시킴
+					Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
+					std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
+					if (command != nullptr)
+						command->executeCommand(res, client_manager, channelManager);
+					else{
+						std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
+						throw 421;
+					}
+				}
+				catch (int num)
+				{
+					numerics.dispatchByInt(clientSock, num);
+				}
+				for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
+				{
+					int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
+					std::cout << "fd " << fd << " output |" << client_manager.get_writeBuf(fd) << std::endl;
+					write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
+					client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+				}
 			}
-			else if (pos_crlf > pos_nl)
-			{
-				result = tem_string.substr(0, pos_nl);
-				tem_string.erase(0, pos_nl + 1);
-			}
-			client_manager.set_readBuf(clientSock, tem_string);
-			try
-			{
-				tParams res;
-				
-				parse.IrcParsing(clientSock, result, res);
-				numerics.setParams(res); // 토큰에서 사용자의 입력값이 reply에 필요함
-				Command *command = CommandFactory::getInstance()->createCommand(res.cmd_type);
-				std::cout << "before executeCommand : " << res.cmd_type << res.tokens[0] << std::endl;
-				if (command != nullptr)
-					command->executeCommand(res, client_manager, channelManager);
-				else
-					std::cout << "Unknown command" << res.cmd_type << res.tokens[0] << std::endl;
-			}
-			catch (int num)
-			{
-				numerics.dispatchByInt(clientSock, num);
-			}
-			for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
-			{
-				int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
-				std::cout << "fd " << fd << " output |" << client_manager.get_writeBuf(fd) << std::endl;
-				write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
-				client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
-			}
-		}
 	}
 }
 

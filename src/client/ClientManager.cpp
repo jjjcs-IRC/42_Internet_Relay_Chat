@@ -222,3 +222,11 @@ std::string ClientManager::get_writeBuf(int fd)
     tmp_client = find_client(fd);
     return tmp_client->get_writeBuf();
 }
+
+// 쓰기 버퍼에 메시지 추가
+void ClientManager::appendToWriteBuf(int fd, const std::string& message) {
+    Client* tmp_client = find_client(fd);
+    if (tmp_client) {
+        tmp_client->appendToWriteBuf(message);
+    }
+}

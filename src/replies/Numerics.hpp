@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
+#include <sstream>
 
 #include "../client/ClientManager.hpp"
 #include "../channelManager/ChannelManager.hpp"
@@ -59,6 +60,8 @@ class Numerics {
 		void RPL_JOIN(int fd);
 		void ERR_BANNEDFROMCHAN_474(int fd);
 		void ERR_BADCHANNELKEY_475(int fd);
+		void ERR_BADCHANMASK_476(int fd);
+		void ERR_TOOMANYTARGETS_407(int fd);
 
 		// KICK
 		void ERR_USERNOTINCHANNEL_441(int fd);
