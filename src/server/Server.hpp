@@ -95,6 +95,8 @@ class Server {
 		void createKqueue(void);
 		void registerServerSocket(void);
 		void registerClientSocket(int clientSock);
+		void registerClientWriteEvent(int clientSock);
+		void unregisterWriteEvent(int clientSock);
 		void runServer(void);
 		void handleNewConnection(void);
 		void handleClientData(int clientSock, struct kevent& event);

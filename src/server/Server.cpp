@@ -132,6 +132,28 @@ void Server::registerClientSocket(int clientSock)
 
 	m_clientSocks.push_back(clientSock);
 }
+void Server::registerClientWriteEvent(int clientSock)
+{
+	EV_SET(&m_changeList[m_changeIdx], clientSock, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
+	if (kevent(m_kqueue, &m_changeList[m_changeIdx], 1, NULL, 0, NULL) == -1)
+	{
+		std::cerr << "kevent() register error" << std::endl;
+		return;
+	}
+	// m_changeIdx = (m_changeIdx + 1) % MAX_EVENTS;
+
+}
+
+void Server::unregisterWriteEvent(int clientSock)
+{
+	EV_SET(&m_changeList[m_changeIdx], clientSock, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+	if (kevent(m_kqueue, &m_changeList[m_changeIdx], 1, NULL, 0, NULL) == -1)
+	{
+		std::cerr << "kevent() unregister error" << std::endl;
+		return;
+	}
+}
+
 
 void Server::runServer(void)
 {
@@ -246,11 +268,20 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 				for (std::list<Client>::const_iterator it = clientList.begin(); it != clientList.end(); it++)
 				{
 					int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
-					std::cout << "fd " << fd << " output |" << client_manager.get_writeBuf(fd) << std::endl;
-					write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
-					client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+					if (client_manager.get_writeBuf(fd).length() > 0) //모든 fd의 write버퍼를 확인해서, 보낼게 있는지 확인
+						registerClientWriteEvent(fd);
+					// std::cout << "fd " << fd << " output |" << client_manager.get_writeBuf(fd) << std::endl;
+					// write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
+					// client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
 				}
 			}
+	}
+	else if (event.filter == EVFILT_WRITE)
+	{
+		std::cout << "fd " << clientSock << " output |" << client_manager.get_writeBuf(clientSock) << std::endl;
+		write(clientSock, client_manager.get_writeBuf(clientSock).c_str(), client_manager.get_writeBuf(clientSock).length());
+		client_manager.set_writeBuf(clientSock, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
+		unregisterWriteEvent(clientSock);
 	}
 }
 
