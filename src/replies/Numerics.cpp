@@ -299,7 +299,10 @@ void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
 	// std::cout << "reply 482" << std::endl;
-	sendMsg(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
+	if (params.cmd_type == INVITE && params.tokens.size() > 2)
+		sendMsg(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " :You're not channel operator\r\n");
+	else
+		sendMsg(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You're not channel operator\r\n");
 }
 
 void Numerics::RPL_KICK(int fd)
