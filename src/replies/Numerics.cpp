@@ -187,9 +187,10 @@ std::string Numerics::makeUserId(int fd)
 
 void Numerics::sendMsg(int fd, std::string msg)
 {
-	cl.set_writeBuf(fd, msg);
-	write(fd, cl.get_writeBuf(fd).c_str(), cl.get_writeBuf(fd).length());
-	cl.set_writeBuf(fd, "");
+	// cl.appendToWriteBuf(fd, msg);
+	cl.appendToWriteBuf(fd, msg);
+	// write(fd, cl.get_writeBuf(fd).c_str(), cl.get_writeBuf(fd).length());
+	// cl.appendToWriteBuf(fd, "");
 }
 
 // numeric_replies
@@ -215,7 +216,7 @@ void Numerics::RPL_ISUPPORT_005(int fd)
 }
 void Numerics::ERR_UNKNOWNCOMMAND_421(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 421 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Unknown command\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 421 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Unknown command\r\n");
 }
 
 
@@ -224,31 +225,31 @@ void Numerics::ERR_NEEDMOREPARAMS_461(int fd) //여기서 에러가 남, 아마 
 {
 	// std::cout << "reply 461" << std::endl;
 	if (cl.find_client(fd)->get_nickName().size() < 1)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 461 * " + params.tokens[0] + " :Not enough parameters.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 461 * " + params.tokens[0] + " :Not enough parameters.\r\n");
 	else
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 461 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :Not enough parameters.\r\n");
 }
 void Numerics::ERR_NOSUCHCHANNEL_403(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + params.tokens[1] + " :No such channel\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + params.tokens[1] + " :No such channel\r\n");
 	// sendMsg(fd, ":" + serverInfo.serverName + " 403 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[0] + " :No such channel\r\n");
 }
 void Numerics::ERR_NOTONCHANNEL_442(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 442 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :The user is not on this channel.\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 442 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :The user is not on this channel.\r\n");
 }
 void Numerics::ERR_USERONCHANNEL_443(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 443 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " :Is already on channel\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 443 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " :Is already on channel\r\n");
 }
 void Numerics::RPL_INVITING_341(int fd)
 {
-	cl.set_writeBuf(fd, makeUserId(fd) + " 341 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + "\r\n");
+	cl.appendToWriteBuf(fd, makeUserId(fd) + " 341 " + cl.find_client(fd)->get_nickName() + " " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + "\r\n");
 }
 void Numerics::RPL_INVITE(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " INVITE " + invited + " #" + params.tokens[2] + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " INVITE " + invited + " #" + params.tokens[2] + "\r\n");
 }
 
 
@@ -260,18 +261,18 @@ void Numerics::RPL_JOIN(int fd)
 }
 void Numerics::ERR_BANNEDFROMCHAN_474(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 474 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+b)\r\n");
 }
 void Numerics::ERR_BADCHANNELKEY_475(int fd)
 {
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
+	// cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 	sendMsg(fd, ":" + serverInfo.serverName + " 475 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+k)\r\n");
 }
 
 void Numerics::ERR_BADCHANMASK_476(int fd)
 {
-	cl.set_writeBuf(fd, ":"+ serverInfo.serverName + " 476 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+ " :Bad Channel Mask\r\n");
+	cl.appendToWriteBuf(fd, ":"+ serverInfo.serverName + " 476 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+ " :Bad Channel Mask\r\n");
 }
 void Numerics::ERR_TOOMANYTARGETS_407(int fd)
 {
@@ -287,13 +288,13 @@ void Numerics::ERR_TOOMANYTARGETS_407(int fd)
 
 		cl.appendToWriteBuf(fd, message);
     }
-	cl.set_writeBuf(fd, cl.get_writeBuf(fd)); 
+	cl.appendToWriteBuf(fd, cl.get_writeBuf(fd)); 
 }
 
 // KICK
 void Numerics::ERR_USERNOTINCHANNEL_441(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 441 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " " + params.tokens[1] + " :They aren't on that channel\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 441 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + " " + params.tokens[1] + " :They aren't on that channel\r\n");
 }
 void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 {
@@ -304,25 +305,25 @@ void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 void Numerics::RPL_KICK(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " KICK #" + params.tokens[1] + " " + kicked + " " + reason + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " KICK #" + params.tokens[1] + " " + kicked + " " + reason + "\r\n");
 }
 
 // KILL
 void Numerics::ERR_NOPRIVILEGES_481(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 481 " + cl.find_client(fd)->get_nickName() + " :Permission Denied- You're not an IRC operator\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 481 " + cl.find_client(fd)->get_nickName() + " :Permission Denied- You're not an IRC operator\r\n");
 }
 void Numerics::RPL_KILL(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " KILL " + killed + " " + comment + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " KILL " + killed + " " + comment + "\r\n");
 }
 
 // MODE
 /* user mode */
 void Numerics::MODE_USERMSG(int fd)
 {
-	cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + " MODE " + cl.find_client(fd)->get_nickName() + " :" + params.tokens[2] + "\r\n");
+	cl.appendToWriteBuf(fd, ":" + cl.find_client(fd)->get_nickName() + " MODE " + cl.find_client(fd)->get_nickName() + " :" + params.tokens[2] + "\r\n");
 }
 void Numerics::ERR_UMODEUNKNOWNFLAG_501(int fd)
 {
@@ -331,22 +332,22 @@ void Numerics::ERR_UMODEUNKNOWNFLAG_501(int fd)
 }
 void Numerics::ERR_USERSDONTMATCH_502(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 502 " + cl.find_client(fd)->get_nickName() + " :Cant change mode for other users\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 502 " + cl.find_client(fd)->get_nickName() + " :Cant change mode for other users\r\n");
 }
 void Numerics::RPL_UMODEIS_221(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 221 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + "\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 221 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[2] + "\r\n");
 }
 
 /* channel mode */
 void Numerics::MODE_CHANNELMSG(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " MODE " + params.tokens[1] + " " + params.tokens[2] + "\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " MODE " + params.tokens[1] + " " + params.tokens[2] + "\r\n");
 }
 void Numerics::MODE_CHANNELMSGWITHPARAM(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
 }
 void Numerics::RPL_CHANNELMODEIS_324(int fd)
 {
@@ -357,56 +358,56 @@ void Numerics::RPL_CHANNELMODEIS_324(int fd)
 }
 void Numerics::ERR_CANNOTSENDTOCHAN_404(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 404 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot send to channel\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 404 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot send to channel\r\n");
 }
 void Numerics::ERR_CHANNELISFULL_471(int fd)
 {
 							// :server 471 nickname channel :Cannot join channel (+l)
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
+	// cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
 	sendMsg(fd, ":" + serverInfo.serverName + " 471 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+l)\r\n");
 }
 // void Numerics::ERR_CHANOPRIVSNEEDED_482(int fd)
 // {
-// 	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :You're not channel operator\r\n");
+// 	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 482 " + cl.find_client(fd)->get_nickName() + " #" + params.tokens[1] + " :You're not channel operator\r\n");
 // }
 void Numerics::ERR_INVALIDMODEPARAM_696(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 696 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You must specify a parameter for the key mode. Syntax: <key>.\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 696 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :You must specify a parameter for the key mode. Syntax: <key>.\r\n");
 }
 void Numerics::RPL_ADDVOICE(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " MODE #" + params.tokens[1] + " " + params.tokens[2] + " " + param + "\r\n");
 }
 void Numerics::ERR_INVITEONLYCHAN_473(int fd)
 {
-	// cl.set_writeBuf(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (invite only)\r\n");
+	// cl.appendToWriteBuf(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (invite only)\r\n");
 	sendMsg(fd,":" + serverInfo.serverName + " 473 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Cannot join channel (+i)\r\n");
 }
 
 // MOTD
 void Numerics::ERR_NOSUCHSERVER_402(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 402 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.serverName + " :No such server\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 402 " + cl.find_client(fd)->get_nickName() + " " + serverInfo.serverName + " :No such server\r\n");
 }
 void Numerics::ERR_NOMOTD_422(int fd)
 {
 	// :mercury.libera.chat 442 jimchoi__ #jimchoi :You're not on that channel
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+" :You're not on that channel\r\n");
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " "+ params.tokens[1]+" :You're not on that channel\r\n");
+	// cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 422 " + cl.find_client(fd)->get_nickName() + " :MOTD File is missing\r\n");
 }
 void Numerics::RPL_MOTDSTART_375(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 375 " + cl.find_client(fd)->get_nickName() + " :- " + serverInfo.serverName + " Message of the day - \r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 375 " + cl.find_client(fd)->get_nickName() + " :- " + serverInfo.serverName + " Message of the day - \r\n");
 }
 void Numerics::RPL_MOTD_372(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 372 " + cl.find_client(fd)->get_nickName() + " :" + motd_line + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 372 " + cl.find_client(fd)->get_nickName() + " :" + motd_line + "\r\n");
 }
 void Numerics::RPL_ENDOFMOTD_376(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 376 " + cl.find_client(fd)->get_nickName() + " :End of /MOTD command.\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 376 " + cl.find_client(fd)->get_nickName() + " :End of /MOTD command.\r\n");
 }
 
 // NAMES
@@ -443,56 +444,56 @@ void Numerics::RPL_ENDOFNAMES_366(int fd)
 // NICK
 void Numerics::ERR_NONICKNAMEGIVEN_431(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 431 " + cl.find_client(fd)->get_nickName() + " :No nickname given\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 431 " + cl.find_client(fd)->get_nickName() + " :No nickname given\r\n");
 }
 void Numerics::ERR_ERRONEUSNICKNAME_432(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Erroneus nickname\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 432 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Erroneus nickname\r\n");
 }
 void Numerics::ERR_NICKNAMEINUSE_433(int fd) // NICK 명령어 다음에 이름이 나와야 하는데, 이름이 없으면 터짐
 {
 	if (cl.find_client(fd)->get_nickName().size() < 1)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 433 * " + params.tokens[1] + " :Nickname is already in use.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 433 * " + params.tokens[1] + " :Nickname is already in use.\r\n");
 	else
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 433 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :Nickname is already in use.\r\n");
 }
 void Numerics::RPL_NICK(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + oclient + "!" + uclient + "@" + serverInfo.serverName + " NICK " +  client + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + oclient + "!" + uclient + "@" + serverInfo.serverName + " NICK " +  client + "\r\n");
 }
 
 // NOTICE
 void Numerics::RPL_NOTICE(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " NOTICE " + target + " " + message + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " NOTICE " + target + " " + message + "\r\n");
 }
 
 // OPER
 void Numerics::ERR_NOOPERHOST_491(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 491 " + cl.find_client(fd)->get_nickName() + " :No O-lines for your host\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 491 " + cl.find_client(fd)->get_nickName() + " :No O-lines for your host\r\n");
 }
 void Numerics::RPL_YOUREOPER_381(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 381 " + cl.find_client(fd)->get_nickName() + " :You are now an IRC operator\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 381 " + cl.find_client(fd)->get_nickName() + " :You are now an IRC operator\r\n");
 }
 
 // PART
 void Numerics::RPL_PART(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " PART #" + channel + " " + (reason.empty() ? "." : reason ) + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " PART #" + channel + " " + (reason.empty() ? "." : reason ) + "\r\n");
 }
 
 // PASS
 void Numerics::ERR_PASSWDMISMATCH_464(int fd)
 {
 	if (cl.find_client(fd)->get_nickName().size() < 1)
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 464 * :Password incorrect.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 464 * :Password incorrect.\r\n");
 	else
-		cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
+		cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 464 " + cl.find_client(fd)->get_nickName() + " :Password incorrect.\r\n");
 }
 
 void Numerics::ERR_NOTREGISTERED_451(int fd)
@@ -516,31 +517,31 @@ void Numerics::RPL_PONG(int fd)
 void Numerics::RPL_QUIT(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " QUIT :Quit: " + reason + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " QUIT :Quit: " + reason + "\r\n");
 }
 void Numerics::RPL_ERROR(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, makeUserId(fd) + " ERROR :" + reason + "\r\n");
+	// cl.appendToWriteBuf(fd, makeUserId(fd) + " ERROR :" + reason + "\r\n");
 }
 
 // PRIVMSG
 void Numerics::ERR_NOSUCHNICK_401(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 401 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No such nick/channel\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 401 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No such nick/channel\r\n");
 }
 void Numerics::ERR_NORECIPIENT_411(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 411 " + cl.find_client(fd)->get_nickName() + " :No recipient given PRIVMSG\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 411 " + cl.find_client(fd)->get_nickName() + " :No recipient given PRIVMSG\r\n");
 }
 void Numerics::ERR_NOTEXTTOSEND_412(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 412 " + cl.find_client(fd)->get_nickName() + " :No text to send\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 412 " + cl.find_client(fd)->get_nickName() + " :No text to send\r\n");
 }
 void Numerics::RPL_PRIVMSG(int fd)
 {
 	(void)fd;
-	// cl.set_writeBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " PRIVMSG " + target + " " + message + "\r\n");
+	// cl.appendToWriteBuf(fd, ":" + cl.find_client(fd)->get_nickName() + "!" + username + "@" + serverInfo.serverName + " PRIVMSG " + target + " " + message + "\r\n");
 }
 
 // TOPIC
@@ -555,13 +556,13 @@ void Numerics::RPL_TOPIC_332(int fd)
 }
 void Numerics::RPL_NOTOPIC_331(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 331 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No topic is set\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 331 " + cl.find_client(fd)->get_nickName() + " " + params.tokens[1] + " :No topic is set\r\n");
 }
 
 // USER
 void Numerics::ERR_ALREADYREGISTERED_462(int fd)
 {
-	cl.set_writeBuf(fd, ":" + serverInfo.serverName + " 462 " + cl.find_client(fd)->get_nickName() + " :You may not reregister.\r\n");
+	cl.appendToWriteBuf(fd, ":" + serverInfo.serverName + " 462 " + cl.find_client(fd)->get_nickName() + " :You may not reregister.\r\n");
 }
 
 void Numerics::ERR_UNKNOWNMODE_472(int fd, int errNum)
