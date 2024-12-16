@@ -74,7 +74,7 @@ int Part::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     part_msg += "\r\n";
 
     for (unsigned long i = 0; i < client_list.size(); i++)
-        client_list[i]->set_writeBuf(part_msg);
+        client_list[i]->appendToWriteBuf(part_msg);
 
     //채널에서 사용자 삭제
     channel->removeParticipantByName(client->get_nickName());

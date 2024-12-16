@@ -45,7 +45,7 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
         std::string topic_msg = channel->getChannelName() + " topic: ";
         if (channel->getTopic().length() > 0)
             topic_msg += channel->getTopic();
-        client->set_writeBuf(topic_msg);
+        client->appendToWriteBuf(topic_msg);
 
         // 토픽이 있는 경우: RPL_TOPIC (332) + RPL_TOPICWHOTIME (333) 출력
         // 토픽이 공백인 경우: RPL_NOTOPIC (331) 출력
@@ -69,7 +69,7 @@ int Topic::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn
     std::string topic_msg = ":" + client->get_nickName() + "!" + client->get_userName() + "@" + client->get_clientIp()\
                              + " TOPIC " + channel->getChannelName() + " " + params.tokens[2] + "\n";
 	for (unsigned long i = 0; i < list.size(); i++)
-		list[i]->set_writeBuf(topic_msg);
+		list[i]->appendToWriteBuf(topic_msg);
     // throw 332;
     return 0;
 }

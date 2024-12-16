@@ -55,7 +55,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     std::string invite_msg = ":" + inviter->get_nickName() + "!" + inviter->get_userName() + "@"\
                              + inviter->get_realName() + " INVITE " + invitee->get_clientIp() + " :"\
                              + channel->getChannelName() + "\n";
-    cl.find_client_byNick(params.tokens[1])->set_writeBuf(invite_msg);
+    cl.find_client_byNick(params.tokens[1])->appendToWriteBuf(invite_msg);
     //채널의 초대 리스트에 대상자 추가
     channel->inviteClient(invitee);
     //초대자에게 RPL_INVITING (341) 전송

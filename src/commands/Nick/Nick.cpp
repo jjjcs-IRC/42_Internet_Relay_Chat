@@ -97,7 +97,7 @@ void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &
 
 	if (client->get_channels().size() == 0)
 	{
-		client->set_writeBuf(msg);
+		client->appendToWriteBuf(msg);
 		return ;
 	}
 	std::vector<std::string> channel_list = client->get_channels();
@@ -107,6 +107,6 @@ void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &
 		std::vector<Client*> client_list = channel->getParticipants();
 
 		for (unsigned long j = 0; j < client_list.size(); j++)
-			client_list[j]->set_writeBuf(msg);
+			client_list[j]->appendToWriteBuf(msg);
 	}
 }
