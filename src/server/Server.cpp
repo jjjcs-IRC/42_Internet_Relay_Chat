@@ -196,8 +196,8 @@ void Server::handleNewConnection(void)
 	int clientSock = accept(m_serverSock, (struct sockaddr *)&clientAddr, &clientAddrSize);
 	if (clientSock == -1)
 	{
-		if (errno != EWOULDBLOCK)
-			std::cerr << "accept() error" << std::endl;
+		// if (errno != EWOULDBLOCK)
+		// 	std::cerr << "accept() error" << std::endl;
 		return;
 	}
 	std::cout << "New client connected: " << clientSock << std::endl;
