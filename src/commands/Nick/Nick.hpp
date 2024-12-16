@@ -1,8 +1,7 @@
 #ifndef NICK_HPP
 # define NICK_HPP
 
-#include "../parser/IrcType.hpp"  // tParams 정의를 가져오기 위해
-#include "Command.hpp"
+#include "../Command.hpp"
 
 class Nick : public Command {
     public:

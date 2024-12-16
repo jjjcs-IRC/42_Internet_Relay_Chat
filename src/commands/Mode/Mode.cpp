@@ -1,12 +1,20 @@
 #include "Mode.hpp"
-#include "../server/Server.hpp"
 
+// Mode::Mode() {}
+Mode::Mode() : flag(0), channel(NULL), client(NULL) {
+    resultOp.clear();
+    resultToken.clear();
+    modeCmd.clear();
+}
 
-
-
-Mode::Mode() {}
-
-Mode::~Mode() {}
+// Mode::~Mode() {}
+Mode::~Mode() {
+    resultOp.clear();
+    resultToken.clear();
+    modeCmd.clear();
+    channel = NULL;  // 소유권이 없으므로 delete하지 않음
+    client = NULL;   // 소유권이 없으므로 delete하지 않음
+}
 
 Mode &Mode::operator=(const Mode &other) {
 	(void)other;
@@ -18,7 +26,6 @@ Mode::Mode(const Mode &other) {
 }
 
 int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	std::cout << "Mode::executeCommand" << std::endl;
 	this->client = cl.find_client(params.client_fd);
 
 	if (client->get_passed() == false) {
@@ -29,11 +36,10 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (channel == NULL) { //  채널이 없을 때
 		if (params.tokens[1][0] != '#') {
 			throw 501;	
-	}
+		}
 		throw 403;
 	}
 	if (params.tokens.size() < 3) { // 매개변수가 충분하지 않을 때
-		std::cout << "매개변수가 충분하지 않을 때" << std::endl;
 		throw 324;
 	}
 	if (channel->isOperator(client) == false) {
@@ -42,12 +48,17 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	std::vector<std::string> modeTokens = Parser(params.tokens);
 	this->flag = -1;
 
-	memset(&this->resultOp, 0, sizeof(this->resultOp));
-	memset(&this->resultToken, 0, sizeof(this->resultToken));
+	// memset(&this->resultOp, 0, sizeof(this->resultOp));
+	// memset(&this->resultToken, 0, sizeof(this->resultToken));
+	resultOp.clear();
+	resultToken.clear();
+	modeCmd.clear();
 
 	for (size_t i = 2; i < modeTokens.size(); i++) {
-		memset(&this->modeCmd, 0, sizeof(this->modeCmd));
+		// memset(&this->modeCmd, 0, sizeof(this->modeCmd));
+		modeCmd.clear();
 		modeCmd = modeSplit(modeTokens[i], ':');
+		std::cout << "modeTokens : " << modeTokens[i] << std::endl;
 		std::string result = "";
 		if (modeCmd[1] == "i") {
 			result += modeI();
@@ -69,6 +80,7 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 			resultToken += modeCmd.size() > 2 ? modeCmd[2] : "";
 			resultToken += " ";
 		}
+		modeCmd.clear();
 	}
 
 	// 성공한 경우 채널의 모든 사용자에게 변경된 옵션 안내
@@ -76,6 +88,9 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		sendMsgToCh(channel, client);
 	}
 	std::cout << "Mode::executeCommand end" << std::endl;
+		resultOp.clear();
+	resultToken.clear();
+	modeCmd.clear();
 	return 0;
 }
 
@@ -111,7 +126,7 @@ std::string Mode::modeI () {
 
 std::string Mode::modeO () {
 	Client *operatorClient = channel->findClient(modeCmd[2]);
-	if (operatorClient == NULL) { // 클라이언트가 없을 때
+	if (operatorClient == NULL) { // 유효하지 않은 사용자일 때
 			return "";
 		}
 	if (modeCmd[0] == "+") {
@@ -219,16 +234,6 @@ std::string Mode::modeT () {
 	}
 }
 
-// bool Mode::findOperator(const Client *client) {
-// 	std::vector<Client*> operators = channel->getOperators();
-// 	// if (find(operators.begin(), operators.end(), client) == operators.end())
-// 	// 	return false;
-// 	for (size_t i = 0; i < operators.size(); i++) {
-		
-// 		std::cout << "operators[" << i << "] : " << operators[i]->get_userName() << std::endl;
-// 	}
-// 	return true;
-// }
 
 bool Mode::isNumber(const std::string& str) {
 	if (str.size() == 0) return false;
@@ -238,19 +243,20 @@ bool Mode::isNumber(const std::string& str) {
 	return true;
 }
 
+
 std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
-	std::istringstream iss(str);             // istringstream에 str을 담는다.
-	std::string buffer;                      // 구분자를 기준으로 절삭된 문자열이 담겨지는 버퍼
-	std::vector<std::string> result;
-	while (getline(iss, buffer, Delimiter)) {
-		result.push_back(buffer);               // 절삭된 문자열을 vector에 저장
-	}
-
-	return result;
+    std::istringstream iss(str);
+    std::string buffer;
+    std::vector<std::string> result;
+    
+    while (getline(iss, buffer, Delimiter)) {
+        result.push_back(buffer);
+    }
+    return result; 
 }
-
 void Mode::sendMsgToCh(Channel *channel, Client *sender)
 {
+	(void)sender;
 	std::vector<Client*> list =  channel->getParticipants();
 	if (client == NULL) {
 		std::cout << "client is NULL" << std::endl;
@@ -258,8 +264,8 @@ void Mode::sendMsgToCh(Channel *channel, Client *sender)
 	std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
 							"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
 							+ " :" + resultOp + " " + resultToken + "\r\n";
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned long i = 0; i < list.size(); i++)
 	{
-			list[i]->set_writeBuf(mode_msg);				
+			list[i]->appendToWriteBuf(mode_msg);				
 	}
 }

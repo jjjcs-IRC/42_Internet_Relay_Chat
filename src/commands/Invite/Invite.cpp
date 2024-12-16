@@ -2,9 +2,16 @@
 
 Invite::Invite() {}
 
-Invite::Invite(const Invite &obj) {}
+Invite::Invite(const Invite &obj) 
+{
+    (void)obj;
+}
 
-Invite& Invite::operator=(const Invite &obj) {return *this;}
+Invite& Invite::operator=(const Invite &obj) 
+{
+    (void)obj;
+    return *this;
+}
 
 Invite::~Invite() {}
 
@@ -22,7 +29,6 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     if (!inviter->check_pass_client())
         throw 451;
 
-    std::cout << "Invite command::executeCommand" << std::endl;
     //개인 존재 유무 확인 (401)
     if (cl.find_client_byNick(params.tokens[1]) == NULL)
         throw 401;
@@ -49,7 +55,7 @@ int Invite::executeCommand(tParams &params, ClientManager &cl, ChannelManager &c
     std::string invite_msg = ":" + inviter->get_nickName() + "!" + inviter->get_userName() + "@"\
                              + inviter->get_realName() + " INVITE " + invitee->get_clientIp() + " :"\
                              + channel->getChannelName() + "\n";
-    cl.find_client_byNick(params.tokens[1])->set_writeBuf(invite_msg);
+    cl.find_client_byNick(params.tokens[1])->appendToWriteBuf(invite_msg);
     //채널의 초대 리스트에 대상자 추가
     channel->inviteClient(invitee);
     //초대자에게 RPL_INVITING (341) 전송

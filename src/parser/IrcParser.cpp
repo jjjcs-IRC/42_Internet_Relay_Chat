@@ -29,7 +29,7 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 	{
 		std::string								line(CmdLine);
 		std::vector<std::string>				temp;
-		int	pos = line.find(':');
+		const unsigned long	pos = line.find(':');
 		if (pos != std::string::npos)
 		{
 			
@@ -109,7 +109,7 @@ void		IrcParser::ShowStatus( tParams &res )
 	std::cout << "client_fd: " << res.client_fd << std::endl;
 	std::cout << "cmd_type : " << res.cmd_type << std::endl;
 	std::cout << "tokens_list: " << std::endl;
-	for (int i = 0; i < res.tokens.size(); i++)
+	for (unsigned long i = 0; i < res.tokens.size(); i++)
 	{
 		std::cout << "tokens[" << i << "]: " << res.tokens[i] << std::endl;
 	}

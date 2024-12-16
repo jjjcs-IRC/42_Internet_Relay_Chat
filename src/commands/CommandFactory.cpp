@@ -1,10 +1,10 @@
 #include "CommandFactory.hpp"
-#include "Join.hpp"
-#include "Pass.hpp"
-#include "User.hpp"
-#include "Nick.hpp"
-#include "Mode.hpp"
-#include "Pong.hpp"
+#include "./Join/Join.hpp"
+#include "./Pass/Pass.hpp"
+#include "./User/User.hpp"
+#include "./Nick/Nick.hpp"
+#include "./Mode/Mode.hpp"
+#include "./Pong/Pong.hpp"
 #include "./privmsg/Privmsg.hpp"
 #include "./Invite/Invite.hpp"
 #include "./Kick/Kick.hpp"
@@ -30,7 +30,7 @@ CommandFactory::CommandFactory() {
 }
 
 CommandFactory* CommandFactory::getInstance() {
-    if (_instance == nullptr) {
+    if (_instance == NULL) {
         _instance = new CommandFactory();
     }
     return _instance;
@@ -41,7 +41,7 @@ Command* CommandFactory::createCommand(int commandType) {
     if (it != _commandMap.end()) {
         return it->second;
     }
-    return nullptr; // 알 수 없는 커맨드인 경우
+    return NULL; // 알 수 없는 커맨드인 경우
 }
 
 CommandFactory::~CommandFactory() {
@@ -55,5 +55,5 @@ for (it = _commandMap.begin(); it != _commandMap.end(); ++it) {
 
 
 // 전역 변수 초기화
-CommandFactory* CommandFactory::_instance = nullptr;
+CommandFactory* CommandFactory::_instance = NULL;
 

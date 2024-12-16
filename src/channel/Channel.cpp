@@ -214,7 +214,7 @@ bool Channel::isValideName(std::string channelName) const {
     // 채널 이름에 허용되지 않는 문자 (' ', ASCII 7 (^G), ',')가 있는지 확인
     for (std::string::size_type i = 1; i < channelName.size(); ++i) {
         char c = channelName[i];
-        if (c == ' ' || c == '\a' || c == ',') {
+        if (c == ' ' || c == '\a' || c == ',' || c == '\n') {
             return false;
         }
     }

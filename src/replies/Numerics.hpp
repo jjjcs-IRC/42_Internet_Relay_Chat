@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
+#include <sstream>
 
 #include "../client/ClientManager.hpp"
 #include "../channelManager/ChannelManager.hpp"

@@ -4,13 +4,19 @@
 
 Kick::Kick() {}
 
-Kick::Kick(const Kick &obj) {}
+Kick::Kick(const Kick &obj) 
+{
+    (void)obj;
+}
 
-Kick& Kick::operator=(const Kick &obj) {return *this;}
+Kick& Kick::operator=(const Kick &obj) 
+{
+    (void)obj;
+    return *this;
+}
 
 Kick::~Kick() {}
 
-//
 
 int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 {
@@ -48,7 +54,7 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     //강퇴하려는 사용자가 본인 && 권한을 가진 사람이 본인 한 명 -> 가장 오래된 사용자에게 권한 위임
     if (kicker->get_nickName() == kickee->get_nickName() && channel->getOperators().size() == 1)
     {
-        for (int i = 0; i < client_list.size(); i++)
+        for (unsigned long i = 0; i < client_list.size(); i++)
         {
             if (client_list[i] != kicker)
             {
@@ -75,8 +81,8 @@ int Kick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
     if (params.tokens.size() == 4) //강퇴 사유가 있는 경우
         kick_msg += " " + params.tokens[3];
     kick_msg += "\r\n";
-    for (int i = 0; i < client_list.size(); i++)
-        client_list[i]->set_writeBuf(kick_msg);
+    for (unsigned long i = 0; i < client_list.size(); i++)
+        client_list[i]->appendToWriteBuf(kick_msg);
 
     //채널에서 사용자 삭제
     channel->removeParticipantByName(kickee->get_nickName());

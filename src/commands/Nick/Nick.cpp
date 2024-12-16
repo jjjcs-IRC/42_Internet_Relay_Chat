@@ -1,6 +1,4 @@
 #include "Nick.hpp"
-#include "../server/Server.hpp"
-
 
 Nick::Nick() {}
 
@@ -16,13 +14,12 @@ Nick::Nick(const Nick &other) {
 
 int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
 	
-	// std::cout << "Nick executeCommand" << std::endl;
 	Client *client = cl.find_client(params.client_fd);
 	std::string isFirst = client->get_nickName();
 	if (client->get_passed() == false) {
 		// `USER` 명령어로 사용자 정보를 등록하기 전에 다른 명령어를 사용하려고 하면 이 에러가 발생합니다.
-		std::cout <<"PASS 를 먼저 입력해야함"<<std::endl;
-		throw 451;
+		// throw 451;
+		return 0;
 	}
 	
 	if (params.tokens.size() < 2) {
@@ -33,11 +30,6 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 		// `NICK` 명령어로 전송된 닉네임이 이미 사용 중일 때 발생합니다.
 		throw 433;
 	}
-	//클라이언트 닉네임 세팅
-	// if (!cl.set_nick_client(params.client_fd, params.tokens[1])) {
-	// 	// `NICK` 명령어로 전송된 닉네임이 서버에서 허용되지 않을 때 발생합니다.
-	// 	throw 432;
-	// }
 	if (check_nick(params.tokens[1]) == false) {
 		// `NICK` 명령어로 전송된 닉네임이 서버에서 허용되지 않을 때 발생합니다.
 		throw 432;
@@ -52,6 +44,7 @@ int Nick::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	 // 닉네임 변경
 	if (isFirst.size() != 0) //  닉네임 변경 성공 메세지 전송
 	{
+		// sugom!root@127.0.0.1 NICK :aaa
 		std::string msg = ":" + pre_nickName +"!" +client->get_userName() + "@" + client->get_clientIp() \
 								+ " NICK :" + params.tokens[1] + "\r\n";
 		send_nick_ch_msg(params, cl, cn, msg);
@@ -70,7 +63,7 @@ bool Nick::check_nick(std::string nick) {
 		return false;
 
 	//닉네임에 공백, @, !, #, :, , 등 특정 특수 문자 포함 불가
-	for (int i = 0; i < nick.size(); i++)
+	for (unsigned long i = 0; i < nick.size(); i++)
 	{
 		if (nick[i] == ' ')
 			return (false);
@@ -84,7 +77,8 @@ bool Nick::check_nick(std::string nick) {
 			return (false);
 		if (nick[i] == ',')
 			return (false);
-
+		if (nick[i] == '\n')
+			return (false);
 		// if (nick[i] == '*')
 		// 	return (false);
 		// if (nick[i] == '?')
@@ -101,13 +95,18 @@ void Nick::send_nick_ch_msg(tParams &params, ClientManager &cl, ChannelManager &
 {
 	Client *client = cl.find_client(params.client_fd);
 
+	if (client->get_channels().size() == 0)
+	{
+		client->appendToWriteBuf(msg);
+		return ;
+	}
 	std::vector<std::string> channel_list = client->get_channels();
-	for (int i = 0; i < channel_list.size(); i++)
+	for (unsigned long i = 0; i < channel_list.size(); i++)
 	{
 		Channel *channel = cn.findChannel(channel_list[i]);
 		std::vector<Client*> client_list = channel->getParticipants();
 
-		for (int j = 0; j < client_list.size(); j++)
-			client_list[j]->set_writeBuf(msg);
+		for (unsigned long j = 0; j < client_list.size(); j++)
+			client_list[j]->appendToWriteBuf(msg);
 	}
 }

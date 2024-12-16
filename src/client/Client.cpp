@@ -5,7 +5,7 @@ Client::Client() : client_fd(-1), passed(false)
 	// std::cout << "Create Client!!!" << std::endl;
 }
 
-Client::Client(int fd, std::string ip) : client_fd(fd), nickName(""), client_ip(ip), passed(false)
+Client::Client(int fd, std::string ip) : client_fd(fd), client_ip(ip), nickName(""), passed(false)
 {
 	// this->nickName = "*";
 	// std::cout << "Create Client!!!" << std::endl;
@@ -176,4 +176,8 @@ bool Client::kick_client_from_channel(std::string channel)
 	else
 		this->channels.erase(it);
 	return true;
+}
+
+void Client::appendToWriteBuf(const std::string& message) {
+    write_buf += message; // 메시지를 기존 버퍼에 추가
 }
