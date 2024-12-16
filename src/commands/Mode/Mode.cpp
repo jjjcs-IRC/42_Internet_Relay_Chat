@@ -266,6 +266,6 @@ void Mode::sendMsgToCh(Channel *channel, Client *sender)
 							+ " :" + resultOp + " " + resultToken + "\r\n";
 	for (unsigned long i = 0; i < list.size(); i++)
 	{
-			list[i]->set_writeBuf(mode_msg);				
+			list[i]->appendToWriteBuf(mode_msg);				
 	}
 }

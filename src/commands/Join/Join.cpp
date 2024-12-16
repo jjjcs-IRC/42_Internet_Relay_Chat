@@ -89,7 +89,7 @@ void Join::sendMsgToCh(tParams &params, Channel *channel, Client *sender)
 	for (unsigned long i = 0; i < list.size(); i++)
 	{
 		if (list[i] != sender){
-			list[i]->set_writeBuf(join_msg);
+			list[i]->appendToWriteBuf(join_msg);
 		}					
 	}
 }

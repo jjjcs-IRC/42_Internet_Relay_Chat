@@ -70,7 +70,8 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 	std::string priv_msg =  ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
                             + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " "\
                             + params.tokens[2] + "\n";
-	receiver->set_writeBuf(priv_msg);
+	std::cout << "priv_msg : " << priv_msg << std::endl;
+	receiver->appendToWriteBuf(priv_msg);
 }
 
 void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn, std::string channel)
@@ -85,7 +86,7 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 			std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
 								+ sender->get_clientIp() + " PRIVMSG " + channel + " "\
 								+ params.tokens[2] + "\n";
-			list[i]->set_writeBuf(priv_msg);
+			list[i]->appendToWriteBuf(priv_msg);
 		}					
 	}
 }
@@ -111,22 +112,22 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 
 	parsing_receiver(params);
 
-	//단일 상대에게 전송
-	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
-	{
-		if (check_client(params, cl, this->v_client[0]) != 0)
-			throw 441;
-		sendMsgToCl(params, cl, this->v_client[0]);
-	}
+	// //단일 상대에게 전송
+	// if (this->v_client.size() == 1 && this->v_channel.size() == 0)
+	// {
+	// 	if (check_client(params, cl, this->v_client[0]) != 0)
+	// 		throw 441;
+	// 	sendMsgToCl(params, cl, this->v_client[0]);
+	// }
 
-	//단일 채널에 전송
-	if (this->v_client.size() == 0 && this->v_channel.size() == 1)
-	{
-		int res = check_channel(params, cl, cn, this->v_channel[0]);
-		if (res != 0)
-			throw res;
-		sendMsgToCh(params, cl, cn, v_channel[0]);
-	}
+	// //단일 채널에 전송
+	// if (this->v_client.size() == 0 && this->v_channel.size() == 1)
+	// {
+	// 	int res = check_channel(params, cl, cn, this->v_channel[0]);
+	// 	if (res != 0)
+	// 		throw res;
+	// 	sendMsgToCh(params, cl, cn, v_channel[0]);
+	// }
 
 	//다중 대상에게 전송
 	//사용자에 전송
