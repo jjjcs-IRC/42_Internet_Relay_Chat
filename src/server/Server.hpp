@@ -102,7 +102,6 @@ class Server {
 		void handleClientData(int clientSock, struct kevent& event);
 		void disconnectClient(int clientSock);
 		void cleanup(void);
-		std::string receiveMessage(int clientSock);
 
 		//server측 command
 		tParams setParams(int &fd, std::string &string);

@@ -140,8 +140,6 @@ void Server::registerClientWriteEvent(int clientSock)
 		std::cerr << "kevent() register error" << std::endl;
 		return;
 	}
-	// m_changeIdx = (m_changeIdx + 1) % MAX_EVENTS;
-
 }
 
 void Server::unregisterWriteEvent(int clientSock)
@@ -195,11 +193,7 @@ void Server::handleNewConnection(void)
 
 	int clientSock = accept(m_serverSock, (struct sockaddr *)&clientAddr, &clientAddrSize);
 	if (clientSock == -1)
-	{
-		// if (errno != EWOULDBLOCK)
-		// 	std::cerr << "accept() error" << std::endl;
 		return;
-	}
 	std::cout << "New client connected: " << clientSock << std::endl;
 	registerClientSocket(clientSock);
 
@@ -270,9 +264,6 @@ void Server::handleClientData(int clientSock, struct kevent &event)
 					int fd = it->get_clientFd(); // 각 리스트 객체의 fd값을 받아온다.
 					if (client_manager.get_writeBuf(fd).length() > 0) //모든 fd의 write버퍼를 확인해서, 보낼게 있는지 확인
 						registerClientWriteEvent(fd);
-					// std::cout << "fd " << fd << " output |" << client_manager.get_writeBuf(fd) << std::endl;
-					// write(fd, client_manager.get_writeBuf(fd).c_str(), client_manager.get_writeBuf(fd).length());
-					// client_manager.set_writeBuf(fd, ""); // write buf를 clear함수를 쓸수 있게 하는 게 있으면 좋을듯
 				}
 			}
 	}
@@ -354,51 +345,6 @@ void Server::cleanup(void)
 		std::cout << "Closed kqueue" << std::endl;
 		m_kqueue = -1;
 	}
-}
-
-std::string Server::receiveMessage(int clientSock)
-{
-	unsigned long pos_crlf;
-	unsigned long pos_nl;
-	std::string result;
-	std::string tem_string;
-
-	tem_string = client_manager.get_readBuf(clientSock);
-	memset(read_buf, 0, BUF_SIZE);
-	ssize_t strLen = read(clientSock, read_buf, BUF_SIZE);
-	if (strLen <= 0)
-	{
-		disconnectClient(clientSock);
-		return ("");
-	}
-	tem_string.append(read_buf);
-	std::cout << "input result : " << read_buf << std::endl;
-	printAsciiValues(read_buf);
-	pos_crlf = tem_string.find("\r\n"); // 캐리지 리턴의 위치를 찾고
-	pos_nl = tem_string.find("\n");
-
-	if ((pos_crlf == std::string::npos) && (pos_nl == std::string::npos)) // 캐리지 리턴을 못 찾으면
-	{
-		printf("no cfrl nl\n");
-		// tem_string.append(result, 0, result.length());
-		// result.clear();
-	}
-	else if (pos_crlf < pos_nl)
-	{
-		// printf("cfrl\n");
-		result = tem_string.substr(0, pos_crlf); // result는 첫 위치부터 캐리지 리턴까지 저장
-		tem_string.erase(0, pos_crlf + 2);		 // tem_string은 캐리지 리턴부터 끝까지 잘라서 저장
-	}
-	else if (pos_crlf > pos_nl)
-	{
-		// printf("nl\n");
-		result = tem_string.substr(0, pos_nl);
-		tem_string.erase(0, pos_nl + 1);
-	}
-	// std::cout << "tem string : " << tem_string << std::endl;
-	// std::cout << "result : " << result << std::endl;
-	client_manager.set_readBuf(clientSock, tem_string);
-	return (result);
 }
 
 // 임시 함수
