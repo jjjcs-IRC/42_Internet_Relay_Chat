@@ -43,7 +43,6 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 		std::vector<std::string>::iterator		it = temp.begin();
 		data.tokens = split(*it, ' ');
 		std::cout << "tokens_len: " << data.tokens.size() << std::endl;
-		// std::cout << data.tokens.size() << std::endl;
 		if (data.tokens.size() == 0)
 		{
 			std::cerr << "Error: there is no argument" << std::endl;
@@ -51,7 +50,7 @@ tParams	IrcParser::IrcParsing( int fd, std::string &CmdLine, tParams &data )
 		}
 		*it++;
 		if (it != temp.end())
-			data.tokens.push_back(':' + *it);
+			data.tokens.push_back(*it);
 	}
 	/* get CMD Type */
 	data.cmd_type = GetCmdType(*data.tokens.begin());

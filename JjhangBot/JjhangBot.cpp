@@ -173,6 +173,7 @@ void	*JjhangBot::execute( void *arg )
 	t_Arg	*data = (t_Arg *)(arg);
 	std::cout << "Thread start" << std::endl;
 	std::cout << "Thread num is " << data->ThreadNum << std::endl;
+	usleep(1000);
 	if (data->ThreadNum == PING)
 	{
 		std::cout << "PING start" << std::endl;
@@ -188,7 +189,6 @@ void	*JjhangBot::execute( void *arg )
 
 void	JjhangBot::CtlThread( int socketFD )
 {
-	std::cout << "thread start" << std::endl;
 	for (int i = 0; i < TH_NUM; i++)
 	{
 		arg[i].socketFD = socketFD;
@@ -219,15 +219,19 @@ void	JjhangBot::JoinThread( void )
 
 }
 
-void	JjhangBot::SendToServer( int socketFD, std::string const &msg )
+int	JjhangBot::SendToServer( int socketFD, std::string const &msg )
 {
-	if (send(socketFD, msg.c_str(), msg.size(), 0) < 0)
+	int	res;
+
+	res = send(socketFD, msg.c_str(), msg.size(), 0);
+	if (res < 0)
 	{
 		std::cerr << "Error: Unable to send data: " << msg << std::endl;
 	}
+	return (res);
 }
 
-void	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
+int	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
 {
 	char	buffer[1024];
 	
@@ -245,7 +249,7 @@ void	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
 			
 			pos = Readbuf.find('\n');
 			if (pos != std::string::npos)
-				return ;
+				return(ERROR);
 		}
 		else if (bytesRead == 0)
 		{
@@ -258,13 +262,34 @@ void	JjhangBot::ReadToServer( int socketFD, std::string &Readbuf )
 		}
 	}
 	std::cout << "Server: " << Readbuf << std::endl;
+	return (0);
 }
 
 void	JjhangBot::Authenticate( int socketFD, std::string const &PassWord )
 {
-	SendToServer(socketFD, PassWord + "NICK bot\r\nUSER bot 0 * :JJHANG IRC BOT\r\n");
-	// SendToServer(socketFD, "JOIN #newchat\r\n");
-	/* JOIN */
+	int							sign = 1;
+	std::string					ReadBuf;
+	std::vector<std::string>	vec;
+	std::string					bot("bot");
+	IrcBotParser				parser;
+	
+	while ( sign )
+	{
+		SendToServer(socketFD, PassWord + "NICK " + bot + "\r\nUSER bot 0 * :JJHANG IRC BOT\r\n");
+		usleep(1000);
+		ReadToServer(socketFD, ReadBuf);
+		parser.IrcParsing(ReadBuf, vec);
+		parser.ShowStatus(vec);
+		if (vec.size() > 2 && vec[1] == "432")
+		{
+			bot = "bot";
+			bot = bot + static_cast<char>(sign);
+		}
+		else
+			break ;
+		sign++;
+	}
+	usleep(1000);
 }
 
 void	JjhangBot::LockMutex( pthread_mutex_t &mutex )

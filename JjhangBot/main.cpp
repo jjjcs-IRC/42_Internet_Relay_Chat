@@ -56,9 +56,9 @@ int	main( int argc, char *argv[])
 	std::string password( argv[3] );
 	Bot.Authenticate( fd, "PASS " + password + "\r\n" );
 	Bot.CtlThread( fd );
+	std::string		ReadBuf;
+	IrcBotParser	parser;
 	{
-		std::string		ReadBuf;
-		IrcBotParser	parser;
 		std::vector<std::string>	data;
 		while ( true )
 		{
@@ -82,7 +82,6 @@ int	main( int argc, char *argv[])
 				std::cout << "Privmsg execute Done" << std::endl;
 			}
 		}
-
 	}
 	Bot.JoinThread();
 	Bot.DeleteThrad( arg );
