@@ -103,11 +103,7 @@ class Server {
 		void disconnectClient(int clientSock);
 		void cleanup(void);
 
-		//server측 command
-		tParams setParams(int &fd, std::string &string);
-
 		//임시 함수
-		void printParams(tParams t_params);
 		void printAsciiValues(const std::string& str);
 };
 

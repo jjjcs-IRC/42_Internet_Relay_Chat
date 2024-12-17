@@ -349,19 +349,6 @@ void Server::cleanup(void)
 
 // 임시 함수
 
-void Server::printParams(tParams t_params)
-{
-	std::cout << "client fd : " << t_params.client_fd << std::endl;
-	std::cout << "command type : " << t_params.cmd_type << std::endl;
-	// std::cout << "password : " << t_params.password << std::endl;
-	std::cout << "tokens : ";
-	for (unsigned long i = 0; i < t_params.tokens.size(); i++)
-	{
-		std::cout << t_params.tokens[i] << " | ";
-	}
-	std::cout << "\n\n";
-}
-
 void Server::printAsciiValues(const std::string &str)
 {
 	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
