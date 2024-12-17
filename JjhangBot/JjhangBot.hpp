@@ -13,7 +13,7 @@
 
 # include "IrcBotParser.hpp"
 
-# define PING_TIME 30
+# define PING_TIME 300
 typedef struct s_Arg
 {
 	int	socketFD;
@@ -51,8 +51,8 @@ class JjhangBot
 		/* About Server */
 		int	ConnectToServer( const char *server, int port );
 		void	Authenticate( int socketFD, std::string const &PassWord );
-		static void	SendToServer(int sock, std::string const &msg );
-		static void	ReadToServer( int socketFD, std::string &Readbuf );
+		static int	SendToServer(int sock, std::string const &msg );
+		static int	ReadToServer( int socketFD, std::string &Readbuf );
 
 		/* About Threads */
 		t_Arg	*InitThread( void );
