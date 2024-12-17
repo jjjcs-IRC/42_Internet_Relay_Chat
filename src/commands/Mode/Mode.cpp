@@ -26,14 +26,14 @@ Mode::Mode(const Mode &other) {
 }
 
 int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn) {
-	this->client = cl.find_client(params.client_fd);
 
+	this->client = cl.find_client(params.client_fd);
 	if (client->get_passed() == false) {
 		throw 451;
 	}
-
 	this->channel = cn.findChannel(params.tokens[1]);
 	if (channel == NULL) { //  채널이 없을 때
+		// irssi 에서 mode 로 클라이언트 모드를 확인하는 커맨드가 주기적으로 들어옴, 우리는 채널 모드만 처리하므로 해당 케이스는 501 에러로 처리함
 		if (params.tokens[1][0] != '#') {
 			throw 501;	
 		}
@@ -47,15 +47,11 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	}
 	std::vector<std::string> modeTokens = Parser(params.tokens);
 	this->flag = -1;
-
-	// memset(&this->resultOp, 0, sizeof(this->resultOp));
-	// memset(&this->resultToken, 0, sizeof(this->resultToken));
 	resultOp.clear();
 	resultToken.clear();
 	modeCmd.clear();
 
 	for (size_t i = 2; i < modeTokens.size(); i++) {
-		// memset(&this->modeCmd, 0, sizeof(this->modeCmd));
 		modeCmd.clear();
 		modeCmd = modeSplit(modeTokens[i], ':');
 		std::cout << "modeTokens : " << modeTokens[i] << std::endl;
@@ -87,8 +83,8 @@ int Mode::executeCommand(tParams &params, ClientManager &cl, ChannelManager &cn)
 	if (resultOp.size() > 0) {
 		sendMsgToCh(channel, client);
 	}
-	std::cout << "Mode::executeCommand end" << std::endl;
-		resultOp.clear();
+
+	resultOp.clear();
 	resultToken.clear();
 	modeCmd.clear();
 	return 0;
@@ -254,13 +250,11 @@ std::vector<std::string> Mode::modeSplit(std::string str, char Delimiter) {
     }
     return result; 
 }
+
 void Mode::sendMsgToCh(Channel *channel, Client *sender)
 {
 	(void)sender;
 	std::vector<Client*> list =  channel->getParticipants();
-	if (client == NULL) {
-		std::cout << "client is NULL" << std::endl;
-	}
 	std::string mode_msg = ":" + client->get_nickName() + "!~" + client->get_userName() +\
 							"@" + client->get_clientIp() + " MODE " + channel->getChannelName()
 							+ " :" + resultOp + " " + resultToken + "\r\n";
