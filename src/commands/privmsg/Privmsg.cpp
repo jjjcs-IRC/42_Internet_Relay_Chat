@@ -69,7 +69,7 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 	Client *receiver = cl.find_client_byNick(client);
 	std::string priv_msg =  ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
                             + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " "\
-                            + params.tokens[2] + "\n";
+                            + params.tokens[2] + "\r\n";
 	std::cout << "priv_msg : " << priv_msg << std::endl;
 	receiver->appendToWriteBuf(priv_msg);
 }
@@ -79,13 +79,12 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	std::vector<Client*> list =  cn.findChannel(channel)->getParticipants();
 	Client *sender = cl.find_client(params.client_fd);
 
-
 	for (unsigned long i = 0; i < list.size(); i++)
 	{
 		if (list[i] != sender){
 			std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
 								+ sender->get_clientIp() + " PRIVMSG " + channel + " "\
-								+ params.tokens[2] + "\n";
+								+ params.tokens[2] + "\r\n";
 			list[i]->appendToWriteBuf(priv_msg);
 		}					
 	}
