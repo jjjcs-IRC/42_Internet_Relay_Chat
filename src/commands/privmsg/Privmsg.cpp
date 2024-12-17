@@ -112,40 +112,41 @@ int Privmsg::executeCommand(tParams &params, ClientManager &cl, ChannelManager &
 
 	parsing_receiver(params);
 
-	// //단일 상대에게 전송
-	// if (this->v_client.size() == 1 && this->v_channel.size() == 0)
-	// {
-	// 	if (check_client(params, cl, this->v_client[0]) != 0)
-	// 		throw 441;
-	// 	sendMsgToCl(params, cl, this->v_client[0]);
-	// }
-
-	// //단일 채널에 전송
-	// if (this->v_client.size() == 0 && this->v_channel.size() == 1)
-	// {
-	// 	int res = check_channel(params, cl, cn, this->v_channel[0]);
-	// 	if (res != 0)
-	// 		throw res;
-	// 	sendMsgToCh(params, cl, cn, v_channel[0]);
-	// }
-
-	//다중 대상에게 전송
-	//사용자에 전송
-	int res = 0;
-	for (unsigned long i = 0; i < this->v_client.size(); i++)
+	//단일 상대에게 전송
+	if (this->v_client.size() == 1 && this->v_channel.size() == 0)
 	{
-		if (check_client(params, cl, this->v_client[i]) != 0)
-			res = 407;
-		else
-			sendMsgToCl(params, cl, this->v_client[i]);
+		if (check_client(params, cl, this->v_client[0]) != 0)
+			throw 441;
+		sendMsgToCl(params, cl, this->v_client[0]);
 	}
-	//채널에 전송
-	for (unsigned long i = 0; i < this->v_channel.size(); i++)
+
+	//단일 채널에 전송
+	if (this->v_client.size() == 0 && this->v_channel.size() == 1)
 	{
-		if (check_channel(params, cl, cn, this->v_channel[i]) != 0)
-			res = 407;
-		else
-			sendMsgToCh(params, cl, cn, this->v_channel[i]);
+		int res = check_channel(params, cl, cn, this->v_channel[0]);
+		if (res != 0)
+			throw res;
+		sendMsgToCh(params, cl, cn, v_channel[0]);
 	}
-	throw res;
+
+	// 다중 대상에게 전송
+	// 사용자에 전송
+	// int res = 0;
+	// for (unsigned long i = 0; i < this->v_client.size(); i++)
+	// {
+	// 	if (check_client(params, cl, this->v_client[i]) != 0)
+	// 		res = 407;
+	// 	else
+	// 		sendMsgToCl(params, cl, this->v_client[i]);
+	// }
+	// //채널에 전송
+	// for (unsigned long i = 0; i < this->v_channel.size(); i++)
+	// {
+	// 	if (check_channel(params, cl, cn, this->v_channel[i]) != 0)
+	// 		res = 407;
+	// 	else
+	// 		sendMsgToCh(params, cl, cn, this->v_channel[i]);
+	// }
+	// throw res;
+	throw 0;
 }
