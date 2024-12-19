@@ -9,10 +9,11 @@
 <br/>
 
 ## 📌 목차
-- [✏️ IRC 프로젝트 설명](#-IRC-프로젝트-설명)
-- [🛠️ 프로젝트 구조도](#-프로젝트-구조도)
+- [✏️ IRC 프로젝트 설명](#%EF%B8%8F-irc-프로젝트-설명)
+- [🛠️ 프로젝트 구조도](#%EF%B8%8F-프로젝트-구조도)
 - [✅ 구현한 명령어](#-구현한-명령어)
-- [📚 참고 자료](#-참고-자료)
+- [🏃🏻‍♂️ 실행하기](#%EF%B8%8F-실행하기)
+- [📚 참고 자료](#-참고자료)
 
   <br/>
 
@@ -51,7 +52,11 @@
 ## 🛠️ 프로젝트 구조도
 
 ### ▫️ 서버 구조
-> 서버 간단한 설명
+> jjjcs_irc의 소켓 연결은 서버의 시스템 콜 함수인 socket(), bind(), listen(), accept()를 사용하여 클라이언트와 연결합니다.
+<br/>사용된 멀티플렉싱 기법은 kqueue입니다.
+읽기 이벤트는 클라이언트가 접속함과 동시에 해당 클라이언트의 읽기 이벤트가 kqueue에 등록이 됩니다.<br/>
+쓰기 이벤트는 특정 클라이언트의 쓰기 버퍼가 채워지면, 해당 클라이언트의 쓰기 이벤트가 kqueue에 등록이 되고, write()를 실행함과 동시에 쓰기 버퍼를 초기화 시켜 줍니다.
+
 <img src="https://github.com/user-attachments/assets/66ba7b82-a44c-47df-b4bb-438452391f9b" alt="IRC 서버 구조" width="500"/>
 
  ### ▫️ 채널과 클라이언트
@@ -79,6 +84,49 @@
 | PONG | `PONG` 명령은 클라이언트의 `PING` 요청에 대한 응답으로 사용됩니다.|
 
 <br/>
+
+## 🏃🏻‍♂️ 실행하기
+
+해당 레파지토리를 clone하기
+
+```
+git clone //github.com/jjjcs-IRC/42_Internet_Relay_Chat.git
+```
+
+src 폴더 들어가기
+
+```
+cd src
+```
+
+Makefile 실행하기
+
+```
+make
+```
+
+ircserv 실행하기
+
+```
+./ircserv <port> <password>
+```
+irssi 클라이언트로 로컬 irc서버 접속하기
+
+```
+irssi
+/connect -nocap localhost <port> <password>
+```
+
+nc 로컬 irc서버 접속하기
+```
+nc -c 127.0.0.1 <port> <password>
+```
+```
+PASS <password>
+NICK <nickname>
+USER <username> 0 * <realname>
+```
+&nbsp;
 
 
 ## 📚 참고자료
