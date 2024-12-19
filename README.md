@@ -1,15 +1,67 @@
-# 42_Internet_Relay_Chat
+# 📧 📩 📤 42_Internet_Relay_Chat  📥 📮 💌 💬
 
-## 목차
-- [IRC 프로젝트 설명](#IRC-프로젝트-설명)
-- [서버 구조도](#서버-구조도)
-- [구현한 명령어](#-구현한-명령어)
+| 항목 | 내용 |
+| --- | --- |
+| **개발 기간** | 2024.11 - 2024.12 |
+| **개발 언어** | C++ 98 |
+| **멤버** | 팀 jjjcs_irc ([jjhang](https://github.com/jjhang42), [jimchoi](https://github.com/jimchoi9), [jeakim](https://github.com/jeayoungKim529), [choolee](https://github.com/MatSalt), [seonghmo](https://github.com/seong-hui)) |
 
-## IRC 프로젝트 설명
+<br/>
+
+## 📌 목차
+- [✏️ IRC 프로젝트 설명](#-IRC-프로젝트-설명)
+- [🛠️ 프로젝트 구조도](#-프로젝트-구조도)
+- [✅ 구현한 명령어](#-구현한-명령어)
+- [📚 참고 자료](#-참고-자료)
+
+  <br/>
+
+## ✏️ IRC 프로젝트 설명
+해당 프로젝트는 **IRC 서버의 기능**들을 부분적으로 제공하는 프로그램입니다. <br/>
+42서울 과제인 ft_irc에서 요구하는 사항들을 바탕으로 만들어졌습니다.
+> IRC 정의
+: `IRC(Internet Relay Chat)`는 **인터넷 기반 실시간 텍스트 통신 프로토콜**로, 사용자들이 채팅방(채널)을 통해 대화를 나누거나 1:1 개인 메시지를 보낼 수 있게 해주는 시스템입니다.
+
+- 참조 클라이언트: [irssi](https://irssi.org/)
+- 참조 서버: [inspircd](https://www.inspircd.org/), [libera server](https://libera.chat/)
 
 
-## 서버 구조도
+<br/>
+
+### 프로젝트 요구 사항
+
+- 본 과제는 C++ 98로 IRC 서버를 만들어야 합니다.
+- 서버간 통신과 클라이언트는 구현하지 않아도 됩니다.
+- 프로그램을 실행하기 위한 코드는 다음과 같습니다.  `./ircserv <port> <password>`
+- 해당 서버는 동시에 여러 클라이언트와 통신이 되어야 합니다.
+- 모든 입출력은 논블럭으로 처리되어야 합니다.
+- 오직 하나의 `poll()` (또는 동등한 것)을 사용하여야 합니다.
+- 해당 서버가 제공해야하는 기능들
+    - 인증과정, 닉네임과 유저네임 변경, 채널 입장,  개인 메세지를 주고 받는 기능
+    - 채널에 속해 있는 모든 클라이언트에게 메세지를 보내는 기능
+    - 구현해야할 명령어
+        - KICK
+        - INVITE
+        - TOPIC
+        - MODE
+            - MODE 명령어는 i, t, k, o, l 옵션을 받을 수 있어야 합니다.
+         
+  <br/>
+
+## 🛠️ 프로젝트 구조도
+
+### ▫️ 서버 구조
+> 서버 간단한 설명
 <img src="https://github.com/user-attachments/assets/66ba7b82-a44c-47df-b4bb-438452391f9b" alt="IRC 서버 구조" width="500"/>
+
+ ### ▫️ 채널과 클라이언트
+> IRC 상용 클라이언트가 IRC 서버에 연결되면, 서버는 ClientManager를 통해 Client 객체 정보를, ChannelManager를 통해 Channel 객체 정보를 관리하며, 클라이언트와 채널 간의 연결 및 상호작용을 중재합니다.
+<img width="600" alt="irc (1)" src="https://github.com/user-attachments/assets/5ad8afe7-daa1-4f15-9901-4997fa110607" />
+
+ ### ▫️ 커맨드 실행 구조
+> IRC 서버는 수신한 커맨드를 검증한 후 각 커맨드 타입에 맞는 처리 과정을 거쳐 실행합니다.
+
+<img width="600" alt="irc (1)" src="https://github.com/user-attachments/assets/0bfb7010-3293-44fd-8745-4ee30ecebc4a" />
 
 ## ✅ 구현한 명령어 
 | 명령어 | 설명 |
@@ -25,3 +77,20 @@
 | KICK | `KICK` 명령은 특정 사용자를 강제로 채널에서 제거하도록 요청할 때 사용됩니다. |
 | PART | `PART` 명령은 클라이언트를 지정된 채널에서 나가게 하는 데 사용됩니다. |
 | PONG | `PONG` 명령은 클라이언트의 `PING` 요청에 대한 응답으로 사용됩니다.|
+
+<br/>
+
+
+## 📚 참고자료
+
+- [RFC 1459 - Internet Relay Chat Protocol](https://datatracker.ietf.org/doc/html/rfc1459)
+- [RFC 2812 - Internet Relay Chat: Client Protocol](https://datatracker.ietf.org/doc/html/rfc2812)
+- https://modern.ircdocs.horse/
+- https://1d1cblog.tistory.com/319
+- https://80000coding.oopy.io/a8507af9-f9f7-4f50-b3a2-26bff492c8c6#a8507af9-f9f7-4f50-b3a2-26bff492c8c6
+- https://medium.com/@afatir.ahmedfatir/small-irc-server-ft-irc-42-network-7cee848de6f9
+- https://jiiiiind.github.io/42Seoul/5Circle/ft_irc/
+- [https://velog.io/@sihkang/IRC서버-메시지-처리](https://velog.io/@sihkang/IRC%EC%84%9C%EB%B2%84-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC)
+- [https://velog.io/@rockaria/ftirc-3.-IRC-프로토콜](https://velog.io/@rockaria/ftirc-3.-IRC-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C)
+- https://80000coding.oopy.io/48994d58-5d68-4639-9982-e7d31c61e66f#48994d58-5d68-4639-9982-e7d31c61e66f
+- [https://velog.io/@jen133/Ftirc-irc-커맨드](https://velog.io/@jen133/Ftirc-irc-%EC%BB%A4%EB%A7%A8%EB%93%9C)
