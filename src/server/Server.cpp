@@ -167,8 +167,6 @@ void Server::runServer(void)
 		int n = kevent(m_kqueue, NULL, 0, m_eventList, MAX_EVENTS, &timeout);
 		if (n == -1)
 		{
-			if (errno == EINTR)
-				continue;
 			std::cerr << "kevent() error" << std::endl;
 			break;
 		}

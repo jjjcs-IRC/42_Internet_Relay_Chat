@@ -11,7 +11,6 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <errno.h>
 
 #include "../client/ClientManager.hpp"
 #include <string>
