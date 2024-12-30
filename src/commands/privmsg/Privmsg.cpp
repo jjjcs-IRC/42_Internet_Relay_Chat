@@ -18,7 +18,6 @@ Privmsg& Privmsg::operator=(const Privmsg &obj)
 }
 
 Privmsg::~Privmsg() {}
-
 //
 
 void Privmsg::parsing_receiver(tParams &params) //receiver 파싱
@@ -51,15 +50,12 @@ int Privmsg::check_channel(tParams &params, ClientManager &cl, ChannelManager &c
 	//채널 이름 형식 검사(413)
 	if (!ch->isValideName(channel))
 		return 413;
-
 	//채널 존재 검사(403)
 	if (ch == NULL)
 		return 403;
-
 	//클라이언트가 채널에 가입되어있는지 검사 (404)
 	if (ch->findClient(client->get_nickName()) == NULL)
 		return 404;
-
 	return 0;
 }
 
@@ -68,7 +64,7 @@ void Privmsg::sendMsgToCl(tParams &params, ClientManager &cl, std::string client
 	Client *sender = cl.find_client(params.client_fd);
 	Client *receiver = cl.find_client_byNick(client);
 	std::string priv_msg =  ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
-                            + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " "\
+                            + sender->get_clientIp() + " PRIVMSG " + receiver->get_nickName() + " :"\
                             + params.tokens[2] + "\r\n";
 	std::cout << "priv_msg : " << priv_msg << std::endl;
 	receiver->appendToWriteBuf(priv_msg);
