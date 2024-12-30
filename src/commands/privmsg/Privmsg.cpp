@@ -1,6 +1,5 @@
 #include <vector>
 #include <sstream>
-
 #include "Privmsg.hpp"
 
 Privmsg::Privmsg() {}
@@ -79,7 +78,7 @@ void Privmsg::sendMsgToCh(tParams &params, ClientManager &cl, ChannelManager &cn
 	{
 		if (list[i] != sender){
 			std::string priv_msg = ":" + sender->get_nickName() + "!" + sender->get_userName() + "@"\
-								+ sender->get_clientIp() + " PRIVMSG " + channel + " "\
+								+ sender->get_clientIp() + " PRIVMSG " + channel + " :"\
 								+ params.tokens[2] + "\r\n";
 			list[i]->appendToWriteBuf(priv_msg);
 		}					
